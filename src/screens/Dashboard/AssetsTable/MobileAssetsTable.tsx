@@ -64,7 +64,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
               <Column>
                 <Text>{s.symbol}</Text>
                 <Text size="small" type="secondary">
-                  {s.symbol}
+                  ${s.prices.max.toFormat(2)}
                 </Text>
               </Column>
             </Row>
