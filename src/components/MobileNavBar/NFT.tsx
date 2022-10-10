@@ -1,0 +1,42 @@
+import React from "react";
+import { useTheme } from "@emotion/react";
+
+interface IProps extends React.SVGProps<SVGSVGElement> {
+  active?: boolean;
+}
+
+const Compass: React.FC<IProps> = ({ active }) => {
+  const theme = useTheme();
+  return (
+    <svg
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M19.2001 3H5.20007C4.0955 3 3.20007 3.89543 3.20007 5V19C3.20007 20.1046 4.0955 21 5.20007 21H19.2001C20.3046 21 21.2001 20.1046 21.2001 19V5C21.2001 3.89543 20.3046 3 19.2001 3Z"
+        stroke={active ? theme.colors.blue500 : theme.colors.primary300}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.70007 10C9.5285 10 10.2001 9.32843 10.2001 8.5C10.2001 7.67157 9.5285 7 8.70007 7C7.87165 7 7.20007 7.67157 7.20007 8.5C7.20007 9.32843 7.87165 10 8.70007 10Z"
+        stroke={active ? theme.colors.blue500 : theme.colors.primary300}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M21.2001 15L16.2001 10L5.20007 21"
+        stroke={active ? theme.colors.blue500 : theme.colors.primary300}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+export default Compass;

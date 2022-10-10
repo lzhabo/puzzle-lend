@@ -1,0 +1,82 @@
+
+.send-asset > .rc-dialog-mask {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.send-asset .rc-dialog-wrap {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.send-asset .rc-dialog {
+    width: 100%;
+    height: 100%;
+}
+
+@media (min-width: 560px) {
+    .send-asset .rc-dialog {
+        width: 368px;
+        height: 560px;
+    }
+}
+
+
+.send-asset .rc-dialog-content {
+    border-radius: 0;
+    border: 0;
+    box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
+    overflow: hidden;
+    padding: 0;
+}
+
+@media (min-width: 560px) {
+    .send-asset .rc-dialog-content {
+        border-radius: 16px;
+        width: 368px;
+        height: 560px;
+    }
+}
+
+.send-asset .rc-dialog-header {
+    border-bottom: 1px solid #F1F2FE;
+    padding: 0;
+    max-height: 56px;
+}
+
+.send-asset .rc-dialog-body {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    /*padding: 0 24px;*/
+    position: relative;
+    height: calc(100vh - 56px);
+}
+
+@media screen and (min-width: 560px) {
+    .send-asset .rc-dialog-body {
+        max-height: 504px;
+    }
+
+}
+
+.send-asset .rc-dialog-title {
+    font-family: Roboto, sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    /*color: #363870;*/
+}
+
+.send-asset .rc-dialog-header {
+    border-bottom: 1px solid #F1F2FE;
+    padding: 16px 24px;
+    max-height: 56px;
+}
+
+
+.send-asset .rc-dialog-close {
+    opacity: 1;
+}

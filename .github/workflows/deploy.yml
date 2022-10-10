@@ -1,0 +1,47 @@
+name: Deploy
+
+env:
+  REACT_APP_API_BASE_DEV: https://puzzle-js-back-test.herokuapp.com
+  REACT_APP_API_BASE_PROD: https://puzzle-js-back.herokuapp.com
+  REACT_APP_AGG_API_DEV: https://stage.puzzle-aggr-api.com
+  REACT_APP_AGG_API_PROD: https://waves.puzzle-aggr-api.com
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  deploy_to_Heroku:
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_EMAIL: izhur27@gmail.com
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to DEVELOP
+        if: endsWith(github.ref, '/develop')
+        run: |
+          echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_DEV}" >> $GITHUB_ENV
+          echo "REACT_APP_AGG_API=${REACT_APP_AGG_API_DEV}" >> $GITHUB_ENV
+          echo "HEROKU_APP_NAME=puzzlestage" >> $GITHUB_ENV
+          echo "REACT_APP_AGGREGATOR_KEY=${REACT_APP_AGGREGATOR_KEY_DEV}" >> $GITHUB_ENV
+      - name: Deploy to PROD
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "REACT_APP_API_BASE=${REACT_APP_API_BASE_PROD}" >> $GITHUB_ENV
+          echo "REACT_APP_AGG_API=${REACT_APP_AGG_API_PROD}" >> $GITHUB_ENV
+          echo "HEROKU_APP_NAME=puzzlefi" >> $GITHUB_ENV
+          echo "REACT_APP_AGGREGATOR_KEY=${REACT_APP_AGGREGATOR_KEY_PROD}" >> $GITHUB_ENV
+      - name: Run chekout
+        uses: actions/checkout@v2
+      - name: Set env
+        run: heroku config:set REACT_APP_API_BASE=${{env.REACT_APP_API_BASE}} -a ${{ env.HEROKU_APP_NAME }}
+      - run: heroku config:set REACT_APP_AGGREGATOR_KEY="${{env.REACT_APP_AGGREGATOR_KEY}}" -a ${{ env.HEROKU_APP_NAME }}
+      - name: Deploy to ${{ env.HEROKU_APP_NAME }}
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ env.HEROKU_APP_NAME }}
+          heroku_email: "izhur27@gmail.com"
+          buildpack: "https://buildpack-registry.s3.amazonaws.com/buildpacks/mars/create-react-app.tgz"
