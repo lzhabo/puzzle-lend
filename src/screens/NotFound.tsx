@@ -2,10 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import noPage from "@src/assets/404.svg";
 import Text from "@components/Text";
-import { Link } from "react-router-dom";
-import { Row } from "@src/components/Flex";
 import SizedBox from "@components/SizedBox";
-import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -22,25 +19,8 @@ const Img = styled.img`
   height: auto;
   padding-bottom: 44px;
 `;
-const paths = [
-  { title: "Explore", link: ROUTES.EXPLORE },
-  { title: "Trade", link: ROUTES.TRADE },
-  { title: "Invest", link: ROUTES.INVEST },
-  { title: "Stake", link: ROUTES.STAKE },
-];
-const Path = styled(Link)`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  color: #7075e9;
-
-  margin-left: 32px;
-
-  &:first-of-type {
-    margin-left: 0;
-  }
-`;
 const NotFound: React.FC<IProps> = () => {
+  // /todo
   return (
     <Root>
       <Img src={noPage} alt="noPage" />
@@ -51,13 +31,6 @@ const NotFound: React.FC<IProps> = () => {
         But there are many other useful pages
       </Text>
       <SizedBox height={32} />
-      <Row justifyContent="center" className="nav-links">
-        {paths.map((i, index) => (
-          <Path to={i.link} key={index}>
-            {i.title}
-          </Path>
-        ))}
-      </Row>
     </Root>
   );
 };

@@ -111,11 +111,8 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    { name: "Explore", link: ROUTES.EXPLORE },
-    { name: "Trade", link: ROUTES.TRADE },
-    { name: "Invest", link: ROUTES.INVEST },
-    { name: "Stake", link: ROUTES.STAKE },
-    { name: "NFT", link: "https://puzzlemarket.org/" },
+    { name: "Dashboard", link: ROUTES.DASHBOARD },
+    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" },
   ];
 
   const communityMenu = [

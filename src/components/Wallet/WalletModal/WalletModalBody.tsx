@@ -7,8 +7,6 @@ import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
 import SizedBox from "@components/SizedBox";
 import Tabs from "@components/Tabs";
 import AssetsBalances from "@components/Wallet/WalletModal/AssetsBalances";
-import NFTs from "@components/Wallet/WalletModal/NFTs";
-import Investments from "./Investments";
 
 interface IProps {}
 
@@ -64,8 +62,6 @@ const WalletModalBody: React.FC<IProps> = () => {
         <ListWrapper headerExpanded={vm.headerExpanded}>
           <SizedBox height={8} />
           {activeTab === 0 && <AssetsBalances />}
-          {activeTab === 1 && <Investments />}
-          {activeTab === 2 && <NFTs />}
           <SizedBox height={64} width={1} />
         </ListWrapper>
       </Scrollbar>
