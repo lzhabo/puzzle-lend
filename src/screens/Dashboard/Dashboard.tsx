@@ -12,6 +12,7 @@ import { useStores } from "@stores";
 import AccountSupply from "@screens/Dashboard/AccountSupply";
 import AccountBorrow from "@screens/Dashboard/AccountBorrow";
 import AssetsTable from "@screens/Dashboard/AssetsTable";
+import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
 
 interface IProps {}
 
@@ -74,11 +75,7 @@ const DashboardImpl: React.FC<IProps> = () => {
             {accountStore != null && (
               <>
                 <AccountHealth />
-                <SizedBox height={24} />
-                <AccountSupply />
-                <SizedBox height={24} />
-                <AccountBorrow />
-                <SizedBox height={24} />
+                <AccountSupplyAndBorrow />
                 <AssetsTable />
               </>
             )}

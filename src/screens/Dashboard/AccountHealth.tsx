@@ -50,7 +50,11 @@ const AccountHealth: React.FC<IProps> = () => {
       <SizedBox height={10} />
       <Column crossAxisSize="max">
         {data.map(({ title, value, description }) => (
-          <Row justifyContent="space-between" style={{ marginBottom: 14 }}>
+          <Row
+            key={`account-health-${value}`}
+            justifyContent="space-between"
+            style={{ marginBottom: 14 }}
+          >
             <Tooltip content={<Text>{description}</Text>}>
               <Title fitContent type="secondary">
                 {title}
