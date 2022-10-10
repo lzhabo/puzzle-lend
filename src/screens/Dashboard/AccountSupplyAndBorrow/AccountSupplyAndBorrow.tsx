@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import React from "react";
-import useWindowSize from "@src/hooks/useWindowSize";
 
 interface IProps {}
 
@@ -10,7 +9,7 @@ const Root = styled.div`
 `;
 
 const AccountSupplyAndBorrow: React.FC<IProps> = () => {
-  const { width } = useWindowSize();
-  return <Root></Root>;
+  // const { width } = useWindowSize();
+  return <Root>AccountSupplyAndBorrow</Root>;
 };
 export default AccountSupplyAndBorrow;

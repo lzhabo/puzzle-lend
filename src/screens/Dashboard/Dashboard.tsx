@@ -9,8 +9,6 @@ import WhatIsLend from "@screens/Dashboard/WhatIsLend";
 import FAQ from "@screens/Dashboard/FAQ";
 import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { useStores } from "@stores";
-import AccountSupply from "@screens/Dashboard/AccountSupply";
-import AccountBorrow from "@screens/Dashboard/AccountBorrow";
 import AssetsTable from "@screens/Dashboard/AssetsTable";
 import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
 
