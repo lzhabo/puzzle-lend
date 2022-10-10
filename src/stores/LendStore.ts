@@ -17,6 +17,7 @@ type TPoolStats = {
   totalBorrow: BN;
   supplyAPY: BN;
   borrowAPY: BN;
+  prices: { min: BN; max: BN };
 } & TPoolToken;
 
 const calcApy = (i: BN) =>
@@ -41,9 +42,12 @@ class LendStore {
       ],
       [] as string[]
     );
-    const state = await nodeService.nodeKeysRequest(pool, keys);
-    const rates = await this.fetchService.calculateTokenRates();
-    const interests = await this.fetchService.calculateTokensInterest();
+    const [state, rates, prices, interests] = await Promise.all([
+      nodeService.nodeKeysRequest(pool, keys),
+      this.fetchService.calculateTokenRates(),
+      this.fetchService.getPrices(),
+      this.fetchService.calculateTokensInterest(),
+    ]);
 
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
@@ -57,6 +61,7 @@ class LendStore {
 
       return {
         ...token,
+        prices: prices[index],
         totalSupply: totalSupply.toDecimalPlaces(0),
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         supplyAPY: calcApy(supplyInterest),

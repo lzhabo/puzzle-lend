@@ -44,7 +44,7 @@ const DesktopTable: React.FC<IProps> = () => {
               {s.symbol}
             </Text>
             <Text type="secondary" size="small" fitContent>
-              $ 1
+              $ {s.prices.max.toFormat(2)}
             </Text>
           </Column>
         </Row>

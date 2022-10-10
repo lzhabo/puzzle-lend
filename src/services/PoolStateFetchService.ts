@@ -64,6 +64,18 @@ class PoolStateFetchService {
     });
   };
 
+  getPrices = async () => {
+    const response = await nodeService.evaluate(this.pool, "getPrices(false)");
+    const value = response?.result?.value?._2?.value as string;
+
+    return value
+      .split("|")
+      .filter((str: string) => str !== "")
+      .map((str: string) => {
+        const [min, max] = str.split(",");
+        return { min: BN.formatUnits(min, 6), max: BN.formatUnits(max, 6) };
+      });
+  };
   calculateTokenRates = async () => {
     const response = await nodeService.evaluate(
       this.pool,
