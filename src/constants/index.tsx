@@ -1,5 +1,4 @@
 import tokens from "./tokens.json";
-import tokensDetails from "./tokenDetails.json";
 import tokenLogos from "@src/constants/tokenLogos";
 
 export const ROUTES = {
@@ -7,8 +6,6 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
   NOT_FOUND: "/404",
 };
-
-export const TOKEN_DETAILS_BY_SYMBOL: Record<string, string> = tokensDetails;
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,

@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
+import { IToken, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<DashboardVM | null>(null);
 
@@ -17,6 +18,8 @@ class DashboardVM {
   public rootStore: RootStore;
   searchValue = "";
   setSearchValue = (v: string) => (this.searchValue = v);
+
+  tokens: IToken[] = TOKENS_LIST.slice(0, 5);
 
   sortApy = true;
   setSortApy = (v: boolean) => (this.sortApy = v);

@@ -23,6 +23,10 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     width: 100%;
     border-spacing: 0;
 
+    th {
+      border-radius: 16px 16px 0 0;
+    }
+
     tr {
       font-weight: 400;
       font-size: 14px;
@@ -56,7 +60,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
     td {
       font-weight: 400;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 20px;
       color: ${({ theme }) => `${theme.colors.primary800}`};
       padding: 16px;

@@ -4,7 +4,6 @@ import React from "react";
 import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import SizedBox from "@components/SizedBox";
-import Progressbar from "@components/Progressbar";
 import CircularProgressbar from "@components/CircularProgressbar";
 
 interface IProps {}
