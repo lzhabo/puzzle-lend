@@ -2,7 +2,7 @@
   "name": "puzzle",
   "version": "1.0.0",
   "private": false,
-  "homepage": "https://app.puzzleswap.org/",
+  "homepage": "https://lend.puzzleswap.org/",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@emotion/core": "^11.0.0",

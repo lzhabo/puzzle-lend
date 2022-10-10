@@ -9,8 +9,8 @@ interface IProps {
 }
 
 const Root = styled.div<{ red?: boolean }>`
-  width: 32px;
-  height: 32px;
+  width: 100px;
+  height: 100px;
 
   .CircularProgressbar .CircularProgressbar-trail {
     stroke: ${({ theme, red }) =>
@@ -19,17 +19,18 @@ const Root = styled.div<{ red?: boolean }>`
 
   .CircularProgressbar .CircularProgressbar-path {
     stroke: ${({ theme, red }) =>
-      red ? theme.colors.error500 : theme.colors.blue500};
+      red ? theme.colors.error500 : theme.colors.success500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
     fill: ${({ theme, red }) =>
-      red ? theme.colors.error500 : theme.colors.blue500};
+      red ? theme.colors.error500 : theme.colors.success500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
-    font-size: 25px;
     font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
     fill: ${({ theme }) => theme.colors.primary800};
   }
 `;

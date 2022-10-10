@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
 
 interface IProps {
   closed: boolean;
@@ -58,13 +56,10 @@ const BoldText = styled.div`
 `;
 
 const Banner: React.FC<IProps> = ({ closed, setClosed }) => {
-  const navigate = useNavigate();
   return (
     <Root closed={closed}>
       Custom pools are live! 🧩 &nbsp;
-      <BoldText onClick={() => navigate(ROUTES.POOLS_CREATE)}>
-        Run your megapool
-      </BoldText>
+      <BoldText>Run your megapool</BoldText>
       <CloseIcon className="close" onClick={() => setClosed(true)} />
     </Root>
   );

@@ -22,29 +22,26 @@ const Root = styled.div`
 
 const AssetsBalances: React.FC<IProps> = () => {
   const vm = useWalletVM();
-  const { accountStore, poolsStore, tokenStore } = useStores();
+  const { accountStore } = useStores();
   if (accountStore.assetBalances === null)
     return (
       <Root style={{ padding: "0 24px" }}>
         <Skeleton height={56} style={{ marginBottom: 8 }} count={3} />
       </Root>
     );
+  //todo
   return (
     <Root>
       {vm.balances.length !== 0 ? (
         vm.balances.map((b) => {
-          const rate = poolsStore.usdnRate(b.assetId)?.toFormat(2);
-          const rateChange = tokenStore.statistics.find(
-            ({ assetId }) => assetId === b.assetId
-          );
           return (
             <InvestRow
-              rateChange={rateChange?.change24H ?? BN.ZERO}
+              rateChange={BN.ZERO}
               key={b.assetId}
               logo={b.logo}
               topLeftInfo={b.name}
               topRightInfo={b.formatBalance}
-              bottomLeftInfo={rate && "$ " + rate}
+              bottomLeftInfo={"$ "}
               bottomRightInfo={b.formatUsdnEquivalent}
               withClickLogic
               onClick={() => {

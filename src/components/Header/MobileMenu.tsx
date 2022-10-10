@@ -54,11 +54,12 @@ const communityMenu = [
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   const mainFunctional = [
-    { name: "Explore", link: ROUTES.EXPLORE, outer: false },
-    { name: "Trade", link: ROUTES.TRADE, outer: false },
-    { name: "Invest", link: ROUTES.INVEST, outer: false },
-    { name: "Stake", link: ROUTES.STAKE, outer: false },
-    { name: "NFT", link: "https://puzzlemarket.org/", outer: true },
+    { name: "Dashboard", link: ROUTES.DASHBOARD, outer: false },
+    {
+      name: "Guidebook",
+      link: "https://puzzle-lend.gitbook.io/guidebook/",
+      outer: true,
+    },
   ];
   return (
     <Root {...{ bannerClosed, opened }}>

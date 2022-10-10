@@ -7,7 +7,7 @@ import Balance from "@src/entities/Balance";
 import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
-import { ROUTES, TOKENS_LIST } from "@src/constants";
+import { TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
 
@@ -49,8 +49,6 @@ class WalletVM {
       this.rootStore.accountStore.setAssetBalances(null),
       this.rootStore.accountStore.setAddress(null),
       this.rootStore.accountStore.setLoginType(null),
-      this.rootStore.poolsStore.setAccountPoolsLiquidity(null),
-      this.rootStore.stakeStore.setStakedAccountPuzzle(null),
     ]);
 
   get signInInfo() {
@@ -82,63 +80,5 @@ class WalletVM {
       BN.ZERO
     );
     return balancesAmount.plus(BN.ZERO).toFormat(2);
-  }
-
-  get investments() {
-    const { poolsStore, stakeStore } = this.rootStore;
-    const poolsData =
-      poolsStore.accountPoolsLiquidity
-        ?.filter(({ liquidityInUsdn }) => !liquidityInUsdn.eq(0))
-        .map(
-          ({
-            pool,
-            addressStaked,
-            indexTokenRate,
-            liquidityInUsdn,
-            indexTokenName,
-          }) => {
-            const amount = BN.formatUnits(addressStaked, 8);
-            return {
-              onClickPath: `/pools/${pool.domain}/invest`,
-              logo: pool?.logo,
-              name: pool?.title,
-              amount:
-                (amount.gte(0.0001) ? amount.toFormat(4) : amount.toFormat(8)) +
-                indexTokenName,
-              nuclearValue:
-                "$ " +
-                (indexTokenRate.gte(0.0001)
-                  ? indexTokenRate.toFormat(4)
-                  : indexTokenRate.toFormat(8)),
-              usdnEquivalent: "$ " + liquidityInUsdn.toFormat(2),
-            };
-          }
-        ) ?? [];
-    const stakedNftData = this.stakedNfts.map(
-      ({ imageLink, marketPrice, name }) => {
-        const price =
-          marketPrice == null
-            ? "-"
-            : "$ " + new BN(marketPrice ?? 0).toFormat();
-
-        return {
-          onClickPath: ROUTES.ULTRASTAKE,
-          logo: imageLink,
-          amount: "1 NFT",
-          name,
-          nuclearValue: price,
-          usdnEquivalent: price,
-        };
-      }
-    );
-    const stakedPuzzle = stakeStore.puzzleWallet;
-    return [...stakedNftData, ...poolsData, ...stakedPuzzle].sort((a, b) =>
-      new BN(a.usdnEquivalent).gt(b.usdnEquivalent) ? 1 : -1
-    );
-  }
-
-  get stakedNfts() {
-    const { nftStore } = this.rootStore;
-    return nftStore.stakedAccountNFTs ?? [];
   }
 }

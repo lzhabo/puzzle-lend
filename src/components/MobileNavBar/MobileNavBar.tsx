@@ -1,21 +1,18 @@
 import styled from "@emotion/styled";
 import React from "react";
-import Compass from "./Compass";
 import { ROUTES } from "@src/constants";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import { useLocation, useNavigate } from "react-router-dom";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import NFT from "./NFT";
-import Swap from "./Swap";
-import Invest from "./Invest";
-import Stake from "@components/MobileNavBar/Stake";
+import Home from "@components/MobileNavBar/Home";
+import Invest from "@components/MobileNavBar/Invest";
 
 interface IProps {}
 
 const Root = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 
   position: fixed;
   width: 100%;
@@ -27,15 +24,15 @@ const Root = styled.div`
   }
   background: ${({ theme }) => `${theme.colors.white}`};
   border-top: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
-  //justify-content: space-evenly;
   padding: 8px;
 
   & > * {
     cursor: pointer;
   }
+
+  z-index: 2;
 `;
 
-// const MenuItem = styled(Anchor)<{ selected?: boolean }>`
 const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -50,36 +47,27 @@ const MobileNavBar: React.FC<IProps> = () => {
   const navigate = useNavigate();
   const menuItems = [
     {
-      name: "Explore",
-      link: ROUTES.EXPLORE,
+      name: "My supply",
+      link: ROUTES.DASHBOARD,
       icon: (
-        <Compass active={isRoutesEquals(ROUTES.EXPLORE, location.pathname)} />
+        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
       big: false,
     },
     {
-      name: "Invest",
-      link: ROUTES.INVEST,
+      name: "Home",
+      link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={isRoutesEquals(ROUTES.INVEST, location.pathname)} />
+        <Home active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
       big: false,
     },
     {
-      link: ROUTES.TRADE,
-      icon: <Swap active={isRoutesEquals(ROUTES.TRADE, location.pathname)} />,
-      big: true,
-    },
-    {
-      name: "Stake",
-      link: ROUTES.STAKE,
-      icon: <Stake active={isRoutesEquals(ROUTES.STAKE, location.pathname)} />,
-      big: false,
-    },
-    {
-      name: "NFT",
-      link: "https://puzzlemarket.org/",
-      icon: <NFT />,
+      name: "My borrow",
+      link: ROUTES.DASHBOARD,
+      icon: (
+        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
+      ),
       big: false,
     },
   ];

@@ -103,12 +103,9 @@ export const buildSuccessLiquidityDialogParams = ({
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/tx/${txId}`;
   const poolLink = `/pools/${poolDomain}/invest`;
-  const pool = accountStore.rootStore.poolsStore.pools.find(
-    ({ domain }) => domain === poolDomain
-  );
   return {
     title: "Successfully provided",
-    description: `Liquidity successfully provided to the ${pool?.title}. You can track your reward on the pool page.`,
+    description: `Liquidity successfully provided to the . You can track your reward on the pool page.`,
     type: "success",
     buttons: [
       () => (

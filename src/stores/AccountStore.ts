@@ -238,11 +238,7 @@ class AccountStore {
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
-      const rate =
-        this.rootStore.poolsStore.usdnRate(asset.assetId, 1) ?? BN.ZERO;
-      const usdnEquivalent = rate
-        ? rate.times(BN.formatUnits(balance, asset.decimals))
-        : BN.ZERO;
+      const usdnEquivalent = BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
     });
     const newAddress = this.address;

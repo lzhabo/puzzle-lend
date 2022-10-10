@@ -111,11 +111,8 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    { name: "Explore", link: ROUTES.EXPLORE },
-    { name: "Trade", link: ROUTES.TRADE },
-    { name: "Invest", link: ROUTES.INVEST },
-    { name: "Stake", link: ROUTES.STAKE },
-    { name: "NFT", link: "https://puzzlemarket.org/" },
+    { name: "Dashboard", link: ROUTES.DASHBOARD },
+    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" },
   ];
 
   const communityMenu = [
@@ -140,7 +137,7 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <a href="https://puzzleswap.org">
+          <a href="https://lend.puzzleswap.org">
             <img className="logo" src={theme.images.icons.logo} alt="logo" />
           </a>
           <Desktop>
