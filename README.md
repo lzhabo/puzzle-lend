@@ -1,4 +1,4 @@
-# Puzzle Swap Frontend App
+# Puzzle Lend Frontend App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
