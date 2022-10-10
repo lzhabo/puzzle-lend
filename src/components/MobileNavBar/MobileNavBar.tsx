@@ -24,15 +24,15 @@ const Root = styled.div`
   }
   background: ${({ theme }) => `${theme.colors.white}`};
   border-top: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
-  //justify-content: space-evenly;
   padding: 8px;
 
   & > * {
     cursor: pointer;
   }
+
+  z-index: 2;
 `;
 
-// const MenuItem = styled(Anchor)<{ selected?: boolean }>`
 const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   flex-direction: column;

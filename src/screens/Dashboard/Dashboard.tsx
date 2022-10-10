@@ -5,6 +5,12 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
 import { Observer } from "mobx-react-lite";
+import WhatIsLend from "@screens/Dashboard/WhatIsLend";
+import FAQ from "@screens/Dashboard/FAQ";
+import AccountHealth from "@screens/Dashboard/AccountHealth";
+import { useStores } from "@stores";
+import AccountSupply from "@screens/Dashboard/AccountSupply";
+import AccountBorrow from "@screens/Dashboard/AccountBorrow";
 
 interface IProps {}
 
@@ -44,6 +50,7 @@ const Subtitle = styled(Text)`
 `;
 const DashboardImpl: React.FC<IProps> = () => {
   const vm = useDashboardVM();
+  const { accountStore } = useStores();
   return (
     <Layout>
       <Observer>
@@ -51,7 +58,10 @@ const DashboardImpl: React.FC<IProps> = () => {
           <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
             <Text weight={500} size="large">
               Lending protocol built on the
-              <a style={{ color: "#7075E9", paddingLeft: 4 }}>
+              <a
+                style={{ color: "#7075E9", paddingLeft: 4 }}
+                href="https://waves.tech/"
+              >
                 Waves blockchain
               </a>
             </Text>
@@ -59,11 +69,21 @@ const DashboardImpl: React.FC<IProps> = () => {
             <Subtitle size="medium" fitContent>
               Supply and borrow tokens using different pools
             </Subtitle>
-            {/*{accountStore.address != null && <AccountDashboardBalance />}*/}
+            <SizedBox height={40} />
+            {accountStore != null && (
+              <>
+                <AccountHealth />
+                <SizedBox height={24} />
+                <AccountSupply />
+                <SizedBox height={24} />
+                <AccountBorrow />
+                <SizedBox height={24} />
+              </>
+            )}
+            <WhatIsLend />
             <SizedBox height={24} />
-            {/*<SearchAndFilterTab />*/}
+            <FAQ />
             <SizedBox height={16} />
-            {/*<PoolsTable />*/}
           </Root>
         )}
       </Observer>
