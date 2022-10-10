@@ -137,7 +137,7 @@ const Header: React.FC<IProps> = () => {
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <a href="https://puzzleswap.org">
+          <a href="https://lend.puzzleswap.org">
             <img className="logo" src={theme.images.icons.logo} alt="logo" />
           </a>
           <Desktop>
