@@ -7,6 +7,7 @@ import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
+import { observer } from "mobx-react-lite";
 
 interface IProps {}
 
@@ -94,4 +95,4 @@ const MobileAssetsTable: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default MobileAssetsTable;
+export default observer(MobileAssetsTable);
