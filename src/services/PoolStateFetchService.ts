@@ -1,14 +1,14 @@
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import BN from "@src/utils/BN";
+import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 
 export type TPoolToken = {
-  assetId: string;
   cf: BN;
   lt: BN;
   penalty: BN;
   interest: BN;
-};
+} & IToken;
 
 class PoolStateFetchService {
   private readonly pool: string;
@@ -37,19 +37,6 @@ class PoolStateFetchService {
     const interest = splitRecord(getStateByKey(settings, "setup_interest"));
     const active = getStateByKey(settings, "setup_active");
     if (tokens == null || !active) throw new Error("pool not active");
-    const poolTokens: TPoolToken[] = tokens.map((assetId, index) => ({
-      assetId,
-      cf: ltvs && ltvs[index] ? new BN(ltvs![index]).div(1e8) : BN.ZERO,
-      lt: lts && lts[index] ? new BN(lts![index]).div(1e8) : BN.ZERO,
-      penalty:
-        penalties && penalties[index]
-          ? new BN(penalties![index]).div(1e8)
-          : BN.ZERO,
-      interest:
-        interest && interest[index]
-          ? new BN(interest![index]).div(1e8)
-          : BN.ZERO,
-    }));
     // console.log(
     //   poolTokens.map((t) => ({
     //     t: t.assetId,
@@ -59,7 +46,22 @@ class PoolStateFetchService {
     //     interest: t.interest.toString(),
     //   }))
     // );
-    return poolTokens;
+    return tokens.map((assetId, index) => {
+      const asset = TOKENS_BY_ASSET_ID[assetId];
+      return {
+        ...asset,
+        cf: ltvs && ltvs[index] ? new BN(ltvs![index]).div(1e8) : BN.ZERO,
+        lt: lts && lts[index] ? new BN(lts![index]).div(1e8) : BN.ZERO,
+        penalty:
+          penalties && penalties[index]
+            ? new BN(penalties![index]).div(1e8)
+            : BN.ZERO,
+        interest:
+          interest && interest[index]
+            ? new BN(interest![index]).div(1e8)
+            : BN.ZERO,
+      };
+    });
   };
 
   calculateTokenRates = async () => {

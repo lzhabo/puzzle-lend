@@ -1,11 +1,12 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useDashboardVM } from "@screens/Dashboard/DashboardVm";
 import Text from "@src/components/Text";
 import { Column, Row } from "@src/components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
+import { useStores } from "@stores";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
@@ -34,26 +35,35 @@ const Data = styled(Column)`
   }
 `;
 const MobileAssetsTable: React.FC<IProps> = () => {
-  const vm = useDashboardVM();
+  const { lendStore } = useStores();
   return (
     <Root>
-      {vm.tokens.map((token) => {
+      {lendStore.poolsStats.map((s) => {
         const data = [
-          { title: "LTV", value: "5.9M" + token.symbol },
-          { title: "Total supply", value: "5.9M" + token.symbol },
-          { title: "Supply APY", value: "12.88%" },
-          { title: "Total borrow", value: "27.2K" + token.symbol },
-          { title: "Borrow APR", value: "181.17%" },
+          {
+            title: "Total supply",
+            value:
+              BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) +
+              ` ${s.symbol}`,
+          },
+          { title: "Supply APY", value: s.supplyAPY.toFormat(2) + " %" },
+          {
+            title: "Total borrow",
+            value:
+              BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) +
+              ` ${s.symbol}`,
+          },
+          { title: "Borrow APY", value: s.borrowAPY.toFormat(2) + " %" },
         ];
         return (
-          <Asset key={`token-${token.assetId}`}>
+          <Asset key={`token-${s.assetId}`}>
             <Row>
-              <SquareTokenIcon size="small" src={token.logo} alt="token" />
+              <SquareTokenIcon size="small" src={s.logo} alt="token" />
               <SizedBox width={16} />
               <Column>
-                <Text>{token.symbol}</Text>
+                <Text>{s.symbol}</Text>
                 <Text size="small" type="secondary">
-                  {token.symbol}
+                  {s.symbol}
                 </Text>
               </Column>
             </Row>
