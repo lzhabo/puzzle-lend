@@ -56,7 +56,7 @@ class LendStore {
       this.fetchService.getPrices(),
       this.fetchService.calculateTokensInterest(),
     ]);
-
+    console.log(state);
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
@@ -121,7 +121,6 @@ class LendStore {
       return acc.plus(assetBcu);
     }, BN.ZERO);
     const health = new BN(1).minus(bcu.div(bc)).times(100);
-    console.log(health.toString());
     if (health.isNaN() || health.gt(100)) return new BN(100);
     if (health.lte(0)) return BN.ZERO;
     else return health;
