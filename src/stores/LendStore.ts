@@ -56,7 +56,6 @@ class LendStore {
       this.fetchService.getPrices(),
       this.fetchService.calculateTokensInterest(),
     ]);
-    console.log(state);
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
@@ -91,19 +90,19 @@ class LendStore {
       };
     });
     this.setPoolsStats(stats);
-    console.log(
-      stats.map((t) => ({
-        // ...t,
-        // totalSupply: t.totalSupply.toString(),
-        // supplyAPY: t.supplyAPY.toString(),
-        // borrowAPY: t.borrowAPY.toString(),
-        // totalBorrow: t.totalBorrow.toString(),
-        // selfSupply: t.selfSupply.toString(),
-        // selfBorrow: t.selfBorrow.toString(),
-        // dailyIncome: t.dailyIncome.toString(),
-        // dailyLoan: t.dailyLoan.toString(),
-      }))
-    );
+    // console.log(
+    //   stats.map((t) => ({
+    //     ...t,
+    //     totalSupply: t.totalSupply.toString(),
+    //     supplyAPY: t.supplyAPY.toString(),
+    //     borrowAPY: t.borrowAPY.toString(),
+    //     totalBorrow: t.totalBorrow.toString(),
+    //     selfSupply: t.selfSupply.toString(),
+    //     selfBorrow: t.selfBorrow.toString(),
+    //     dailyIncome: t.dailyIncome.toString(),
+    //     dailyLoan: t.dailyLoan.toString(),
+    //   }))
+    // );
   };
 
   get health() {

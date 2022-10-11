@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import Header from "@components/Header";
@@ -31,7 +31,7 @@ const App: React.FC = () => {
       <Routes>
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}
