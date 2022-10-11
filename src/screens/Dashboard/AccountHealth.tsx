@@ -18,6 +18,11 @@ const Root = styled.div`
 
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
+  margin-top: 32px;
+  @media (min-width: 1440px) {
+    min-width: 310px;
+    margin-left: 40px;
+  }
 `;
 const Title = styled(Text)`
   border-bottom: 1px dashed ${({ theme }) => `${theme.colors.primary650}`};

@@ -7,28 +7,25 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import Button from "@components/Button";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
+import BN from "@src/utils/BN";
 
 interface IProps {}
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  @media (min-width: 768px) {
-    //gap: 24px;
-  }
 `;
 const Wrapper = styled.div`
   display: grid;
+  width: 100%;
   gap: 24px;
   grid-template-columns: 1fr;
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
   }
 `;
-// const Card = styled.div();
 const Asset = styled.div`
   padding: 16px;
-  width: 100%;
   background: ${({ theme }) => theme.colors.white};
 
   border: 1px solid ${({ theme }) => theme.colors.primary100};
@@ -45,120 +42,132 @@ const Data = styled(Column)`
 `;
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
-  //todo change for supply and borrow
-
-  console.log(lendStore.poolsStats);
   return (
     <Root>
-      <Column crossAxisSize="max">
-        <Text weight={500} type="secondary">
-          My supply
-        </Text>
-        <SizedBox height={8} />
-        <Wrapper>
-          {lendStore.accountSupply.map((s) => {
-            const data = [
-              {
-                title: "Supplied",
-                value: "supply",
-              },
-              { title: "Supply APY", value: "supply" },
-              {
-                title: "Daily income",
-                value: "supply",
-              },
-            ];
-            return (
-              <Asset key={`token-${s.assetId}`}>
-                <Row>
-                  <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                  <SizedBox width={16} />
-                  <Column>
-                    <Text>{s.symbol}</Text>
-                    <Text size="small" type="secondary">
-                      1
-                    </Text>
-                  </Column>
-                </Row>
-                <SizedBox height={16} />
-                <Data crossAxisSize="max">
-                  {data.map(({ title, value }, index) => (
-                    <Row key={`asset-${index}`} justifyContent="space-between">
-                      <Text fitContent>{title}</Text>
-                      <Text fitContent type="secondary">
-                        {value}
+      {lendStore.accountSupply.length > 0 && (
+        <Column crossAxisSize="max">
+          <Text weight={500} type="secondary">
+            My supply
+          </Text>
+          <SizedBox height={8} />
+          <Wrapper>
+            {lendStore.accountSupply.map((s) => {
+              const supplied = BN.formatUnits(s.selfSupply, s.decimals);
+              const data = [
+                {
+                  title: "Supplied",
+                  value: `${supplied.toFormat(4)} ${s.symbol}`,
+                },
+                { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
+                {
+                  title: "Daily income",
+                  value: `${s.dailyIncome.toFormat(2)}  ${s.symbol}`,
+                },
+              ];
+              return (
+                <Asset key={`token-${s.assetId}`}>
+                  <Row>
+                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                    <SizedBox width={16} />
+                    <Column>
+                      <Text>{s.symbol}</Text>
+                      <Text size="small" type="secondary">
+                        ${s.prices.max.toFormat(2)}
                       </Text>
-                    </Row>
-                  ))}
-                </Data>
-                <SizedBox height={16} />
-                <Row>
-                  <Button size="medium" kind="secondary" fixed>
-                    Supply
-                  </Button>
-                  <SizedBox width={8} />
-                  <Button size="medium" kind="secondary" fixed>
-                    Withdraw
-                  </Button>
-                </Row>
-              </Asset>
-            );
-          })}
-        </Wrapper>
-      </Column>
+                    </Column>
+                  </Row>
+                  <SizedBox height={16} />
+                  <Data crossAxisSize="max">
+                    {data.map(({ title, value }, index) => (
+                      <Row
+                        key={`asset-${index}`}
+                        justifyContent="space-between"
+                      >
+                        <Text fitContent>{title}</Text>
+                        <Text fitContent type="secondary">
+                          {value}
+                        </Text>
+                      </Row>
+                    ))}
+                  </Data>
+                  <SizedBox height={16} />
+                  <Row>
+                    <Button size="medium" kind="secondary" fixed>
+                      Supply
+                    </Button>
+                    <SizedBox width={8} />
+                    <Button size="medium" kind="secondary" fixed>
+                      Withdraw
+                    </Button>
+                  </Row>
+                </Asset>
+              );
+            })}
+          </Wrapper>
+        </Column>
+      )}
       <SizedBox height={40} />
-      <Column>
-        <Text weight={500} type="secondary">
-          My borrow
-        </Text>
-        <SizedBox height={8} />
-        <Wrapper>
-          {lendStore.accountBorrow.map((s) => {
-            const data = [
-              {
-                title: "Borrow APR",
-                value: "borrow",
-              },
-              { title: "To be repaid", value: "borrow" },
-            ];
-            return (
-              <Asset key={`token-${s.assetId}`}>
-                <Row>
-                  <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                  <SizedBox width={16} />
-                  <Column>
-                    <Text>{s.symbol}</Text>
-                    <Text size="small" type="secondary">
-                      1
-                    </Text>
-                  </Column>
-                </Row>
-                <SizedBox height={16} />
-                <Data crossAxisSize="max">
-                  {data.map(({ title, value }, index) => (
-                    <Row key={`asset-${index}`} justifyContent="space-between">
-                      <Text fitContent>{title}</Text>
-                      <Text fitContent type="secondary">
-                        {value}
+      {lendStore.accountBorrow.length > 0 && (
+        <Column crossAxisSize="max">
+          <Text weight={500} type="secondary">
+            My borrow
+          </Text>
+          <SizedBox height={8} />
+          <Wrapper>
+            {lendStore.accountBorrow.map((s) => {
+              const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
+              const data = [
+                {
+                  title: "Borrow APR",
+                  value: `${s.borrowAPY.toFormat(2)} %`,
+                },
+                {
+                  title: "To be repaid",
+                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                },
+              ];
+              return (
+                <Asset key={`token-${s.assetId}`}>
+                  <Row>
+                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                    <SizedBox width={16} />
+                    <Column>
+                      <Text>{s.symbol}</Text>
+                      <Text size="small" type="secondary">
+                        ${s.prices.max.toFormat(2)}
                       </Text>
-                    </Row>
-                  ))}
-                </Data>
-                <SizedBox height={16} />
-                <Row>
-                  <Button size="medium" kind="secondary" fixed>
-                    Supply
-                  </Button>
-                  <SizedBox width={8} />
-                  <Button size="medium" kind="secondary" fixed>
-                    Withdraw
-                  </Button>
-                </Row>
-              </Asset>
-            );
-          })}
-        </Wrapper>
-      </Column>
+                    </Column>
+                  </Row>
+                  <SizedBox height={16} />
+                  <Data crossAxisSize="max">
+                    {data.map(({ title, value }, index) => (
+                      <Row
+                        key={`asset-${index}`}
+                        justifyContent="space-between"
+                      >
+                        <Text fitContent>{title}</Text>
+                        <Text fitContent type="secondary">
+                          {value}
+                        </Text>
+                      </Row>
+                    ))}
+                  </Data>
+                  <SizedBox height={16} />
+                  <Row>
+                    <Button size="medium" kind="secondary" fixed>
+                      Supply
+                    </Button>
+                    <SizedBox width={8} />
+                    <Button size="medium" kind="secondary" fixed>
+                      Withdraw
+                    </Button>
+                  </Row>
+                </Asset>
+              );
+            })}
+          </Wrapper>
+        </Column>
+      )}
     </Root>
   );
 };

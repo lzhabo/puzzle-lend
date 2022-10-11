@@ -16,12 +16,11 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   @media (min-width: 768px) {
-    gap: 24px;
+    //gap: 24px;
   }
 `;
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
-  //todo add loader and check if [].lenght ===0
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
   const supplyColumns = useMemo(
@@ -37,7 +36,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
     []
   );
   useMemo(() => {
-    const data = lendStore.poolsStats.map((s) => ({
+    const data = lendStore.accountSupply.map((s) => ({
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -59,12 +58,12 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
         BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
       borrowApy: s.borrowAPY.toFormat(2) + " %",
       supplyBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Supply
         </Button>
       ),
       withdrawBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Withdraw
         </Button>
       ),
@@ -78,6 +77,11 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "Asset", accessor: "asset" },
       { Header: "", accessor: "gap" },
       { Header: "", accessor: "gap2" },
+      { Header: "", accessor: "gap3" },
+      { Header: "", accessor: "gap4" },
+      { Header: "", accessor: "gap5" },
+      { Header: "", accessor: "gap6" },
+      { Header: "", accessor: "gap7" },
       { Header: "To be repaid", accessor: "toRepair" },
       { Header: "Borrow APR", accessor: "borrowApr" },
       { Header: "", accessor: "borrowBtn" },
@@ -86,7 +90,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
     []
   );
   useMemo(() => {
-    const data = lendStore.poolsStats.map((s) => ({
+    const data = lendStore.accountBorrow.map((s) => ({
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -101,46 +105,51 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      toRepair: "100",
-      borrowApr: "200",
+      toRepair:
+        BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
+      borrowApr: s.borrowAPY.toFormat(2) + " %",
       borrowBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Borrow
         </Button>
       ),
       repayBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Repay
         </Button>
       ),
     }));
     setFilteredBorrows(data);
   }, [lendStore.poolsStats]);
-  //todo change for supply and borrow
   return (
     <Root>
-      <Column>
-        <Text weight={500} type="secondary">
-          My supply
-        </Text>
-        <SizedBox height={8} />
-        <Table
-          style={{ width: "100%" }}
-          columns={supplyColumns}
-          data={filteredSupplies}
-        />
-      </Column>
-      <Column>
-        <Text weight={500} type="secondary">
-          My borrow
-        </Text>
-        <SizedBox height={8} />
-        <Table
-          style={{ width: "100%" }}
-          columns={borrowColumns}
-          data={filteredBorrows}
-        />
-      </Column>
+      {lendStore.accountSupply.length > 0 && (
+        <>
+          <Text weight={500} type="secondary">
+            My supply
+          </Text>
+          <SizedBox height={8} />
+          <Table
+            style={{ width: "100%" }}
+            columns={supplyColumns}
+            data={filteredSupplies}
+          />
+        </>
+      )}
+      <SizedBox height={24} />
+      {lendStore.accountBorrow.length > 0 && (
+        <>
+          <Text weight={500} type="secondary">
+            My borrow
+          </Text>
+          <SizedBox height={8} />
+          <Table
+            style={{ width: "100%" }}
+            columns={borrowColumns}
+            data={filteredBorrows}
+          />
+        </>
+      )}
     </Root>
   );
 };

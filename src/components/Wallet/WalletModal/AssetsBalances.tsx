@@ -26,7 +26,7 @@ const AssetsBalances: React.FC<IProps> = () => {
   if (accountStore.assetBalances === null)
     return (
       <Root style={{ padding: "0 24px" }}>
-        <Skeleton height={56} style={{ marginBottom: 8 }} count={3} />
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       </Root>
     );
   //todo

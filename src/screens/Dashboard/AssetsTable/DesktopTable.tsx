@@ -9,6 +9,7 @@ import Button from "@src/components/Button";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -56,12 +57,12 @@ const DesktopTable: React.FC<IProps> = () => {
         BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
       borrowApy: s.borrowAPY.toFormat(2) + " %",
       borrowBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Borrow
         </Button>
       ),
       supplyBtn: (
-        <Button kind="secondary" size="medium">
+        <Button kind="secondary" size="medium" fixed>
           Supply
         </Button>
       ),
@@ -70,7 +71,11 @@ const DesktopTable: React.FC<IProps> = () => {
   }, [lendStore.poolsStats]);
   return (
     <Root>
-      <Table columns={columns} data={filteredAssets} />
+      {lendStore.initialized && filteredAssets.length > 0 ? (
+        <Table columns={columns} data={filteredAssets} />
+      ) : (
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
+      )}
     </Root>
   );
 };

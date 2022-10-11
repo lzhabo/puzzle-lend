@@ -10,6 +10,8 @@ import FAQ from "@screens/Dashboard/FAQ";
 import { useStores } from "@stores";
 import AssetsTable from "@screens/Dashboard/AssetsTable";
 import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
+import AccountHealth from "@screens/Dashboard/AccountHealth";
+import { Column } from "@src/components/Flex";
 
 interface IProps {}
 
@@ -21,7 +23,8 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   padding: 0 16px;
   width: 100%;
   min-height: 100%;
-  max-width: calc(1160px + 32px);
+  max-width: calc(1260px + 32px);
+  //max-width: calc(1460px + 32px);
   margin-bottom: 24px;
   margin-top: 40px;
   text-align: left;
@@ -48,7 +51,12 @@ const Subtitle = styled(Text)`
   }
 `;
 const AccountDataWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  @media (min-width: 1440px) {
+    flex-direction: row-reverse;
+  }
 `;
 const DashboardImpl: React.FC<IProps> = () => {
   const vm = useDashboardVM();
@@ -74,10 +82,14 @@ const DashboardImpl: React.FC<IProps> = () => {
             <SizedBox height={40} />
             {accountStore != null && (
               <AccountDataWrapper>
-                {/*<AccountHealth />*/}
-                <AccountSupplyAndBorrow />
-                <SizedBox height={40} />
-                <AssetsTable />
+                <div>
+                  <AccountHealth />
+                </div>
+                <Column crossAxisSize="max">
+                  <AccountSupplyAndBorrow />
+                  <SizedBox height={40} />
+                  <AssetsTable />
+                </Column>
               </AccountDataWrapper>
             )}
             <WhatIsLend />

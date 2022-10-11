@@ -8,6 +8,7 @@ import Button from "@components/Button";
 import { useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { observer } from "mobx-react-lite";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -39,59 +40,63 @@ const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   return (
     <Root>
-      {lendStore.poolsStats.map((s) => {
-        const data = [
-          {
-            title: "Total supply",
-            value:
-              BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) +
-              ` ${s.symbol}`,
-          },
-          { title: "Supply APY", value: s.supplyAPY.toFormat(2) + " %" },
-          {
-            title: "Total borrow",
-            value:
-              BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) +
-              ` ${s.symbol}`,
-          },
-          { title: "Borrow APY", value: s.borrowAPY.toFormat(2) + " %" },
-        ];
-        return (
-          <Asset key={`token-${s.assetId}`}>
-            <Row>
-              <SquareTokenIcon size="small" src={s.logo} alt="token" />
-              <SizedBox width={16} />
-              <Column>
-                <Text>{s.symbol}</Text>
-                <Text size="small" type="secondary">
-                  ${s.prices.max.toFormat(2)}
-                </Text>
-              </Column>
-            </Row>
-            <SizedBox height={16} />
-            <Data crossAxisSize="max">
-              {data.map(({ title, value }, index) => (
-                <Row key={`asset-${index}`} justifyContent="space-between">
-                  <Text fitContent>{title}</Text>
-                  <Text fitContent type="secondary">
-                    {value}
-                  </Text>
+      {lendStore.initialized
+        ? lendStore.poolsStats.map((s) => {
+            const data = [
+              {
+                title: "Total supply",
+                value:
+                  BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) +
+                  ` ${s.symbol}`,
+              },
+              { title: "Supply APY", value: s.supplyAPY.toFormat(2) + " %" },
+              {
+                title: "Total borrow",
+                value:
+                  BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) +
+                  ` ${s.symbol}`,
+              },
+              { title: "Borrow APY", value: s.borrowAPY.toFormat(2) + " %" },
+            ];
+            return (
+              <Asset key={`token-${s.assetId}`}>
+                <Row>
+                  <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                  <SizedBox width={16} />
+                  <Column>
+                    <Text>{s.symbol}</Text>
+                    <Text size="small" type="secondary">
+                      ${s.prices.max.toFormat(2)}
+                    </Text>
+                  </Column>
                 </Row>
-              ))}
-            </Data>
-            <SizedBox height={16} />
-            <Row>
-              <Button size="medium" kind="secondary" fixed>
-                Supply
-              </Button>
-              <SizedBox width={8} />
-              <Button size="medium" kind="secondary" fixed>
-                Borrow
-              </Button>
-            </Row>
-          </Asset>
-        );
-      })}
+                <SizedBox height={16} />
+                <Data crossAxisSize="max">
+                  {data.map(({ title, value }, index) => (
+                    <Row key={`asset-${index}`} justifyContent="space-between">
+                      <Text fitContent>{title}</Text>
+                      <Text fitContent type="secondary">
+                        {value}
+                      </Text>
+                    </Row>
+                  ))}
+                </Data>
+                <SizedBox height={16} />
+                <Row>
+                  <Button size="medium" kind="secondary" fixed>
+                    Supply
+                  </Button>
+                  <SizedBox width={8} />
+                  <Button size="medium" kind="secondary" fixed>
+                    Borrow
+                  </Button>
+                </Row>
+              </Asset>
+            );
+          })
+        : Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton height={356} key={index + "skeleton-row"} />
+          ))}
     </Root>
   );
 };

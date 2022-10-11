@@ -12,6 +12,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 24px;
+  width: 100%;
   @media (min-width: 768px) {
     margin-bottom: 60px;
   }
@@ -22,6 +23,7 @@ const Root = styled.div`
 
 const AssetsTable: React.FC<IProps> = () => {
   const { width } = useWindowSize();
+  //todo add filter
   return (
     <Root>
       <Text weight={500} type="secondary">

@@ -31,6 +31,9 @@ class LendStore {
   public readonly rootStore: RootStore;
   private readonly fetchService;
 
+  initialized: boolean = false;
+  private setInitialized = (l: boolean) => (this.initialized = l);
+
   tokensSetups: Array<TPoolToken> = [];
   private setTokensSetups = (v: Array<TPoolToken>) => (this.tokensSetups = v);
 
@@ -147,6 +150,7 @@ class LendStore {
         //todo redirect
       });
     //todo add reaction to update data if account address was changed
+    this.setInitialized(true);
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 }
