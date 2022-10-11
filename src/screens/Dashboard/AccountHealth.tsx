@@ -7,6 +7,7 @@ import SizedBox from "@components/SizedBox";
 import CircularProgressbar from "@components/CircularProgressbar";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -28,42 +29,62 @@ const Title = styled(Text)`
   border-bottom: 1px dashed ${({ theme }) => `${theme.colors.primary650}`};
 `;
 const AccountHealth: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
+  const { lendStore, accountStore } = useStores();
+  const theme = useTheme();
+  if (accountStore.address == null) return <></>;
   const data = [
     {
       title: "Supply balance",
-      value: "$18,7K",
+      value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
       description: "USD value of your deposits in total",
     },
     {
       title: "Borrow balance",
-      value: "$3,4K",
+      value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
       description: "USD value of your borrows in total",
     },
     {
       title: "NET APY",
-      value: "48%",
+      value: `${lendStore.netApy.toFormat(2)} %`,
+      border: true,
       description:
         "Your annual net profit(expenses) relative to your deposits(loans) USD value.",
     },
   ];
+  console.log(data);
   return (
     <Root>
-      <Row>
-        <Text weight={500} type="secondary">
+      <Row
+        style={{ position: "relative", padding: 10 }}
+        justifyContent="space-between"
+      >
+        <Text weight={500} type="secondary" fitContent>
           Account
         </Text>
         <CircularProgressbar
+          style={{
+            position: "absolute",
+            top: -75,
+            right: "calc(50% - 55px)",
+          }}
+          text="Account Health"
           percent={lendStore.health.toDecimalPlaces(2).toNumber()}
         />
+        <Text weight={500} type="secondary" fitContent>
+          Health
+        </Text>
       </Row>
       <SizedBox height={10} />
       <Column crossAxisSize="max">
-        {data.map(({ title, value, description }) => (
+        {data.map(({ title, value, description, border }) => (
           <Row
             key={`account-health-${value}`}
             justifyContent="space-between"
-            style={{ marginBottom: 14 }}
+            style={{
+              marginBottom: 14,
+              borderTop: border ? `1px solid ${theme.colors.primary100}` : "",
+              paddingTop: border ? `14px` : "",
+            }}
           >
             <Tooltip content={<Text>{description}</Text>}>
               <Title fitContent type="secondary">

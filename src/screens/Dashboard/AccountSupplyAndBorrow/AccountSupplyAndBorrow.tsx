@@ -9,6 +9,7 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const AccountSupplyAndBorrow: React.FC<IProps> = () => {

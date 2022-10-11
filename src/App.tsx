@@ -4,7 +4,6 @@ import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import Header from "@components/Header";
 import { Column } from "@components/Flex";
-import NotFound from "@screens/NotFound";
 import { useStores } from "@stores";
 import WalletModal from "@components/Wallet/WalletModal";
 import MobileNavBar from "./components/MobileNavBar";

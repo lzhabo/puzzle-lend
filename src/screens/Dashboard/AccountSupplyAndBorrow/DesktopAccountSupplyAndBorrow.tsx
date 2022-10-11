@@ -69,7 +69,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredSupplies(data);
-  }, [lendStore.poolsStats]);
+  }, [lendStore.accountSupply]);
 
   //-------------
   const borrowColumns = useMemo(
@@ -120,7 +120,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredBorrows(data);
-  }, [lendStore.poolsStats]);
+  }, [lendStore.accountBorrow]);
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (

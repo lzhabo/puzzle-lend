@@ -1,30 +1,31 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { HTMLAttributes } from "react";
 import { CircularProgressbar as Bar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-interface IProps {
+interface IProps extends HTMLAttributes<HTMLDivElement> {
   percent: number;
-  red?: boolean;
+  text: string;
 }
 
-const Root = styled.div<{ red?: boolean }>`
-  width: 100px;
-  height: 100px;
+const Root = styled.div`
+  width: 120px;
+  height: 120px;
+  background: ${({ theme }) => theme.colors.white};
+  border-radius: 50%;
 
   .CircularProgressbar .CircularProgressbar-trail {
-    stroke: ${({ theme, red }) =>
-      red ? theme.colors.error100 : theme.colors.primary100};
+    stroke: ${({ theme }) => theme.colors.primary100};
+    stroke-width: 3px;
   }
 
   .CircularProgressbar .CircularProgressbar-path {
-    stroke: ${({ theme, red }) =>
-      red ? theme.colors.error500 : theme.colors.success500};
+    stroke-width: 3px;
+    stroke: ${({ theme }) => theme.colors.success500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
-    fill: ${({ theme, red }) =>
-      red ? theme.colors.error500 : theme.colors.success500};
+    fill: ${({ theme }) => theme.colors.success500};
   }
 
   .CircularProgressbar .CircularProgressbar-text {
@@ -33,11 +34,15 @@ const Root = styled.div<{ red?: boolean }>`
     line-height: 24px;
     fill: ${({ theme }) => theme.colors.primary800};
   }
+
+  .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-trail {
+    stroke: ${({ theme }) => theme.colors.white};
+  }
 `;
 
-const CircularProgressbar: React.FC<IProps> = ({ percent, red }) => {
+const CircularProgressbar: React.FC<IProps> = ({ percent, ...rest }) => {
   return (
-    <Root red={red}>
+    <Root {...rest}>
       <Bar value={percent} text={`${percent}%`} />
     </Root>
   );

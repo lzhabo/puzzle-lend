@@ -128,6 +128,34 @@ class LendStore {
     else return health;
   }
 
+  get accountSupplyBalance() {
+    if (this.rootStore.accountStore.address == null) return BN.ZERO;
+    return this.poolsStats
+      .filter(({ selfSupply }) => selfSupply.gt(0))
+      .reduce((acc, v) => {
+        const balance = v.prices.max.times(
+          BN.formatUnits(v.selfSupply, v.decimals)
+        );
+        return acc.plus(balance);
+      }, BN.ZERO);
+  }
+
+  get accountBorrowBalance() {
+    if (this.rootStore.accountStore.address == null) return BN.ZERO;
+    return this.poolsStats
+      .filter(({ selfBorrow }) => selfBorrow.gt(0))
+      .reduce((acc, v) => {
+        const balance = v.prices.max.times(
+          BN.formatUnits(v.selfBorrow, v.decimals)
+        );
+        return acc.plus(balance);
+      }, BN.ZERO);
+  }
+
+  get netApy() {
+    return BN.ZERO;
+  }
+
   get accountSupply() {
     if (this.rootStore.accountStore.address == null) return [];
     return this.poolsStats.filter(({ selfSupply }) => selfSupply.gt(0));
