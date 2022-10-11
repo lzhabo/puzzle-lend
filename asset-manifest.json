@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/puzzle-lend/static/css/main.c61bd160.chunk.css",
-    "main.js": "/puzzle-lend/static/js/main.eeaf023c.chunk.js",
-    "main.js.map": "/puzzle-lend/static/js/main.eeaf023c.chunk.js.map",
+    "main.js": "/puzzle-lend/static/js/main.da3dcb10.chunk.js",
+    "main.js.map": "/puzzle-lend/static/js/main.da3dcb10.chunk.js.map",
     "runtime-main.js": "/puzzle-lend/static/js/runtime-main.e60e3224.js",
     "runtime-main.js.map": "/puzzle-lend/static/js/runtime-main.e60e3224.js.map",
     "static/css/2.27da91d0.chunk.css": "/puzzle-lend/static/css/2.27da91d0.chunk.css",
-    "static/js/2.7ad9f70d.chunk.js": "/puzzle-lend/static/js/2.7ad9f70d.chunk.js",
-    "static/js/2.7ad9f70d.chunk.js.map": "/puzzle-lend/static/js/2.7ad9f70d.chunk.js.map",
+    "static/js/2.56cee2b9.chunk.js": "/puzzle-lend/static/js/2.56cee2b9.chunk.js",
+    "static/js/2.56cee2b9.chunk.js.map": "/puzzle-lend/static/js/2.56cee2b9.chunk.js.map",
     "index.html": "/puzzle-lend/index.html",
     "static/css/2.27da91d0.chunk.css.map": "/puzzle-lend/static/css/2.27da91d0.chunk.css.map",
     "static/css/main.c61bd160.chunk.css.map": "/puzzle-lend/static/css/main.c61bd160.chunk.css.map",
-    "static/js/2.7ad9f70d.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.7ad9f70d.chunk.js.LICENSE.txt",
+    "static/js/2.56cee2b9.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.56cee2b9.chunk.js.LICENSE.txt",
     "static/media/BNB.b8f5fc3b.svg": "/puzzle-lend/static/media/BNB.b8f5fc3b.svg",
     "static/media/BUSD.8bdb43fc.svg": "/puzzle-lend/static/media/BUSD.8bdb43fc.svg",
     "static/media/DAI.a7d5ac1a.svg": "/puzzle-lend/static/media/DAI.a7d5ac1a.svg",
@@ -94,6 +94,7 @@
     "static/media/nsbt-logo.227ac705.svg": "/puzzle-lend/static/media/nsbt-logo.227ac705.svg",
     "static/media/orderArrow.svg": "/puzzle-lend/static/media/orderArrow.d473b134.svg",
     "static/media/pink-wallet.923a945a.svg": "/puzzle-lend/static/media/pink-wallet.923a945a.svg",
+    "static/media/puzzleBg.9d02fff4.svg": "/puzzle-lend/static/media/puzzleBg.9d02fff4.svg",
     "static/media/puzzleusdn.76b00cf4.svg": "/puzzle-lend/static/media/puzzleusdn.76b00cf4.svg",
     "static/media/race-logo.2c6a8eae.svg": "/puzzle-lend/static/media/race-logo.2c6a8eae.svg",
     "static/media/sNSBT_TCI.a80ba7cd.svg": "/puzzle-lend/static/media/sNSBT_TCI.a80ba7cd.svg",
@@ -126,8 +127,8 @@
   "entrypoints": [
     "static/js/runtime-main.e60e3224.js",
     "static/css/2.27da91d0.chunk.css",
-    "static/js/2.7ad9f70d.chunk.js",
+    "static/js/2.56cee2b9.chunk.js",
     "static/css/main.c61bd160.chunk.css",
-    "static/js/main.eeaf023c.chunk.js"
+    "static/js/main.da3dcb10.chunk.js"
   ]
 }
