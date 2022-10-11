@@ -47,6 +47,9 @@ const Subtitle = styled(Text)`
     max-width: 560px;
   }
 `;
+const AccountDataWrapper = styled.div`
+  width: 100%;
+`;
 const DashboardImpl: React.FC<IProps> = () => {
   const vm = useDashboardVM();
   const { accountStore } = useStores();
@@ -70,12 +73,12 @@ const DashboardImpl: React.FC<IProps> = () => {
             </Subtitle>
             <SizedBox height={40} />
             {accountStore != null && (
-              <>
+              <AccountDataWrapper>
                 {/*<AccountHealth />*/}
                 <AccountSupplyAndBorrow />
                 <SizedBox height={40} />
                 <AssetsTable />
-              </>
+              </AccountDataWrapper>
             )}
             <WhatIsLend />
             <FAQ />

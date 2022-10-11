@@ -7,7 +7,6 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import Button from "@components/Button";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
-import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 interface IProps {}
 
@@ -47,6 +46,8 @@ const Data = styled(Column)`
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   //todo change for supply and borrow
+
+  console.log(lendStore.poolsStats);
   return (
     <Root>
       <Column crossAxisSize="max">
@@ -55,7 +56,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={8} />
         <Wrapper>
-          {[TOKENS_BY_SYMBOL["WAVES"]].map((s) => {
+          {lendStore.accountSupply.map((s) => {
             const data = [
               {
                 title: "Supplied",
@@ -112,7 +113,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
         </Text>
         <SizedBox height={8} />
         <Wrapper>
-          {[TOKENS_BY_SYMBOL["WAVES"]].map((s) => {
+          {lendStore.accountBorrow.map((s) => {
             const data = [
               {
                 title: "Borrow APR",

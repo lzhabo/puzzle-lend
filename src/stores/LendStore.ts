@@ -90,19 +90,19 @@ class LendStore {
       };
     });
     this.setPoolsStats(stats);
-    // console.log(
-    //   stats.map((t) => ({
-    //     ...t,
-    //     totalSupply: t.totalSupply.toString(),
-    //     supplyAPY: t.supplyAPY.toString(),
-    //     borrowAPY: t.borrowAPY.toString(),
-    //     totalBorrow: t.totalBorrow.toString(),
-    //     selfSupply: t.selfSupply.toString(),
-    //     selfBorrow: t.selfBorrow.toString(),
-    //     dailyIncome: t.dailyIncome.toString(),
-    //     dailyLoan: t.dailyLoan.toString(),
-    //   }))
-    // );
+    console.log(
+      stats.map((t) => ({
+        ...t,
+        totalSupply: t.totalSupply.toString(),
+        supplyAPY: t.supplyAPY.toString(),
+        borrowAPY: t.borrowAPY.toString(),
+        totalBorrow: t.totalBorrow.toString(),
+        selfSupply: t.selfSupply.toString(),
+        selfBorrow: t.selfBorrow.toString(),
+        dailyIncome: t.dailyIncome.toString(),
+        dailyLoan: t.dailyLoan.toString(),
+      }))
+    );
   };
 
   get health() {
@@ -125,6 +125,16 @@ class LendStore {
     else return health;
   }
 
+  get accountSupply() {
+    if (this.rootStore.accountStore.address == null) return [];
+    return this.poolsStats.filter(({ selfSupply }) => selfSupply.gt(0));
+  }
+
+  get accountBorrow() {
+    if (this.rootStore.accountStore.address == null) return [];
+    return this.poolsStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
+  }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -136,6 +146,7 @@ class LendStore {
       .catch(() => {
         //todo redirect
       });
+    //todo add reaction to update data if account address was changed
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 }
