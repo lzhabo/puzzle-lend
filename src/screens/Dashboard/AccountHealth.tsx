@@ -12,6 +12,8 @@ import { useTheme } from "@emotion/react";
 interface IProps {}
 
 const Root = styled.div`
+  display: flex;
+  flex-direction: column;
   align-items: center;
   padding: 16px;
 
@@ -20,13 +22,22 @@ const Root = styled.div`
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
   margin-top: 32px;
-  @media (min-width: 1440px) {
+  @media (min-width: 1300px) {
     min-width: 310px;
     margin-left: 40px;
+    flex-direction: column;
   }
 `;
 const Title = styled(Text)`
   border-bottom: 1px dashed ${({ theme }) => `${theme.colors.primary650}`};
+`;
+const Health = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  position: relative;
 `;
 const AccountHealth: React.FC<IProps> = () => {
   const { lendStore, accountStore } = useStores();
@@ -54,10 +65,7 @@ const AccountHealth: React.FC<IProps> = () => {
   console.log(data);
   return (
     <Root>
-      <Row
-        style={{ position: "relative", padding: 10 }}
-        justifyContent="space-between"
-      >
+      <Health>
         <Text weight={500} type="secondary" fitContent>
           Account
         </Text>
@@ -73,7 +81,7 @@ const AccountHealth: React.FC<IProps> = () => {
         <Text weight={500} type="secondary" fitContent>
           Health
         </Text>
-      </Row>
+      </Health>
       <SizedBox height={10} />
       <Column crossAxisSize="max">
         {data.map(({ title, value, description, border }) => (
