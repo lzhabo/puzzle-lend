@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/github.io/puzzle-lend/static/css/main.c27e0173.chunk.css",
-    "main.js": "/github.io/puzzle-lend/static/js/main.625d3dd9.chunk.js",
-    "main.js.map": "/github.io/puzzle-lend/static/js/main.625d3dd9.chunk.js.map",
+    "main.js": "/github.io/puzzle-lend/static/js/main.97f31d66.chunk.js",
+    "main.js.map": "/github.io/puzzle-lend/static/js/main.97f31d66.chunk.js.map",
     "runtime-main.js": "/github.io/puzzle-lend/static/js/runtime-main.36e05842.js",
     "runtime-main.js.map": "/github.io/puzzle-lend/static/js/runtime-main.36e05842.js.map",
     "static/css/2.dd89c938.chunk.css": "/github.io/puzzle-lend/static/css/2.dd89c938.chunk.css",
-    "static/js/2.9e138df5.chunk.js": "/github.io/puzzle-lend/static/js/2.9e138df5.chunk.js",
-    "static/js/2.9e138df5.chunk.js.map": "/github.io/puzzle-lend/static/js/2.9e138df5.chunk.js.map",
+    "static/js/2.967bf2b6.chunk.js": "/github.io/puzzle-lend/static/js/2.967bf2b6.chunk.js",
+    "static/js/2.967bf2b6.chunk.js.map": "/github.io/puzzle-lend/static/js/2.967bf2b6.chunk.js.map",
     "index.html": "/github.io/puzzle-lend/index.html",
     "static/css/2.dd89c938.chunk.css.map": "/github.io/puzzle-lend/static/css/2.dd89c938.chunk.css.map",
     "static/css/main.c27e0173.chunk.css.map": "/github.io/puzzle-lend/static/css/main.c27e0173.chunk.css.map",
-    "static/js/2.9e138df5.chunk.js.LICENSE.txt": "/github.io/puzzle-lend/static/js/2.9e138df5.chunk.js.LICENSE.txt",
+    "static/js/2.967bf2b6.chunk.js.LICENSE.txt": "/github.io/puzzle-lend/static/js/2.967bf2b6.chunk.js.LICENSE.txt",
     "static/media/404.971bc32f.svg": "/github.io/puzzle-lend/static/media/404.971bc32f.svg",
     "static/media/BNB.b8f5fc3b.svg": "/github.io/puzzle-lend/static/media/BNB.b8f5fc3b.svg",
     "static/media/BUSD.8bdb43fc.svg": "/github.io/puzzle-lend/static/media/BUSD.8bdb43fc.svg",
@@ -127,8 +127,8 @@
   "entrypoints": [
     "static/js/runtime-main.36e05842.js",
     "static/css/2.dd89c938.chunk.css",
-    "static/js/2.9e138df5.chunk.js",
+    "static/js/2.967bf2b6.chunk.js",
     "static/css/main.c27e0173.chunk.css",
-    "static/js/main.625d3dd9.chunk.js"
+    "static/js/main.97f31d66.chunk.js"
   ]
 }
