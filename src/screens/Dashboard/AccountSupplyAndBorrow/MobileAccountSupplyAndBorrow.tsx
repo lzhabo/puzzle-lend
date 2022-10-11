@@ -13,20 +13,17 @@ interface IProps {}
 
 const Root = styled.div`
   display: flex;
-  //background: red;
-  //width: 100%;
   flex-direction: column;
   @media (min-width: 768px) {
-    gap: 24px;
-    //flex-direction: row;
+    //gap: 24px;
   }
 `;
 const Wrapper = styled.div`
   display: grid;
   gap: 24px;
-  //grid-template-columns: 1fr;
+  grid-template-columns: 1fr;
   @media (min-width: 768px) {
-    //grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 `;
 // const Card = styled.div();
@@ -84,8 +81,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 </Row>
                 <SizedBox height={16} />
                 <Data crossAxisSize="max">
-                  {data.map(({ title, value }) => (
-                    <Row key={`asset-${value}`} justifyContent="space-between">
+                  {data.map(({ title, value }, index) => (
+                    <Row key={`asset-${index}`} justifyContent="space-between">
                       <Text fitContent>{title}</Text>
                       <Text fitContent type="secondary">
                         {value}
@@ -108,6 +105,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           })}
         </Wrapper>
       </Column>
+      <SizedBox height={40} />
       <Column>
         <Text weight={500} type="secondary">
           My borrow
@@ -136,8 +134,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 </Row>
                 <SizedBox height={16} />
                 <Data crossAxisSize="max">
-                  {data.map(({ title, value }) => (
-                    <Row key={`asset-${value}`} justifyContent="space-between">
+                  {data.map(({ title, value }, index) => (
+                    <Row key={`asset-${index}`} justifyContent="space-between">
                       <Text fitContent>{title}</Text>
                       <Text fitContent type="secondary">
                         {value}
