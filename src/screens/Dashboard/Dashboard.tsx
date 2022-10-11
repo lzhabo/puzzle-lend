@@ -3,6 +3,7 @@ import React from "react";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
+import DashboardModal from "@components/DashboardModals";
 import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
 import { Observer } from "mobx-react-lite";
 import WhatIsLend from "@screens/Dashboard/WhatIsLend";
@@ -116,6 +117,10 @@ const DashboardImpl: React.FC<IProps> = () => {
             )}
             <WhatIsLend />
             <FAQ />
+            <DashboardModal
+              onClose={() => lendStore.setDashboardModalOpened(false, lendStore.dashboardModalStep)}
+              visible={lendStore.dashboardModalOpened}
+            />
           </Root>
         )}
       </Observer>

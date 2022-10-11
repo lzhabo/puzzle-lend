@@ -5,7 +5,7 @@ import PoolStateFetchService, {
 import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, action } from "mobx";
 // const pools = [
 //   { name: "Main Pool", address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH" },
 // ];
@@ -39,6 +39,13 @@ class LendStore {
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+
+  dashboardModalStep = 0;
+  dashboardModalOpened: boolean = false;
+  @action.bound setDashboardModalOpened = (isOpen: boolean, step: number) => {
+    this.dashboardModalStep = step;
+    this.dashboardModalOpened = isOpen
+  };
 
   private syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
