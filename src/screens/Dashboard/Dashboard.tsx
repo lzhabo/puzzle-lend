@@ -73,6 +73,7 @@ const DashboardImpl: React.FC<IProps> = () => {
               <>
                 {/*<AccountHealth />*/}
                 <AccountSupplyAndBorrow />
+                <SizedBox height={40} />
                 <AssetsTable />
               </>
             )}
