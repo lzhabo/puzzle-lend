@@ -5,6 +5,8 @@ import Text from "@components/Text";
 import Tooltip from "@components/Tooltip";
 import SizedBox from "@components/SizedBox";
 import CircularProgressbar from "@components/CircularProgressbar";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@stores";
 
 interface IProps {}
 
@@ -21,6 +23,7 @@ const Title = styled(Text)`
   border-bottom: 1px dashed ${({ theme }) => `${theme.colors.primary650}`};
 `;
 const AccountHealth: React.FC<IProps> = () => {
+  const { lendStore } = useStores();
   const data = [
     {
       title: "Supply balance",
@@ -45,7 +48,9 @@ const AccountHealth: React.FC<IProps> = () => {
         <Text weight={500} type="secondary">
           Account
         </Text>
-        <CircularProgressbar percent={100} />
+        <CircularProgressbar
+          percent={lendStore.health.toDecimalPlaces(2).toNumber()}
+        />
       </Row>
       <SizedBox height={10} />
       <Column crossAxisSize="max">
@@ -67,4 +72,4 @@ const AccountHealth: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default AccountHealth;
+export default observer(AccountHealth);

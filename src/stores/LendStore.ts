@@ -17,6 +17,10 @@ type TPoolStats = {
   totalBorrow: BN;
   supplyAPY: BN;
   borrowAPY: BN;
+  selfSupply: BN;
+  selfBorrow: BN;
+  dailyIncome: BN;
+  dailyLoan: BN;
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
@@ -34,11 +38,15 @@ class LendStore {
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
 
   private syncPoolsStats = async () => {
+    const address = this.rootStore.accountStore.address;
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
         `total_supplied_${assetId}`,
         `total_borrowed_${assetId}`,
+        ...(address
+          ? [`${address}_supplied_${assetId}`, `${address}_borrowed_${assetId}`]
+          : []),
       ],
       [] as string[]
     );
@@ -53,31 +61,71 @@ class LendStore {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
 
+      const sSup = getStateByKey(state, `${address}_supplied_${token.assetId}`);
+      const selfSupply = new BN(sSup ?? "0").times(rates[index].supplyRate);
+
       const bor = getStateByKey(state, `total_borrowed_${token.assetId}`);
       const totalBorrow = new BN(bor ?? "0").times(rates[index].borrowRate);
+
+      const sBor = getStateByKey(state, `${address}_borrowed_${token.assetId}`);
+      const selfBorrow = new BN(sBor ?? "0").times(rates[index].borrowRate);
 
       const UR = totalBorrow.div(totalSupply);
       const supplyInterest = interests[index].times(UR).times(0.8);
 
+      const p = prices[index];
+      const dailyIncome = selfSupply.times(supplyInterest);
+      const dailyLoan = selfBorrow.times(interests[index]);
+
       return {
         ...token,
-        prices: prices[index],
+        prices: p,
+        dailyIncome: dailyIncome.toDecimalPlaces(0),
+        dailyLoan: dailyLoan.toDecimalPlaces(0),
         totalSupply: totalSupply.toDecimalPlaces(0),
+        selfSupply: selfSupply.toDecimalPlaces(0),
         totalBorrow: totalBorrow.toDecimalPlaces(0),
+        selfBorrow: selfBorrow.toDecimalPlaces(0),
         supplyAPY: calcApy(supplyInterest),
         borrowAPY: calcApy(interests[index]),
       };
     });
     this.setPoolsStats(stats);
-    //   .map((t) => ({
-    //     ...t,
-    //     totalSupply: t.totalSupply.toString(),
-    //     supplyAPY: t.supplyAPY.toString(),
-    //     borrowAPY: t.borrowAPY.toString(),
-    //     totalBorrow: t.totalBorrow.toString(),
-    //   }));
-    // console.log(result);
+    console.log(
+      stats.map((t) => ({
+        // ...t,
+        // totalSupply: t.totalSupply.toString(),
+        // supplyAPY: t.supplyAPY.toString(),
+        // borrowAPY: t.borrowAPY.toString(),
+        // totalBorrow: t.totalBorrow.toString(),
+        // selfSupply: t.selfSupply.toString(),
+        // selfBorrow: t.selfBorrow.toString(),
+        // dailyIncome: t.dailyIncome.toString(),
+        // dailyLoan: t.dailyLoan.toString(),
+      }))
+    );
   };
+
+  get health() {
+    const bc = this.poolsStats.reduce((acc: BN, stat, index) => {
+      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
+      if (deposit.eq(0)) return acc;
+      const cf = this.tokensSetups[index].cf;
+      const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+      return acc.plus(assetBc);
+    }, BN.ZERO);
+    const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
+      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+      const lt = this.tokensSetups[index].lt;
+      const assetBcu = borrow.times(stat.prices.max).div(lt);
+      return acc.plus(assetBcu);
+    }, BN.ZERO);
+    const health = new BN(1).minus(bcu.div(bc)).times(100);
+    console.log(health.toString());
+    if (health.isNaN() || health.gt(100)) return new BN(100);
+    if (health.lte(0)) return BN.ZERO;
+    else return health;
+  }
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
