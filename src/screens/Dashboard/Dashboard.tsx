@@ -7,7 +7,6 @@ import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
 import { Observer } from "mobx-react-lite";
 import WhatIsLend from "@screens/Dashboard/WhatIsLend";
 import FAQ from "@screens/Dashboard/FAQ";
-import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { useStores } from "@stores";
 import AssetsTable from "@screens/Dashboard/AssetsTable";
 import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
@@ -72,7 +71,7 @@ const DashboardImpl: React.FC<IProps> = () => {
             <SizedBox height={40} />
             {accountStore != null && (
               <>
-                <AccountHealth />
+                {/*<AccountHealth />*/}
                 <AccountSupplyAndBorrow />
                 <AssetsTable />
               </>

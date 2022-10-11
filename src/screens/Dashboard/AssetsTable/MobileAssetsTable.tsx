@@ -70,8 +70,8 @@ const MobileAssetsTable: React.FC<IProps> = () => {
             </Row>
             <SizedBox height={16} />
             <Data crossAxisSize="max">
-              {data.map(({ title, value }) => (
-                <Row key={`asset-${value}`} justifyContent="space-between">
+              {data.map(({ title, value }, index) => (
+                <Row key={`asset-${index}`} justifyContent="space-between">
                   <Text fitContent>{title}</Text>
                   <Text fitContent type="secondary">
                     {value}
