@@ -12,6 +12,8 @@ import AssetsTable from "@screens/Dashboard/AssetsTable";
 import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
 import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { Column } from "@src/components/Flex";
+import { useTheme } from "@emotion/react";
+import bg from "@src/assets/dashboard/puzzleBg.svg";
 
 interface IProps {}
 
@@ -58,9 +60,20 @@ const AccountDataWrapper = styled.div`
     flex-direction: row-reverse;
   }
 `;
+const TotalLiquidity = styled.div`
+  display: flex;
+  padding: 16px;
+  border-radius: 16px;
+  width: calc(100% - 32px);
+  background: url(${bg}), #7075e9;
+  background-repeat: no-repeat;
+  background-position: right;
+  background-size: contain;
+`;
 const DashboardImpl: React.FC<IProps> = () => {
   const vm = useDashboardVM();
-  const { accountStore } = useStores();
+  const { accountStore, lendStore } = useStores();
+  const theme = useTheme();
   return (
     <Layout>
       <Observer>
@@ -76,7 +89,7 @@ const DashboardImpl: React.FC<IProps> = () => {
               </a>
             </Text>
             <SizedBox height={4} />
-            <Subtitle size="medium" fitContent>
+            <Subtitle fitContent>
               Supply and borrow tokens using different pools
             </Subtitle>
             <SizedBox height={40} />
@@ -86,6 +99,15 @@ const DashboardImpl: React.FC<IProps> = () => {
                   <AccountHealth />
                 </div>
                 <Column crossAxisSize="max">
+                  <SizedBox height={24} />
+                  {/*todo поправитть на маленьком экране*/}
+                  <TotalLiquidity>
+                    <Text style={{ color: theme.colors.white }}>
+                      Total liquidity :{" "}
+                      <b>{lendStore.totalLiquidity.toFormat()}</b>
+                    </Text>
+                  </TotalLiquidity>
+                  <SizedBox height={24} />
                   <AccountSupplyAndBorrow />
                   <SizedBox height={40} />
                   <AssetsTable />

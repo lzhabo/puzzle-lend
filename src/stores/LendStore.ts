@@ -152,7 +152,13 @@ class LendStore {
       }, BN.ZERO);
   }
 
+  get totalLiquidity() {
+    //todo посчиать  totalLiquidity для пула
+    return BN.ZERO;
+  }
+
   get netApy() {
+    //todo посчиать  netApy для приложения
     return BN.ZERO;
   }
 
