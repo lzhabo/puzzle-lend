@@ -6,9 +6,16 @@ import { IToken, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<DashboardVM | null>(null);
 
-export const DashboardVMProvider: React.FC = ({ children }) => {
+interface IProps {
+  poolId: string;
+}
+
+export const DashboardVMProvider: React.FC<IProps> = ({ children, poolId }) => {
   const rootStore = useStores();
-  const store = useMemo(() => new DashboardVM(rootStore), [rootStore]);
+  const store = useMemo(
+    () => new DashboardVM(rootStore, poolId),
+    [poolId, rootStore]
+  );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
@@ -33,7 +40,7 @@ class DashboardVM {
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
-  constructor(rootStore: RootStore) {
+  constructor(rootStore: RootStore, poolId: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
   }

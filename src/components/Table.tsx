@@ -43,6 +43,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
       :last-child {
         td {
+          border-bottom: none !important;
         }
       }
     }

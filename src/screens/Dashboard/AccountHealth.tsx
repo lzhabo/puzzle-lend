@@ -62,7 +62,6 @@ const AccountHealth: React.FC<IProps> = () => {
         "Your annual net profit(expenses) relative to your deposits(loans) USD value.",
     },
   ];
-  console.log(data);
   return (
     <Root>
       <Health>
@@ -78,15 +77,12 @@ const AccountHealth: React.FC<IProps> = () => {
           text="Account Health"
           percent={lendStore.health.toDecimalPlaces(2).toNumber()}
         />
-        <Text weight={500} type="secondary" fitContent>
-          Health
-        </Text>
       </Health>
       <SizedBox height={10} />
       <Column crossAxisSize="max">
-        {data.map(({ title, value, description, border }) => (
+        {data.map(({ title, value, description, border }, index) => (
           <Row
-            key={`account-health-${value}`}
+            key={`account-health-${value}-${index}`}
             justifyContent="space-between"
             style={{
               marginBottom: 14,

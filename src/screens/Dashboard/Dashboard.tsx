@@ -104,7 +104,7 @@ const DashboardImpl: React.FC<IProps> = () => {
                   <TotalLiquidity>
                     <Text style={{ color: theme.colors.white }}>
                       Total liquidity :{" "}
-                      <b>{lendStore.totalLiquidity.toFormat()}</b>
+                      <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                     </Text>
                   </TotalLiquidity>
                   <SizedBox height={24} />
@@ -123,9 +123,14 @@ const DashboardImpl: React.FC<IProps> = () => {
   );
 };
 
-const Dashboard: React.FC<IProps> = () => (
-  <DashboardVMProvider>
-    <DashboardImpl />
-  </DashboardVMProvider>
-);
+const Dashboard: React.FC<IProps> = () => {
+  // const params = useParams<{ id: string }>();
+  // if (params.id == null) return <Navigate to={ROUTES.ROOT} />;
+  return (
+    <DashboardVMProvider poolId={""}>
+      <DashboardImpl />
+    </DashboardVMProvider>
+  );
+};
+
 export default Dashboard;

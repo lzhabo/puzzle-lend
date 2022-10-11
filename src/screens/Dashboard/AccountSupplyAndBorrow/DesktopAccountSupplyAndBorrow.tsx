@@ -19,17 +19,16 @@ const Root = styled.div`
     //gap: 24px;
   }
 `;
-const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
+const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
   const supplyColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Total supply", accessor: "supply" },
+      { Header: "Supplied", accessor: "supplied" },
       { Header: "Supply APY", accessor: "supplyApy" },
-      { Header: "Total borrow", accessor: "borrow" },
-      { Header: "Borrow APY", accessor: "borrowApy" },
+      { Header: "Daily income", accessor: "dailyIncome" },
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" },
     ],
@@ -51,12 +50,11 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      supply:
-        BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      supplyApy: s.supplyAPY.toFormat(2) + " %",
-      borrow:
-        BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      borrowApy: s.borrowAPY.toFormat(2) + " %",
+      supplied:
+        `${BN.formatUnits(s.selfSupply, s.decimals).toFormat(4)} ` + s.symbol,
+      supplyApy: s.supplyAPY.toFormat(2) + "%",
+      dailyIncome:
+        `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
         <Button kind="secondary" size="medium" fixed>
           Supply
@@ -75,15 +73,9 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const borrowColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "", accessor: "gap" },
-      { Header: "", accessor: "gap2" },
-      { Header: "", accessor: "gap3" },
-      { Header: "", accessor: "gap4" },
-      { Header: "", accessor: "gap5" },
-      { Header: "", accessor: "gap6" },
-      { Header: "", accessor: "gap7" },
       { Header: "To be repaid", accessor: "toRepair" },
       { Header: "Borrow APR", accessor: "borrowApr" },
+      { Header: "Daily loan interest", accessor: "dailyLoan" },
       { Header: "", accessor: "borrowBtn" },
       { Header: "", accessor: "repayBtn" },
     ],
@@ -108,6 +100,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       toRepair:
         BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
       borrowApr: s.borrowAPY.toFormat(2) + " %",
+      dailyLoan:
+        BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
         <Button kind="secondary" size="medium" fixed>
           Borrow
@@ -153,4 +147,4 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(MobileAccountSupplyAndBorrow);
+export default observer(DesktopAccountSupplyAndBorrow);

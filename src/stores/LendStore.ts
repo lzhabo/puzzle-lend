@@ -153,13 +153,45 @@ class LendStore {
   }
 
   get totalLiquidity() {
-    //todo посчиать  totalLiquidity для пула
-    return BN.ZERO;
+    return this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.totalSupply, stat.decimals)
+          .times(stat.prices.min)
+          .plus(acc),
+      BN.ZERO
+    );
   }
 
   get netApy() {
-    //todo посчиать  netApy для приложения
-    return BN.ZERO;
+    const supplyApy = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfSupply, stat.decimals)
+          .times(stat.prices.min)
+          .times(stat.supplyAPY)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    const baseAmount = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfSupply, stat.decimals)
+          .times(stat.prices.min)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    const borrowApy = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfBorrow, stat.decimals)
+          .times(stat.prices.min)
+          .times(stat.borrowAPY)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    return baseAmount.eq(0)
+      ? BN.ZERO
+      : supplyApy.minus(borrowApy).div(baseAmount);
   }
 
   get accountSupply() {

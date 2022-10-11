@@ -61,7 +61,10 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
                 {
                   title: "Daily income",
-                  value: `${s.dailyIncome.toFormat(2)}  ${s.symbol}`,
+                  value:
+                    `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(
+                      6
+                    )} ` + s.symbol,
                 },
               ];
               return (
@@ -124,6 +127,12 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 {
                   title: "To be repaid",
                   value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                },
+                {
+                  title: "Daily loan interest",
+                  value:
+                    BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
+                    ` ${s.symbol}`,
                 },
               ];
               return (

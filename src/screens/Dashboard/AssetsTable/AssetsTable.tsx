@@ -31,7 +31,7 @@ const AssetsTable: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       {/*filter*/}
-      {width && width >= 1440 ? <DesktopTable /> : <MobileAssetsTable />}
+      {width && width >= 768 ? <DesktopTable /> : <MobileAssetsTable />}
     </Root>
   );
 };
