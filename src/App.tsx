@@ -10,6 +10,8 @@ import MobileNavBar from "./components/MobileNavBar";
 import { ROUTES } from "@src/constants";
 import Dashboard from "@screens/Dashboard";
 import ExploreToken from "@screens/ExploreToken";
+import NotFound from "@screens/NotFound";
+import DashboardModal from "@components/DashboardModals";
 
 const Root = styled(Column)`
   width: 100%;
@@ -24,19 +26,40 @@ const MobileSpace = styled.div`
   }
 `;
 const App: React.FC = () => {
-  const { accountStore } = useStores();
+  const { accountStore, lendStore } = useStores();
   return (
     <Root>
       <Header />
       <Routes>
         {/* Dashboard */}
-        <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
+        <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
+          <Route
+            path={ROUTES.DASHBOARD_MODAL}
+            element={
+              <DashboardModal
+                onClose={() => lendStore.setDashboardModalOpened(false, lendStore.dashboardModalStep)}
+                visible={lendStore.dashboardModalOpened}
+              />
+            }
+          />
+        </Route>
+        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />}>
+          <Route
+            path={ROUTES.DASHBOARD_MODAL}
+            element={
+              <DashboardModal
+                onClose={() => lendStore.setDashboardModalOpened(false, lendStore.dashboardModalStep)}
+                visible={lendStore.dashboardModalOpened}
+              />
+            }
+          />
+        </Route>
         <Route
           path={ROUTES.DASHBOARD_TOKEN_DETAILS}
           element={<ExploreToken />}
         />
         {/*<Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />*/}
+        {/* <Route path="*" element={<NotFound />} /> */}
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}

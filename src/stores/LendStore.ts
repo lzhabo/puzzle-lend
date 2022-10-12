@@ -63,8 +63,10 @@ class LendStore {
   dashboardModalStep = 0;
   dashboardModalOpened: boolean = false;
   @action.bound setDashboardModalOpened = (isOpen: boolean, step: number) => {
+    console.log(this.dashboardModalOpened, 'setDashboardModalOpened1')
     this.dashboardModalStep = step;
     this.dashboardModalOpened = isOpen
+    console.log(this.dashboardModalOpened, 'setDashboardModalOpened2')
   };
 
   private syncPoolsStats = async () => {

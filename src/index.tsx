@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { HashRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import "normalize.css";
 import { RootStore, storesContext } from "@stores";
 import { loadState, saveState } from "@src/utils/localStorage";
@@ -31,7 +31,6 @@ autorun(
 );
 
 ReactDOM.render(
-  <React.StrictMode>
     <storesContext.Provider value={mobxStore}>
       <ThemeWrapper>
         <Router>
@@ -39,7 +38,6 @@ ReactDOM.render(
         </Router>
         <GlobalStyles />
       </ThemeWrapper>
-    </storesContext.Provider>
-  </React.StrictMode>,
+    </storesContext.Provider>,
   document.getElementById("root")
 );

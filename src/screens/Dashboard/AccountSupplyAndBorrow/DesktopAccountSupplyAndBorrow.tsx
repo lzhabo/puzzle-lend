@@ -66,7 +66,12 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       dailyIncome:
         `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          onClick={() => lendStore.setDashboardModalOpened(true, 0)}
+          kind="secondary"
+          size="medium"
+          fixed
+        >
           Supply
         </Button>
       ),
@@ -120,7 +125,15 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       dailyLoan:
         BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          onClick={(e) => {
+            console.log('TEEEEEEST Borrow')
+            lendStore.setDashboardModalOpened(false, 0);
+          }}
+          kind="secondary"
+          size="medium"
+          fixed
+        >
           Borrow
         </Button>
       ),

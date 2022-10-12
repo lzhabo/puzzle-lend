@@ -39,13 +39,13 @@ const DesktopTable: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.poolsStats.map((s) => ({
-      onClick: () =>
-        navigate(
-          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-            ":poolId",
-            lendStore.pool.address
-          ).replace(":assetId", s.assetId)
-        ),
+      // onClick: () =>
+      //   navigate(
+      //     ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+      //       ":poolId",
+      //       lendStore.pool.address
+      //     ).replace(":assetId", s.assetId)
+      //   ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -76,6 +76,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
+          onClick={() => lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep)}
         >
           Supply
         </Button>

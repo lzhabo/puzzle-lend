@@ -6,6 +6,8 @@ export const ROUTES = {
   DASHBOARD: "/",
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
+  DASHBOARD_MODAL: ":poolId/:operationName/:tokenId",
+  NOT_FOUND: "/404",
 };
 
 export const POOLS = [
