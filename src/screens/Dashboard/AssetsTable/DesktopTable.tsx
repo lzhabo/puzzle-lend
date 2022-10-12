@@ -10,7 +10,6 @@ import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
-import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 
 interface IProps {}
@@ -37,6 +36,12 @@ const DesktopTable: React.FC<IProps> = () => {
     ],
     []
   );
+
+  const assetBtnClick = (poolId: string, operationName: string, tokenId: string) => {
+    lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep);
+    return navigate(`/${poolId}/${operationName}/${tokenId}`)
+  }
+
   useMemo(() => {
     const data = lendStore.poolsStats.map((s) => ({
       // onClick: () =>
@@ -76,7 +81,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={() => lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep)}
+          onClick={() => assetBtnClick(lendStore.poolId, 'supply', s.assetId)}
         >
           Supply
         </Button>

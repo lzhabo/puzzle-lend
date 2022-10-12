@@ -4,9 +4,9 @@ import tokenLogos from "@src/constants/tokenLogos";
 export const ROUTES = {
   ROOT: "/",
   DASHBOARD: "/",
+  DASHBOARD_MODAL: ":modalPoolId/:operationName/:tokenId",
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
-  DASHBOARD_MODAL: ":poolId/:operationName/:tokenId",
   NOT_FOUND: "/404",
 };
 

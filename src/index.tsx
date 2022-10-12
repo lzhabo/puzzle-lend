@@ -31,6 +31,7 @@ autorun(
 );
 
 ReactDOM.render(
+  <React.StrictMode>
     <storesContext.Provider value={mobxStore}>
       <ThemeWrapper>
         <Router>
@@ -38,6 +39,7 @@ ReactDOM.render(
         </Router>
         <GlobalStyles />
       </ThemeWrapper>
-    </storesContext.Provider>,
+    </storesContext.Provider>
+  </React.StrictMode>,
   document.getElementById("root")
 );

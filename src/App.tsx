@@ -59,7 +59,7 @@ const App: React.FC = () => {
           element={<ExploreToken />}
         />
         {/*<Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />*/}
-        {/* <Route path="*" element={<NotFound />} /> */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}

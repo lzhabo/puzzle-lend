@@ -8,7 +8,7 @@ import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction, action } from "mobx";
 import { POOLS } from "@src/constants";
 
-type TPoolStats = {
+export type TPoolStats = {
   totalSupply: BN;
   totalBorrow: BN;
   supplyAPY: BN;
@@ -60,9 +60,9 @@ class LendStore {
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 
-  dashboardModalStep = 0;
+  dashboardModalStep: 0 | 1 = 0;
   dashboardModalOpened: boolean = false;
-  @action.bound setDashboardModalOpened = (isOpen: boolean, step: number) => {
+  @action.bound setDashboardModalOpened = (isOpen: boolean, step: 0 | 1) => {
     console.log(this.dashboardModalOpened, 'setDashboardModalOpened1')
     this.dashboardModalStep = step;
     this.dashboardModalOpened = isOpen

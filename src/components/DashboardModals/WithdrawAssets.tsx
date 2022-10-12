@@ -16,43 +16,28 @@ import BigNumberInput from '@components/BigNumberInput';
 import AmountInput from '@components/AmountInput';
 import SquareTokenIcon from '@components/SquareTokenIcon';
 import tokenLogos from "@src/constants/tokenLogos";
-import { IToken } from "@src/constants";
+import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 import _ from 'lodash';
 
-import { ReactComponent as Swap } from '@src/common/assets/icons/swap.svg';
-import { ReactComponent as Back } from '@src/common/assets/icons/arrowBackWithTail.svg';
+import { ReactComponent as Back } from '@src/assets/icons/arrowBackWithTail.svg';
+import { ReactComponent as Swap } from '@src/assets/icons/swap.svg';
 
 interface IProps {
-  assetId: string;
-  decimals: number;
-  amount: BN;
-  assetSymbol?: string;
-  assetName?: string;
-  totalSupply: BN;
-  totalBorrow: BN;
+  token: TPoolStats;
+  modalAmount: BN;
   userBalance: BN;
-  setupSupplyAPY?: BN;
-  selfSupply: BN;
-  selfBorrow: BN;
-  rate: BN;
-  userHealth: number;
-  minPrice: BN;
-  setupLtv: BN;
-  setupLts: BN;
-  setAmount?: (amount: BN) => void;
+  modalSetAmount?: (amount: BN) => void;
   onMaxClick?: (amount?: BN) => void;
   onClose?: () => void;
   onSubmit?: (amount: BN, assetId: string, contractAddress: string) => void;
-  usdnEquivalent?: string;
-  error?: boolean;
 }
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 300px;
-  padding: 24px 20px 16px 20px;
+  padding: 24px 0;
 `;
 
 const Footer = styled.div`
@@ -126,10 +111,18 @@ const DollarSymbol = styled.div`
   transform: translateY(-50%);
 `;
 
-const WithdrawAssets: React.FC<IProps> = (props) => {
+const WithdrawAssets: React.FC<IProps> = ({
+  token,
+  modalAmount,
+  userBalance,
+  modalSetAmount,
+  onMaxClick,
+  onClose,
+  onSubmit,
+}) => {
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
-  const [amount, setAmount] = useState<BN>(props.amount);
+  const [amount, setAmount] = useState<BN>(modalAmount);
   const [getDynamicAccountHealth, setAccountHealth] = useState<number>(100);
   const [isNative, setConvertToNative] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -141,13 +134,13 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
 
   const getUserBalance = () => {
     if (!isNative)
-      return formatVal(props.userBalance, props.decimals)
-        .times(props.rate)
-        .plus(formatVal(amount, props.decimals))
+      return formatVal(userBalance, token?.decimals)
+        .times(token?.prices?.min)
+        .plus(formatVal(amount, token?.decimals))
         .toFixed(4);
 
-    return props.userBalance
-      ? (+formatVal(props.userBalance, props.decimals).plus(formatVal(amount, props.decimals))).toFixed(4)
+    return userBalance
+      ? (+formatVal(userBalance, token?.decimals).plus(formatVal(amount, token?.decimals))).toFixed(4)
       : 0;
   };
 
@@ -158,7 +151,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
     let borrowCapacity = BN.ZERO;
     let borrowCapacityUsed = BN.ZERO;
 
-    if (!isNative) currentWithdrawAmount = currentWithdrawAmount.div(props.rate);
+    if (!isNative) currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
 
     // tokens.forEach((item: IToken) => {
     //   const tokenData: any = lendStore.poolDataTokensWithStats[item.assetId];
@@ -168,7 +161,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
     //       .times(tokenData.minPrice)
     //       .times(+tokenData.setupLtv / 100);
 
-    //     if (tokenData.assetId === props.assetId) {
+    //     if (tokenData.assetId === token.assetId) {
     //       localborrowCapacity = formatVal(tokenData.selfSupply.minus(currentWithdrawAmount), tokenData.decimals)
     //         .toDecimalPlaces(2)
     //         .times(tokenData.minPrice)
@@ -187,10 +180,10 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
     // });
 
     // case when user did'nt borrow anything
-    if (props.selfSupply.isEqualTo(0)) {
-      const newSupply = formatVal(currentWithdraw, props.decimals)
-        .times(props.minPrice)
-        .times(+props.setupLtv / 100);
+    if (token.selfSupply.isEqualTo(0)) {
+      const newSupply = formatVal(currentWithdraw, token?.decimals)
+        .times(token.prices.min)
+        .times(token.lt);
       borrowCapacityUsed = borrowCapacityUsed.minus(newSupply);
     }
 
@@ -206,28 +199,28 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
   };
 
   useEffect(() => {
-    props.amount && setAmount(props.amount);
-  }, [props.amount]);
+    modalAmount && setAmount(modalAmount);
+  }, [modalAmount]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounce = useCallback(
     _.debounce((value: BN) => {
-      props.setAmount && props.setAmount(value);
+      modalSetAmount && modalSetAmount(value);
     }, 500),
     []
   );
 
   const getReserves = () => {
-    return (+formatVal(props.totalSupply, props.decimals).minus(formatVal(props.totalBorrow, props.decimals))).toFixed(
+    return (+formatVal(token?.totalSupply, token?.decimals).minus(formatVal(token?.totalBorrow, token?.decimals))).toFixed(
       4
     );
   };
 
   const handleChangeAmount = (v: BN) => {
     let isError = false;
-    let { selfSupply } = props;
+    let selfSupply = token?.selfSupply;
 
-    if (!isNative) selfSupply = selfSupply.times(props.rate);
+    if (!isNative) selfSupply = selfSupply.times(token?.prices?.min);
     console.log(+v.toDecimalPlaces(0, 2), +selfSupply.toDecimalPlaces(0, 2), 'v-self');
 
     // will be fixed in new app, problem of BigNumber input
@@ -252,7 +245,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
     let isError = false;
     let formattedVal: BN = val;
 
-    if (!isNative) formattedVal = val.times(props.rate);
+    if (!isNative) formattedVal = val.times(token?.prices?.min);
 
     if (countAccountHealth(val) < 1) {
       setError(`Account health less than 1%, risk of liquidation`);
@@ -267,7 +260,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
   const setInputAmountMeasure = (isNativeToken: boolean) => {
     let fixedValue = amount;
 
-    if (isNativeToken && !isNative) fixedValue = fixedValue.div(props.rate).toDecimalPlaces(0);
+    if (isNativeToken && !isNative) fixedValue = fixedValue.div(token?.prices?.min).toDecimalPlaces(0);
 
     setAmount(fixedValue);
     debounce(fixedValue);
@@ -275,12 +268,12 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
   };
 
   const submitForm = () => {
-    let amountVal = props.amount;
+    let amountVal = modalAmount;
 
-    if (!isNative) amountVal = amountVal.div(props.rate);
+    if (!isNative) amountVal = amountVal.div(token?.prices?.min);
 
     // will be fixed in new app, problem of BigNumber input
-    props.onSubmit!(amountVal.toDecimalPlaces(0, 2), props.assetId, 'lendStore.activePoolContract');
+    onSubmit!(amountVal.toDecimalPlaces(0, 2), token.assetId, 'lendStore.activePoolContract');
   };
 
   return (
@@ -288,14 +281,14 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
       <Row>
         <Row
           alignItems="center"
-          onClick={() => navigate(`/dashboard/token/${props.assetId}`)}
+          onClick={() => navigate(`/dashboard/token/${token.assetId}`)}
           style={{ cursor: 'pointer' }}>
-          {props.assetSymbol && <SquareTokenIcon size="small" src={tokenLogos[props.assetSymbol]} />}
+          {token?.symbol && <SquareTokenIcon size="small" src={tokenLogos[token?.symbol]} />}
           <SizedBox width={8} />
           <Column>
-            <Text size="medium">{props.assetSymbol}</Text>
+            <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {props.assetName ? props.assetName : ''}
+              {token.name || ''}
             </Text>
           </Column>
         </Row>
@@ -303,7 +296,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
           <Text size="medium" textAlign="right">
             {+getUserBalance() || 0}
             <>&nbsp;</>
-            {isNative ? props.assetSymbol : '$'}
+            {isNative ? token?.symbol : '$'}
           </Text>
           <Text nowrap size="medium" type="secondary">
             Wallet Balance
@@ -311,13 +304,13 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
         </Column>
       </Row>
       <SizedBox height={16} />
-      <InputContainer focused={focused} readOnly={!props.setAmount} error={props.error}>
+      <InputContainer focused={focused} readOnly={!modalAmount}>
         {!isNative && <DollarSymbol>$</DollarSymbol>}
-        {props.onMaxClick && (
+        {onMaxClick && (
           <MaxButton
             onClick={() => {
               setFocused(true);
-              props.onMaxClick && props.onMaxClick(maxWithdraw(props.selfSupply));
+              onMaxClick && onMaxClick(maxWithdraw(token.selfSupply));
             }}
           />
         )}
@@ -337,24 +330,24 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
             />
           )}
           autofocus={focused}
-          decimals={props.decimals}
+          decimals={token?.decimals}
           value={amount}
           onChange={handleChangeAmount}
           placeholder="0.00"
-          readOnly={!props.setAmount}
+          readOnly={!modalAmount}
         />
         {isNative ? (
           <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
             <Text size="small" type="secondary">
-              ~${+props.rate && +amount ? (+formatVal(amount, props.decimals).times(props.rate)).toFixed(4) : 0}
+              ~${+token?.prices?.min && +amount ? (+formatVal(amount, token?.decimals).times(token?.prices?.min)).toFixed(4) : 0}
             </Text>
             <Swap />
           </TokenToDollar>
         ) : (
           <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
             <Text size="small" type="secondary">
-              ~{props.assetSymbol}{' '}
-              {+props.rate && +amount && (+formatVal(amount.div(props.rate), props.decimals)).toFixed(4)}
+              ~{token?.symbol}{' '}
+              {+token?.prices?.min && +amount && (+formatVal(amount.div(token?.prices?.min), token?.decimals)).toFixed(4)}
             </Text>
             <Swap />
           </TokenToDollar>
@@ -363,10 +356,10 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          {props.assetName} liquidity
+          {token.name} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {getReserves()} {props.assetSymbol}
+          {getReserves()} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -375,7 +368,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
           Supply APY
         </Text>
         <Text size="medium" fitContent>
-          {props.setupSupplyAPY ? (+props.setupSupplyAPY).toFixed(2) : 0}%
+          {token?.supplyAPY.toFormat(2) || 0}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -388,10 +381,10 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
           fitContent
           onClick={() => {
             setFocused(true);
-            props.onMaxClick && props.onMaxClick(maxWithdraw(props.selfSupply));
+            onMaxClick && onMaxClick(maxWithdraw(token.selfSupply));
           }}
           style={{ cursor: 'pointer' }}>
-          {(+formatVal(props.selfSupply, props.decimals)).toFixed(4)}
+          {(+formatVal(token.selfSupply, token?.decimals)).toFixed(4)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -401,9 +394,9 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {+props.userHealth.toFixed(2) || 0} %
+            {+lendStore.health.toDecimalPlaces(2).toFixed(2) || 0} %
           </Text>
-          {getDynamicAccountHealth !== 100 ? (
+          {lendStore.health.toDecimalPlaces(2).lt(100) ? (
             <>
               <Back
                 style={{
@@ -413,7 +406,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
                   transform: 'rotate(180deg)',
                 }}
               />
-              <Text type={getDynamicAccountHealth < +props.userHealth ? 'error' : 'success'} size="medium" fitContent>
+              <Text type={getDynamicAccountHealth < +lendStore.health.toDecimalPlaces(2) ? 'error' : 'success'} size="medium" fitContent>
                 <>&nbsp;</>
                 {getDynamicAccountHealth && amount ? getDynamicAccountHealth.toFixed(2) : 0}%
               </Text>
@@ -433,7 +426,7 @@ const WithdrawAssets: React.FC<IProps> = (props) => {
       <SizedBox height={16} />
       {/* if NO liquidity show ERROR, else withdraw or login */}
       <Footer>
-        {props.totalSupply && props.totalBorrow && +getReserves() === 0 ? (
+        {token?.totalSupply && token?.totalBorrow && +getReserves() === 0 ? (
           <Button fixed disabled size="large">
             Not Enough liquidity to Withdraw
           </Button>
