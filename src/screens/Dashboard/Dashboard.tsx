@@ -14,6 +14,8 @@ import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { Column } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
 import bg from "@src/assets/dashboard/puzzleBg.svg";
+import { Navigate, RouteProps, useParams } from "react-router-dom";
+import { POOLS, ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -123,11 +125,13 @@ const DashboardImpl: React.FC<IProps> = () => {
   );
 };
 
-const Dashboard: React.FC<IProps> = () => {
-  // const params = useParams<{ id: string }>();
-  // if (params.id == null) return <Navigate to={ROUTES.ROOT} />;
+const Dashboard: React.FC<IProps & RouteProps> = () => {
+  const params = useParams<{ poolId: string }>();
+  if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
+    return <Navigate to={ROUTES.ROOT} />;
+  }
   return (
-    <DashboardVMProvider poolId={""}>
+    <DashboardVMProvider poolId={params.poolId}>
       <DashboardImpl />
     </DashboardVMProvider>
   );

@@ -9,6 +9,8 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -21,6 +23,7 @@ const Root = styled.div`
 `;
 const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
+  const navigate = useNavigate();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
   const supplyColumns = useMemo(
@@ -36,6 +39,13 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.accountSupply.map((s) => ({
+      onClick: () =>
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -67,7 +77,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredSupplies(data);
-  }, [lendStore.accountSupply]);
+  }, [lendStore.accountSupply, lendStore.pool.address, navigate]);
 
   //-------------
   const borrowColumns = useMemo(

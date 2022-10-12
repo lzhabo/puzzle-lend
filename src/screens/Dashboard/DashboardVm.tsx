@@ -2,12 +2,12 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { IToken, TOKENS_LIST } from "@src/constants";
+import { IToken, POOLS, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<DashboardVM | null>(null);
 
 interface IProps {
-  poolId: string;
+  poolId?: string;
 }
 
 export const DashboardVMProvider: React.FC<IProps> = ({ children, poolId }) => {
@@ -22,6 +22,7 @@ export const DashboardVMProvider: React.FC<IProps> = ({ children, poolId }) => {
 export const useDashboardVM = () => useVM(ctx);
 
 class DashboardVM {
+  public readonly poolId: string;
   public rootStore: RootStore;
   searchValue = "";
   setSearchValue = (v: string) => (this.searchValue = v);
@@ -40,8 +41,11 @@ class DashboardVM {
   customPoolFilter: number = 0;
   setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
-  constructor(rootStore: RootStore, poolId: string) {
+  constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    this.poolId = poolId ?? POOLS[0].address;
+    const pool = POOLS.find((pool) => pool.address === this.poolId)!;
+    this.rootStore.lendStore.setPool(pool);
   }
 }

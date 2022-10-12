@@ -5,12 +5,8 @@ import PoolStateFetchService, {
 import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
-import { makeAutoObservable } from "mobx";
-// const pools = [
-//   { name: "Main Pool", address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH" },
-// ];
-
-const pool = "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH";
+import { makeAutoObservable, reaction } from "mobx";
+import { POOLS } from "@src/constants";
 
 type TPoolStats = {
   totalSupply: BN;
@@ -29,8 +25,18 @@ const calcApy = (i: BN) =>
 
 class LendStore {
   public readonly rootStore: RootStore;
-  private readonly fetchService;
-
+  private _fetchService?: PoolStateFetchService;
+  get fetchService() {
+    return this._fetchService!;
+  }
+  setFetchService = async (pool: string) => {
+    console.log(pool);
+    this._fetchService = new PoolStateFetchService(pool);
+    return await this._fetchService
+      .fetchSetups()
+      .then(this.setTokensSetups)
+      .then(() => this.syncPoolsStats());
+  };
   initialized: boolean = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
@@ -39,6 +45,20 @@ class LendStore {
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+  getStatByAssetId = (assetId: string) =>
+    this.poolsStats.find((s) => s.assetId === assetId);
+  pool = POOLS[0];
+  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+  get poolId() {
+    return this.pool.address;
+  }
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    makeAutoObservable(this);
+    this.setFetchService(this.poolId).then(() => this.setInitialized(true));
+    reaction(() => this.poolId, this.setFetchService);
+    setInterval(this.syncPoolsStats, 60 * 1000);
+  }
 
   private syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
@@ -54,7 +74,7 @@ class LendStore {
       [] as string[]
     );
     const [state, rates, prices, interests] = await Promise.all([
-      nodeService.nodeKeysRequest(pool, keys),
+      nodeService.nodeKeysRequest(this.poolId, keys),
       this.fetchService.calculateTokenRates(),
       this.fetchService.getPrices(),
       this.fetchService.calculateTokensInterest(),
@@ -202,22 +222,6 @@ class LendStore {
   get accountBorrow() {
     if (this.rootStore.accountStore.address == null) return [];
     return this.poolsStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
-  }
-
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
-    makeAutoObservable(this);
-    this.fetchService = new PoolStateFetchService(pool);
-    this.fetchService
-      .fetchSetups()
-      .then(this.setTokensSetups)
-      .then(() => this.syncPoolsStats())
-      .catch(() => {
-        //todo redirect
-      });
-    //todo add reaction to update data if account address was changed
-    this.setInitialized(true);
-    setInterval(this.syncPoolsStats, 60 * 1000);
   }
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import Header from "@components/Header";
@@ -9,6 +9,7 @@ import WalletModal from "@components/Wallet/WalletModal";
 import MobileNavBar from "./components/MobileNavBar";
 import { ROUTES } from "@src/constants";
 import Dashboard from "@screens/Dashboard";
+import ExploreToken from "@screens/ExploreToken";
 
 const Root = styled(Column)`
   width: 100%;
@@ -30,7 +31,12 @@ const App: React.FC = () => {
       <Routes>
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
-        <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />
+        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
+        <Route
+          path={ROUTES.DASHBOARD_TOKEN_DETAILS}
+          element={<ExploreToken />}
+        />
+        {/*<Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />*/}
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}
