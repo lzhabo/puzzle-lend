@@ -93,6 +93,13 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.accountBorrow.map((s) => ({
+      onClick: () =>
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -124,7 +131,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredBorrows(data);
-  }, [lendStore.accountBorrow]);
+  }, [lendStore.accountBorrow, lendStore.pool.address, navigate]);
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (
