@@ -16,7 +16,7 @@ const AccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { width } = useWindowSize();
   return (
     <Root>
-      {width && width >= 1440 ? (
+      {width && width >= 768 ? (
         <DesktopAccountSupplyAndBorrow />
       ) : (
         <MobileAccountSupplyAndBorrow />

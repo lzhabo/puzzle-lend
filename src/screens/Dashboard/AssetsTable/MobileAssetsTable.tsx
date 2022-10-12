@@ -9,6 +9,8 @@ import { useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { observer } from "mobx-react-lite";
 import Skeleton from "react-loading-skeleton";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -38,6 +40,7 @@ const Data = styled(Column)`
 `;
 const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
+  const navigate = useNavigate();
   return (
     <Root>
       {lendStore.initialized
@@ -73,7 +76,19 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 <SizedBox height={16} />
                 <Data crossAxisSize="max">
                   {data.map(({ title, value }, index) => (
-                    <Row key={`asset-${index}`} justifyContent="space-between">
+                    <Row
+                      key={`asset-${index}`}
+                      justifyContent="space-between"
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        navigate(
+                          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                            ":poolId",
+                            lendStore.pool.address
+                          ).replace(":assetId", s.assetId)
+                        )
+                      }
+                    >
                       <Text fitContent>{title}</Text>
                       <Text fitContent type="secondary">
                         {value}

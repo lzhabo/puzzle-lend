@@ -5,12 +5,8 @@ import PoolStateFetchService, {
 import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
-import { makeAutoObservable, action } from "mobx";
-// const pools = [
-//   { name: "Main Pool", address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH" },
-// ];
-
-const pool = "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH";
+import { makeAutoObservable, reaction, action } from "mobx";
+import { POOLS } from "@src/constants";
 
 type TPoolStats = {
   totalSupply: BN;
@@ -29,8 +25,18 @@ const calcApy = (i: BN) =>
 
 class LendStore {
   public readonly rootStore: RootStore;
-  private readonly fetchService;
-
+  private _fetchService?: PoolStateFetchService;
+  get fetchService() {
+    return this._fetchService!;
+  }
+  setFetchService = async (pool: string) => {
+    console.log(pool);
+    this._fetchService = new PoolStateFetchService(pool);
+    return await this._fetchService
+      .fetchSetups()
+      .then(this.setTokensSetups)
+      .then(() => this.syncPoolsStats());
+  };
   initialized: boolean = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
@@ -39,6 +45,20 @@ class LendStore {
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+  getStatByAssetId = (assetId: string) =>
+    this.poolsStats.find((s) => s.assetId === assetId);
+  pool = POOLS[0];
+  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+  get poolId() {
+    return this.pool.address;
+  }
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+    makeAutoObservable(this);
+    this.setFetchService(this.poolId).then(() => this.setInitialized(true));
+    reaction(() => this.poolId, this.setFetchService);
+    setInterval(this.syncPoolsStats, 60 * 1000);
+  }
 
   dashboardModalStep = 0;
   dashboardModalOpened: boolean = false;
@@ -61,7 +81,7 @@ class LendStore {
       [] as string[]
     );
     const [state, rates, prices, interests] = await Promise.all([
-      nodeService.nodeKeysRequest(pool, keys),
+      nodeService.nodeKeysRequest(this.poolId, keys),
       this.fetchService.calculateTokenRates(),
       this.fetchService.getPrices(),
       this.fetchService.calculateTokensInterest(),
@@ -160,13 +180,45 @@ class LendStore {
   }
 
   get totalLiquidity() {
-    //todo посчиать  totalLiquidity для пула
-    return BN.ZERO;
+    return this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.totalSupply, stat.decimals)
+          .times(stat.prices.min)
+          .plus(acc),
+      BN.ZERO
+    );
   }
 
   get netApy() {
-    //todo посчиать  netApy для приложения
-    return BN.ZERO;
+    const supplyApy = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfSupply, stat.decimals)
+          .times(stat.prices.min)
+          .times(stat.supplyAPY)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    const baseAmount = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfSupply, stat.decimals)
+          .times(stat.prices.min)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    const borrowApy = this.poolsStats.reduce(
+      (acc, stat) =>
+        BN.formatUnits(stat.selfBorrow, stat.decimals)
+          .times(stat.prices.min)
+          .times(stat.borrowAPY)
+          .plus(acc),
+      BN.ZERO
+    );
+
+    return baseAmount.eq(0)
+      ? BN.ZERO
+      : supplyApy.minus(borrowApy).div(baseAmount);
   }
 
   get accountSupply() {
@@ -177,22 +229,6 @@ class LendStore {
   get accountBorrow() {
     if (this.rootStore.accountStore.address == null) return [];
     return this.poolsStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
-  }
-
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
-    makeAutoObservable(this);
-    this.fetchService = new PoolStateFetchService(pool);
-    this.fetchService
-      .fetchSetups()
-      .then(this.setTokensSetups)
-      .then(() => this.syncPoolsStats())
-      .catch(() => {
-        //todo redirect
-      });
-    //todo add reaction to update data if account address was changed
-    this.setInitialized(true);
-    setInterval(this.syncPoolsStats, 60 * 1000);
   }
 }
 

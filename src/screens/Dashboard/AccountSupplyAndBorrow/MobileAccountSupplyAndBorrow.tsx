@@ -8,6 +8,8 @@ import Button from "@components/Button";
 import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -42,6 +44,7 @@ const Data = styled(Column)`
 `;
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
+  const navigate = useNavigate();
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (
@@ -61,7 +64,10 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
                 {
                   title: "Daily income",
-                  value: `${s.dailyIncome.toFormat(2)}  ${s.symbol}`,
+                  value:
+                    `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(
+                      6
+                    )} ` + s.symbol,
                 },
               ];
               return (
@@ -80,6 +86,15 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   <Data crossAxisSize="max">
                     {data.map(({ title, value }, index) => (
                       <Row
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          navigate(
+                            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                              ":poolId",
+                              lendStore.pool.address
+                            ).replace(":assetId", s.assetId)
+                          )
+                        }
                         key={`asset-${index}`}
                         justifyContent="space-between"
                       >
@@ -125,6 +140,12 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   title: "To be repaid",
                   value: `${borrowed.toFormat(2)} ${s.symbol}`,
                 },
+                {
+                  title: "Daily loan interest",
+                  value:
+                    BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
+                    ` ${s.symbol}`,
+                },
               ];
               return (
                 <Asset key={`token-${s.assetId}`}>
@@ -142,6 +163,15 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   <Data crossAxisSize="max">
                     {data.map(({ title, value }, index) => (
                       <Row
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          navigate(
+                            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                              ":poolId",
+                              lendStore.pool.address
+                            ).replace(":assetId", s.assetId)
+                          )
+                        }
                         key={`asset-${index}`}
                         justifyContent="space-between"
                       >

@@ -10,6 +10,8 @@ import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -22,6 +24,7 @@ const Root = styled.div`
 const DesktopTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const [filteredAssets, setFilteredAssets] = useState<any[]>([]);
+  const navigate = useNavigate();
   const columns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
@@ -36,6 +39,13 @@ const DesktopTable: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.poolsStats.map((s) => ({
+      onClick: () =>
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -62,13 +72,17 @@ const DesktopTable: React.FC<IProps> = () => {
         </Button>
       ),
       supplyBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+        >
           Supply
         </Button>
       ),
     }));
     setFilteredAssets(data);
-  }, [lendStore.poolsStats]);
+  }, [lendStore.pool.address, lendStore.poolsStats, navigate]);
   return (
     <Root>
       {lendStore.initialized && filteredAssets.length > 0 ? (

@@ -9,6 +9,8 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -19,17 +21,17 @@ const Root = styled.div`
     //gap: 24px;
   }
 `;
-const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
+const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
+  const navigate = useNavigate();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
   const supplyColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Total supply", accessor: "supply" },
+      { Header: "Supplied", accessor: "supplied" },
       { Header: "Supply APY", accessor: "supplyApy" },
-      { Header: "Total borrow", accessor: "borrow" },
-      { Header: "Borrow APY", accessor: "borrowApy" },
+      { Header: "Daily income", accessor: "dailyIncome" },
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" },
     ],
@@ -37,6 +39,13 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.accountSupply.map((s) => ({
+      onClick: () =>
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -51,12 +60,11 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      supply:
-        BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      supplyApy: s.supplyAPY.toFormat(2) + " %",
-      borrow:
-        BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      borrowApy: s.borrowAPY.toFormat(2) + " %",
+      supplied:
+        `${BN.formatUnits(s.selfSupply, s.decimals).toFormat(4)} ` + s.symbol,
+      supplyApy: s.supplyAPY.toFormat(2) + "%",
+      dailyIncome:
+        `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
         <Button kind="secondary" size="medium" fixed>
           Supply
@@ -69,21 +77,15 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredSupplies(data);
-  }, [lendStore.accountSupply]);
+  }, [lendStore.accountSupply, lendStore.pool.address, navigate]);
 
   //-------------
   const borrowColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "", accessor: "gap" },
-      { Header: "", accessor: "gap2" },
-      { Header: "", accessor: "gap3" },
-      { Header: "", accessor: "gap4" },
-      { Header: "", accessor: "gap5" },
-      { Header: "", accessor: "gap6" },
-      { Header: "", accessor: "gap7" },
       { Header: "To be repaid", accessor: "toRepair" },
       { Header: "Borrow APR", accessor: "borrowApr" },
+      { Header: "Daily loan interest", accessor: "dailyLoan" },
       { Header: "", accessor: "borrowBtn" },
       { Header: "", accessor: "repayBtn" },
     ],
@@ -91,6 +93,13 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
   useMemo(() => {
     const data = lendStore.accountBorrow.map((s) => ({
+      onClick: () =>
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        ),
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -108,6 +117,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       toRepair:
         BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
       borrowApr: s.borrowAPY.toFormat(2) + " %",
+      dailyLoan:
+        BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
         <Button kind="secondary" size="medium" fixed>
           Borrow
@@ -120,7 +131,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredBorrows(data);
-  }, [lendStore.accountBorrow]);
+  }, [lendStore.accountBorrow, lendStore.pool.address, navigate]);
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (
@@ -153,4 +164,4 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(MobileAccountSupplyAndBorrow);
+export default observer(DesktopAccountSupplyAndBorrow);

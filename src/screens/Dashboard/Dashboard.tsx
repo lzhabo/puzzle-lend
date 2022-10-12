@@ -15,6 +15,8 @@ import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { Column } from "@src/components/Flex";
 import { useTheme } from "@emotion/react";
 import bg from "@src/assets/dashboard/puzzleBg.svg";
+import { Navigate, RouteProps, useParams } from "react-router-dom";
+import { POOLS, ROUTES } from "@src/constants";
 
 interface IProps {}
 
@@ -105,7 +107,7 @@ const DashboardImpl: React.FC<IProps> = () => {
                   <TotalLiquidity>
                     <Text style={{ color: theme.colors.white }}>
                       Total liquidity :{" "}
-                      <b>{lendStore.totalLiquidity.toFormat()}</b>
+                      <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                     </Text>
                   </TotalLiquidity>
                   <SizedBox height={24} />
@@ -128,9 +130,16 @@ const DashboardImpl: React.FC<IProps> = () => {
   );
 };
 
-const Dashboard: React.FC<IProps> = () => (
-  <DashboardVMProvider>
-    <DashboardImpl />
-  </DashboardVMProvider>
-);
+const Dashboard: React.FC<IProps & RouteProps> = () => {
+  const params = useParams<{ poolId: string }>();
+  if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
+    return <Navigate to={ROUTES.ROOT} />;
+  }
+  return (
+    <DashboardVMProvider poolId={params.poolId}>
+      <DashboardImpl />
+    </DashboardVMProvider>
+  );
+};
+
 export default Dashboard;
