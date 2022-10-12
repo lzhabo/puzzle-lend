@@ -72,7 +72,12 @@ const DesktopTable: React.FC<IProps> = () => {
         BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
       borrowApy: s.borrowAPY.toFormat(2) + " %",
       borrowBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={() => assetBtnClick(lendStore.poolId, 'borrow', s.assetId)}
+        >
           Borrow
         </Button>
       ),

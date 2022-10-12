@@ -41,6 +41,12 @@ const Data = styled(Column)`
 const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+
+  const assetBtnClick = (poolId: string, operationName: string, tokenId: string) => {
+    lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep);
+    return navigate(`/${poolId}/${operationName}/${tokenId}`)
+  }
+
   return (
     <Root>
       {lendStore.initialized
@@ -98,11 +104,21 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 </Data>
                 <SizedBox height={16} />
                 <Row>
-                  <Button size="medium" kind="secondary" fixed>
+                  <Button
+                    kind="secondary"
+                    size="medium"
+                    fixed
+                    onClick={() => assetBtnClick(lendStore.poolId, 'supply', s.assetId)}
+                  >
                     Supply
                   </Button>
                   <SizedBox width={8} />
-                  <Button size="medium" kind="secondary" fixed>
+                  <Button
+                    kind="secondary"
+                    size="medium"
+                    fixed
+                    onClick={() => assetBtnClick(lendStore.poolId, 'borrow', s.assetId)}
+                  >
                     Borrow
                   </Button>
                 </Row>
