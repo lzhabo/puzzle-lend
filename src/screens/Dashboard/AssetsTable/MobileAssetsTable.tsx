@@ -43,7 +43,6 @@ const MobileAssetsTable: React.FC<IProps> = () => {
   const navigate = useNavigate();
 
   const assetBtnClick = (poolId: string, operationName: string, tokenId: string) => {
-    lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep);
     return navigate(`/${poolId}/${operationName}/${tokenId}`)
   }
 

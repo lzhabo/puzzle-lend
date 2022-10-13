@@ -33,18 +33,14 @@ const App: React.FC = () => {
       <Routes>
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
-          <Route
-            path={ROUTES.DASHBOARD_MODAL_SUPPLY}
-            element={
-              <DashboardModal operationName="supply"/>
-            }
-          />
-          <Route
-            path={ROUTES.DASHBOARD_MODAL_WITHDRAW}
-            element={
-              <DashboardModal operationName="withdraw"/>
-            }
-          />
+          {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([action, path]) => (
+            <Route
+              path={path}
+              element={
+                <DashboardModal operationName={action}/>
+              }
+            />
+          ))}
         </Route>
         <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
         <Route

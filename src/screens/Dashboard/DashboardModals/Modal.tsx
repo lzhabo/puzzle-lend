@@ -1,40 +1,17 @@
 import React from 'react';
-import { useParams, useNavigate, Params } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from '@emotion/styled';
-import { useStores } from "@stores";
 import { observer } from 'mobx-react-lite';
 import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
 import DashboardModalBody from '@screens/Dashboard/DashboardModals/DashboardModalBody';
 import Dialog from '@components/Dialog';
-import { DashboardWalletVMProvider } from '@screens/Dashboard/DashboardModals/DashboardWalletVM';
-import './modal.css';
-
-interface UrlParamsProps {
-  tokenId: string;
-  operationName: string;
-  modalPoolId: string;
-}
+import { DashboardWalletVMProvider, DashboardWalletUseVM } from '@screens/Dashboard/DashboardModals/DashboardWalletVM';
 
 type IProps = {
-  step: 0 | 1;
-  operationName: string;
-  urlParams: Readonly<Params<keyof UrlParamsProps>>;
-  setActiveTab: (step: 0 | 1) => void;
-};
-
-type IModalProps = {
   operationName: string;
 };
-
-const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-`;
 
 const TabsWrapper = styled(Row)`
   border-radius: 16px 16px 0px 0px;
@@ -47,8 +24,18 @@ const TabsWrapper = styled(Row)`
   }
 `;
 
-const DashboardModal: React.FC<IModalProps> = ({ operationName }) => {
-  const { lendStore } = useStores();
+const DashboardModal: React.FC<IProps> = ({ operationName }) => {
+  return (
+    <DashboardWalletVMProvider>
+      <DashboardModalContent
+        operationName={operationName}
+      />
+    </DashboardWalletVMProvider>
+  );
+};
+
+const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
+  const vm = DashboardWalletUseVM();
   const navigate = useNavigate();
   const urlParams = useParams<any>();
 
@@ -57,13 +44,13 @@ const DashboardModal: React.FC<IModalProps> = ({ operationName }) => {
   const setActiveTab = (step: 0 | 1) => {
     if (operationName === 'supply' || operationName === 'withdraw') {
       const operation = operationName === 'supply' ? 'withdraw' : 'supply'
-      lendStore.setDashboardModalOpened(true, step);
+      vm.setDashboardModalOpened(true, step);
       return navigate(`/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`)
     }
   }
 
   const closeTab = (step: 0 | 1) => {
-    lendStore.setDashboardModalOpened(false, step);
+    vm.setDashboardModalOpened(false, step);
     return navigate('/')
   }
 
@@ -71,35 +58,21 @@ const DashboardModal: React.FC<IModalProps> = ({ operationName }) => {
     <Dialog
       wrapClassName="dashboard-dialog"
       title="Operations"
-      visible={lendStore.dashboardModalOpened}
-      onClose={() => closeTab(lendStore.dashboardModalStep)}
+      visible={!!operationName}
+      onClose={() => closeTab(vm.dashboardModalStep)}
+      style={{ maxWidth: '415px' }}
     >
-      <DashboardWalletVMProvider>
-        <DashboardModalContent
-          urlParams={urlParams}
-          operationName={operationName}
-          step={lendStore.dashboardModalStep}
-          setActiveTab={((step) => setActiveTab(step))}
-        />
-      </DashboardWalletVMProvider>
-    </Dialog>
-  );
-};
-
-const DashboardModalContent: React.FC<IProps> = ({ step, setActiveTab, urlParams, operationName }) => {
-  return (
-    <Root>
       <SizedBox height={72} />
       <TabsWrapper>
         <SwitchButtons
           values={['Supply', 'Withdraw']}
-          active={step}
+          active={vm.dashboardModalStep}
           onActivate={(v: 0 | 1) => setActiveTab(v)}
           border
         />
       </TabsWrapper>
       <DashboardModalBody urlParams={urlParams} operationName={operationName} />
-    </Root>
+    </Dialog>
   );
 };
 

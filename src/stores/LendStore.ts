@@ -60,15 +60,6 @@ class LendStore {
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 
-  dashboardModalStep: 0 | 1 = 0;
-  dashboardModalOpened: boolean = false;
-  @action.bound setDashboardModalOpened = (isOpen: boolean, step: 0 | 1) => {
-    console.log(this.dashboardModalOpened, 'setDashboardModalOpened1')
-    this.dashboardModalStep = step;
-    this.dashboardModalOpened = isOpen
-    console.log(this.dashboardModalOpened, 'setDashboardModalOpened2')
-  };
-
   private syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
     const keys = this.tokensSetups.reduce(

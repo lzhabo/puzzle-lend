@@ -39,11 +39,9 @@ const DesktopTable: React.FC<IProps> = () => {
   );
 
   const openModal = useCallback((e: any, poolId: string, operationName: string, assetId: string, step: 0 | 1) => {
-    console.log('openModal');
     e.stopPropagation();
-    lendStore.setDashboardModalOpened(true, step);
     return navigate(`/${poolId}/${operationName}/${assetId}`)
-  }, [lendStore, navigate]);
+  }, [navigate]);
 
 
   useMemo(() => {
@@ -81,7 +79,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, lendStore.poolId, 'borrow', s.assetId, lendStore.dashboardModalStep)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'borrow', s.assetId, 0)}
         >
           Borrow
         </Button>
@@ -91,14 +89,14 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, lendStore.dashboardModalStep)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, 0)}
         >
           Supply
         </Button>
       ),
     }));
     setFilteredAssets(data);
-  }, [lendStore.pool.address, lendStore.poolsStats, lendStore.dashboardModalStep, lendStore.poolId, openModal, navigate]);
+  }, [lendStore.pool.address, lendStore.poolsStats,lendStore.poolId, openModal, navigate]);
 
   return (
     <Root>

@@ -40,9 +40,8 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
 
   const openModal = useCallback((e: any, poolId: string, operationName: string, assetId: string, step: 0 | 1) => {
     e.stopPropagation();
-    lendStore.setDashboardModalOpened(true, step);
     return navigate(`/${poolId}/${operationName}/${assetId}`)
-  }, [lendStore, navigate]);
+  }, [navigate]);
 
   useMemo(() => {
     const data = lendStore.accountSupply.map((s) => ({
@@ -74,7 +73,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
         <Button
-          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, lendStore.dashboardModalStep)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, 0)}
           kind="secondary"
           size="medium"
           fixed
@@ -89,7 +88,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredSupplies(data);
-  }, [lendStore.pool.address, lendStore.dashboardModalStep, lendStore.accountSupply, lendStore.poolId, openModal, navigate]);
+  }, [lendStore.pool.address, lendStore.accountSupply, lendStore.poolId, openModal, navigate]);
 
   //-------------
   const borrowColumns = useMemo(
