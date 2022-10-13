@@ -3,11 +3,11 @@ import { useVM } from '@src/hooks/useVM';
 import { makeAutoObservable } from 'mobx';
 import { RootStore, useStores } from '@stores';
 
-const ctx = React.createContext<DashboardVM | null>(null);
+const ctx = React.createContext<DashboardModalVM | null>(null);
 
 export const DashboardUseVM = () => useVM(ctx);
 
-class DashboardVM {
+class DashboardModalVM {
   rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
@@ -17,13 +17,14 @@ class DashboardVM {
 
   dashboardModalStep: 0 | 1 = 0;
   dashboardModalTitles = [];
-  setDashboardModalOpened = (step: 0 | 1) => {
+
+  setDashboardModalStep = (step: 0 | 1) => {
     this.dashboardModalStep = step;
   };
 }
 
 export const DashboardVMProvider: React.FC = ({ children }) => {
   const rootStore = useStores();
-  const store = useMemo(() => new DashboardVM(rootStore), [rootStore]);
+  const store = useMemo(() => new DashboardModalVM(rootStore), [rootStore]);
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
