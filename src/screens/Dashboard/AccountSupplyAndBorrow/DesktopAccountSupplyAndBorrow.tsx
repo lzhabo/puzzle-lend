@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
@@ -37,6 +37,13 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
     ],
     []
   );
+
+  const openModal = useCallback((e: any, poolId: string, operationName: string, assetId: string, step: 0 | 1) => {
+    e.stopPropagation();
+    lendStore.setDashboardModalOpened(true, step);
+    return navigate(`/${poolId}/${operationName}/${assetId}`)
+  }, [lendStore, navigate]);
+
   useMemo(() => {
     const data = lendStore.accountSupply.map((s) => ({
       onClick: () =>
@@ -67,7 +74,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
         <Button
-          onClick={() => lendStore.setDashboardModalOpened(true, 0)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, lendStore.dashboardModalStep)}
           kind="secondary"
           size="medium"
           fixed
@@ -82,7 +89,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
     }));
     setFilteredSupplies(data);
-  }, [lendStore.accountSupply, lendStore.pool.address, navigate]);
+  }, [lendStore.pool.address, lendStore.dashboardModalStep, lendStore.accountSupply, lendStore.poolId, openModal, navigate]);
 
   //-------------
   const borrowColumns = useMemo(
@@ -126,10 +133,6 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
         <Button
-          onClick={() => {
-            console.log('TEEEEEEST Borrow')
-            lendStore.setDashboardModalOpened(false, 0);
-          }}
           kind="secondary"
           size="medium"
           fixed

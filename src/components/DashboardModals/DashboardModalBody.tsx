@@ -1,7 +1,6 @@
-/* eslint-disable no-bitwise */
 import styled from '@emotion/styled';
 import React, { useState, useMemo } from 'react';
-import { Column, Row } from '@src/components/Flex';
+import { Column } from '@src/components/Flex';
 import { observer } from 'mobx-react-lite';
 import { DashboardWalletUseVM } from '@src/components/DashboardModals/DashboardWalletVM';
 import { TPoolStats } from "@src/stores/LendStore";
@@ -48,25 +47,8 @@ const WalletModalBody: React.FC<IProps> = ({
     if (getAssetData) vm.setSupplyAmount(amount || getAssetData.balance!);
   };
 
-  const withdrawMaxClickFunc = (amount?: BN) => {
-    const getAssetData = vm.balances.find((tokenData) => tokenData.assetId === urlParams.tokenId);
-
-    if (getAssetData) vm.setWithdrawAmount(amount || getAssetData.balance!);
-  };
-
-  const borrowMaxClickFunc = (amount: BN) => {
-    vm.setBorrowAmount(amount);
-  };
-
-  const repayMaxClickFunc = (amount?: BN) => {
-    const getAssetData = vm.balances.find((tokenData) => tokenData.assetId === urlParams.tokenId);
-
-    if (getAssetData) vm.setRepayAmount(amount || getAssetData.balance!);
-  };
-
   useMemo(() => {
     const token = lendStore.poolsStats.find((_) => _.assetId === urlParams.tokenId);
-    console.log(token, '---TOKEN');
 
     setChoosenToken(token!);
   }, [urlParams.tokenId, lendStore.poolsStats]);

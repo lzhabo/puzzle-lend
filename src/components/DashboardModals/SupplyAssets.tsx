@@ -1,7 +1,3 @@
-/* eslint-disable react/require-default-props */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useStores } from '@src/stores';

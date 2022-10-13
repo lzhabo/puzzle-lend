@@ -26,7 +26,7 @@ const MobileSpace = styled.div`
   }
 `;
 const App: React.FC = () => {
-  const { accountStore, lendStore } = useStores();
+  const { accountStore } = useStores();
   return (
     <Root>
       <Header />
@@ -36,24 +36,11 @@ const App: React.FC = () => {
           <Route
             path={ROUTES.DASHBOARD_MODAL}
             element={
-              <DashboardModal
-                onClose={() => lendStore.setDashboardModalOpened(false, lendStore.dashboardModalStep)}
-                visible={lendStore.dashboardModalOpened}
-              />
+              <DashboardModal/>
             }
           />
         </Route>
-        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />}>
-          <Route
-            path={ROUTES.DASHBOARD_MODAL}
-            element={
-              <DashboardModal
-                onClose={() => lendStore.setDashboardModalOpened(false, lendStore.dashboardModalStep)}
-                visible={lendStore.dashboardModalOpened}
-              />
-            }
-          />
-        </Route>
+        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
         <Route
           path={ROUTES.DASHBOARD_TOKEN_DETAILS}
           element={<ExploreToken />}

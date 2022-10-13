@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import Table from "@components/Table";
+import { ROUTES } from "@src/constants";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import SquareTokenIcon from "@components/SquareTokenIcon";
@@ -37,20 +38,24 @@ const DesktopTable: React.FC<IProps> = () => {
     []
   );
 
-  const assetBtnClick = (poolId: string, operationName: string, tokenId: string) => {
-    lendStore.setDashboardModalOpened(true, lendStore.dashboardModalStep);
-    return navigate(`/${poolId}/${operationName}/${tokenId}`)
-  }
+  const openModal = useCallback((e: any, poolId: string, operationName: string, assetId: string, step: 0 | 1) => {
+    console.log('openModal');
+    e.stopPropagation();
+    lendStore.setDashboardModalOpened(true, step);
+    return navigate(`/${poolId}/${operationName}/${assetId}`)
+  }, [lendStore, navigate]);
+
 
   useMemo(() => {
     const data = lendStore.poolsStats.map((s) => ({
-      // onClick: () =>
-      //   navigate(
-      //     ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-      //       ":poolId",
-      //       lendStore.pool.address
-      //     ).replace(":assetId", s.assetId)
-      //   ),
+      onClick: () =>{
+        navigate(
+          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
+        )
+      },
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -76,7 +81,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={() => assetBtnClick(lendStore.poolId, 'borrow', s.assetId)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'borrow', s.assetId, lendStore.dashboardModalStep)}
         >
           Borrow
         </Button>
@@ -86,17 +91,18 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={() => assetBtnClick(lendStore.poolId, 'supply', s.assetId)}
+          onClick={(e) => openModal(e, lendStore.poolId, 'supply', s.assetId, lendStore.dashboardModalStep)}
         >
           Supply
         </Button>
       ),
     }));
     setFilteredAssets(data);
-  }, [lendStore.pool.address, lendStore.poolsStats, navigate]);
+  }, [lendStore.pool.address, lendStore.poolsStats, lendStore.dashboardModalStep, lendStore.poolId, openModal, navigate]);
+
   return (
     <Root>
-      {lendStore.initialized && filteredAssets.length > 0 ? (
+      {lendStore.initialized && filteredAssets.length ? (
         <Table columns={columns} data={filteredAssets} />
       ) : (
         <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />

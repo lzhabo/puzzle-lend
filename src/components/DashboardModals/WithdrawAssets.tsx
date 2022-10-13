@@ -1,7 +1,3 @@
-/* eslint-disable react/require-default-props */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useState, useEffect, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useStores } from '@src/stores';
@@ -146,12 +142,11 @@ const WithdrawAssets: React.FC<IProps> = ({
 
   // todo: BNNNN
   const countAccountHealth = (currentWithdraw: any) => {
-    let currentWithdrawAmount = currentWithdraw.toDecimalPlaces(0);
-    const tokens = lendStore.poolsStats;
+    // let currentWithdrawAmount = currentWithdraw.toDecimalPlaces(0);
     let borrowCapacity = BN.ZERO;
     let borrowCapacityUsed = BN.ZERO;
 
-    if (!isNative) currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
+    // if (!isNative) currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
 
     // tokens.forEach((item: IToken) => {
     //   const tokenData: any = lendStore.poolDataTokensWithStats[item.assetId];
