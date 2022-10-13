@@ -30,6 +30,10 @@ const TabsWrapper = styled(Row)`
   background: ${({ theme }) => theme.colors.white};
   height: 56px;
   margin-top: -56px;
+
+  .rc-dialog-title {
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 const DashboardModal: React.FC<IProps> = ({ ...rest }) => {

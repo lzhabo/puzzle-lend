@@ -22,7 +22,7 @@ interface IProps {
 const Root = styled(Column)`
   width: 100%;
   box-sizing: border-box;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.white};
 
   & > * {
     width: 100%;
