@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { observer } from 'mobx-react-lite';
@@ -34,7 +34,18 @@ const DashboardModal: React.FC<IProps> = ({ operationName }) => {
 const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   const vm = DashboardUseVM();
   const navigate = useNavigate();
+  const [getModalTitles, setModalTitles] = useState<[string, string]>(['', '']);
   const urlParams = useParams<any>();
+
+  useMemo(() => {
+    const supplyTitles: [string, string] = ['Supply', 'Withdraw'];
+    const borrowTitles: [string, string] = ['Borrow', 'Repay'];
+    if (
+      [OPERATIONS_TYPE.SUPPLY, OPERATIONS_TYPE.WITHDRAW].includes(operationName)
+    )
+      setModalTitles(supplyTitles);
+    else setModalTitles(borrowTitles);
+  }, [operationName]);
 
   // todo: operationName modal titles
   const setActiveTab = (step: 0 | 1) => {
@@ -45,7 +56,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
         operationName === OPERATIONS_TYPE.SUPPLY
           ? OPERATIONS_TYPE.WITHDRAW
           : OPERATIONS_TYPE.SUPPLY;
-      vm.setDashboardModalOpened(true, step);
+      vm.setDashboardModalOpened(step);
       return navigate(
         `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`,
       );
@@ -58,7 +69,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
         operationName === OPERATIONS_TYPE.BORROW
           ? OPERATIONS_TYPE.BORROW
           : OPERATIONS_TYPE.REPAY;
-      vm.setDashboardModalOpened(true, step);
+      vm.setDashboardModalOpened(step);
       return navigate(
         `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`,
       );
@@ -66,7 +77,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   };
 
   const closeTab = (step: 0 | 1) => {
-    vm.setDashboardModalOpened(false, step);
+    vm.setDashboardModalOpened(step);
     return navigate('/');
   };
 
@@ -80,7 +91,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
       <SizedBox height={72} />
       <TabsWrapper>
         <SwitchButtons
-          values={['Supply', 'Withdraw']}
+          values={getModalTitles}
           active={vm.dashboardModalStep}
           onActivate={(v: 0 | 1) => setActiveTab(v)}
           border

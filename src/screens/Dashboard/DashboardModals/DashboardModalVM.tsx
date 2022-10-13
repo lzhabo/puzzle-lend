@@ -15,15 +15,10 @@ class DashboardVM {
     makeAutoObservable(this);
   }
 
-  onCloseModal = () => {
-    this.setDashboardModalOpened(false, this.dashboardModalStep);
-  };
-
   dashboardModalStep: 0 | 1 = 0;
-  dashboardModalOpened = false;
-  setDashboardModalOpened = (isOpen: boolean, step: 0 | 1) => {
+  dashboardModalTitles = [];
+  setDashboardModalOpened = (step: 0 | 1) => {
     this.dashboardModalStep = step;
-    this.dashboardModalOpened = isOpen;
   };
 }
 

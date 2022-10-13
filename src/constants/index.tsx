@@ -15,6 +15,8 @@ export const ROUTES = {
   DASHBOARD_MODALS: {
     [OPERATIONS_TYPE.SUPPLY]: ':modalPoolId/supply/:tokenId',
     [OPERATIONS_TYPE.WITHDRAW]: ':modalPoolId/withdraw/:tokenId',
+    [OPERATIONS_TYPE.BORROW]: ':modalPoolId/borrow/:tokenId',
+    [OPERATIONS_TYPE.REPAY]: ':modalPoolId/repay/:tokenId',
   },
   DASHBOARD_POOL: '/:poolId',
   DASHBOARD_TOKEN_DETAILS: '/:poolId/:assetId',
