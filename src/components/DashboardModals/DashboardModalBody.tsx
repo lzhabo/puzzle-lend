@@ -72,14 +72,9 @@ const WalletModalBody: React.FC<IProps> = ({
     if (getAssetData) vm.setRepayAmount(amount || getAssetData.balance!);
   };
 
-  // main reason of this useMemo is SYMBOl
-  // token flow of filtered tokens and choosenToken different
-  // todo: figure out, why symbol is different
   useMemo(() => {
-    console.log(lendStore.poolsStats, urlParams.tokenId, '---TOKEN');
     const token = lendStore.poolsStats.find((_) => _.assetId === urlParams.tokenId);
     console.log(token, '---TOKEN');
-    // const token = filteredTokens.find((item) => item.assetId === choosenToken?.assetId);
 
     setChoosenToken(token!);
   }, [urlParams.tokenId, lendStore.poolsStats]);
