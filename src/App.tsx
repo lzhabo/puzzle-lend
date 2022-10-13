@@ -7,7 +7,7 @@ import { Column } from "@components/Flex";
 import { useStores } from "@stores";
 import WalletModal from "@components/Wallet/WalletModal";
 import MobileNavBar from "./components/MobileNavBar";
-import { ROUTES } from "@src/constants";
+import { ROUTES, OPERATIONS_TYPE } from "@src/constants";
 import Dashboard from "@screens/Dashboard";
 import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
@@ -19,12 +19,14 @@ const Root = styled(Column)`
   background: ${({ theme }) => theme.colors.primary50};
   min-height: 100vh;
 `;
+
 const MobileSpace = styled.div`
   height: 56px;
   @media (min-width: 880px) {
     display: none;
   }
 `;
+
 const App: React.FC = () => {
   const { accountStore } = useStores();
   return (
@@ -33,11 +35,11 @@ const App: React.FC = () => {
       <Routes>
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
-          {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([action, path]) => (
+          {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (
             <Route
               path={path}
               element={
-                <DashboardModal operationName={action}/>
+                <DashboardModal operationName={type as OPERATIONS_TYPE}/>
               }
             />
           ))}

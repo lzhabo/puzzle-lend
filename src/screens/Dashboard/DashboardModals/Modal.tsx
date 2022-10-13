@@ -5,12 +5,13 @@ import { observer } from 'mobx-react-lite';
 import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
+import { OPERATIONS_TYPE } from "@src/constants";
 import DashboardModalBody from '@screens/Dashboard/DashboardModals/DashboardModalBody';
 import Dialog from '@components/Dialog';
 import { DashboardWalletVMProvider, DashboardWalletUseVM } from '@screens/Dashboard/DashboardModals/DashboardWalletVM';
 
 type IProps = {
-  operationName: string;
+  operationName: OPERATIONS_TYPE;
 };
 
 const TabsWrapper = styled(Row)`
@@ -35,6 +36,7 @@ const DashboardModal: React.FC<IProps> = ({ operationName }) => {
 };
 
 const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
+  console.log(operationName, 'operationName')
   const vm = DashboardWalletUseVM();
   const navigate = useNavigate();
   const urlParams = useParams<any>();
@@ -42,8 +44,8 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   console.log(urlParams, '-PPARAANS')
 
   const setActiveTab = (step: 0 | 1) => {
-    if (operationName === 'supply' || operationName === 'withdraw') {
-      const operation = operationName === 'supply' ? 'withdraw' : 'supply'
+    if (operationName === OPERATIONS_TYPE.SUPPLY || operationName === OPERATIONS_TYPE.WITHDRAW) {
+      const operation = operationName === OPERATIONS_TYPE.SUPPLY ? OPERATIONS_TYPE.WITHDRAW : OPERATIONS_TYPE.SUPPLY
       vm.setDashboardModalOpened(true, step);
       return navigate(`/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`)
     }

@@ -1,14 +1,19 @@
 import tokens from "./tokens.json";
 import tokenLogos from "@src/constants/tokenLogos";
 
+export enum OPERATIONS_TYPE {
+  WITHDRAW = 'withdraw',
+  SUPPLY = 'supply',
+}
+
 export const ROUTES = {
   ROOT: "/",
   DASHBOARD: "/",
-  DASHBOARD_MODALS: {
-    supply: ":modalPoolId/supply/:tokenId",
-    withdraw: ":modalPoolId/withdraw/:tokenId",
-  },
   DASHBOARD_MODAL_WITHDRAW: "",
+  DASHBOARD_MODALS: {
+    [OPERATIONS_TYPE.SUPPLY]: ":modalPoolId/supply/:tokenId",
+    [OPERATIONS_TYPE.WITHDRAW]: ":modalPoolId/withdraw/:tokenId",
+  },
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
   NOT_FOUND: "/404",
