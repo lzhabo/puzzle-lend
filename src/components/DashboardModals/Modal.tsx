@@ -19,11 +19,14 @@ interface UrlParamsProps {
 
 type IProps = {
   step: 0 | 1;
+  operationName: string;
   urlParams: Readonly<Params<keyof UrlParamsProps>>;
   setActiveTab: (step: 0 | 1) => void;
 };
 
-type IModalProps = {};
+type IModalProps = {
+  operationName: string;
+};
 
 const Root = styled.div`
   display: flex;
@@ -44,14 +47,16 @@ const TabsWrapper = styled(Row)`
   }
 `;
 
-const DashboardModal: React.FC<IModalProps> = ({ ...rest }) => {
+const DashboardModal: React.FC<IModalProps> = ({ operationName }) => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
-  const urlParams = useParams<keyof UrlParamsProps>();
+  const urlParams = useParams<any>();
+
+  console.log(urlParams, '-PPARAANS')
 
   const setActiveTab = (step: 0 | 1) => {
-    if (urlParams?.operationName === 'supply' || urlParams?.operationName === 'withdraw') {
-      const operation = urlParams?.operationName === 'supply' ? 'withdraw' : 'supply'
+    if (operationName === 'supply' || operationName === 'withdraw') {
+      const operation = operationName === 'supply' ? 'withdraw' : 'supply'
       lendStore.setDashboardModalOpened(true, step);
       return navigate(`/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`)
     }
@@ -72,6 +77,7 @@ const DashboardModal: React.FC<IModalProps> = ({ ...rest }) => {
       <DashboardWalletVMProvider>
         <DashboardModalContent
           urlParams={urlParams}
+          operationName={operationName}
           step={lendStore.dashboardModalStep}
           setActiveTab={((step) => setActiveTab(step))}
         />
@@ -80,7 +86,7 @@ const DashboardModal: React.FC<IModalProps> = ({ ...rest }) => {
   );
 };
 
-const DashboardModalContent: React.FC<IProps> = ({ step, setActiveTab, urlParams }) => {
+const DashboardModalContent: React.FC<IProps> = ({ step, setActiveTab, urlParams, operationName }) => {
   return (
     <Root>
       <SizedBox height={72} />
@@ -92,7 +98,7 @@ const DashboardModalContent: React.FC<IProps> = ({ step, setActiveTab, urlParams
           border
         />
       </TabsWrapper>
-      <DashboardModalBody urlParams={urlParams} />
+      <DashboardModalBody urlParams={urlParams} operationName={operationName} />
     </Root>
   );
 };

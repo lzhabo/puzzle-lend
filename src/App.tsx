@@ -34,9 +34,15 @@ const App: React.FC = () => {
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
           <Route
-            path={ROUTES.DASHBOARD_MODAL}
+            path={ROUTES.DASHBOARD_MODAL_SUPPLY}
             element={
-              <DashboardModal/>
+              <DashboardModal operationName="supply"/>
+            }
+          />
+          <Route
+            path={ROUTES.DASHBOARD_MODAL_WITHDRAW}
+            element={
+              <DashboardModal operationName="withdraw"/>
             }
           />
         </Route>

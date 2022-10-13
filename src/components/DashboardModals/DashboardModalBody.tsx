@@ -16,6 +16,7 @@ type UrlParamsTypes = {
 
 interface IProps {
   urlParams: UrlParamsTypes;
+  operationName: string;
 }
 
 const Root = styled(Column)`
@@ -29,7 +30,8 @@ const Root = styled(Column)`
 `;
 
 const WalletModalBody: React.FC<IProps> = ({
-  urlParams
+  urlParams,
+  operationName
 }) => {
   const [choosenToken, setChoosenToken] = useState<TPoolStats>();
   const vm = DashboardWalletUseVM();
@@ -55,7 +57,7 @@ const WalletModalBody: React.FC<IProps> = ({
 
   return (
     <Root>
-      {lendStore.dashboardModalStep === 0 && urlParams.operationName === 'supply' && (
+      {lendStore.dashboardModalStep === 0 && operationName === 'supply' && (
         <SupplyAssets
           token={choosenToken!}
           userBalance={getTokenBalance()}
@@ -66,7 +68,7 @@ const WalletModalBody: React.FC<IProps> = ({
           onClose={vm.onCloseModal}
         />
       )}
-      {lendStore.dashboardModalStep === 1 && urlParams.operationName === 'withdraw' && (
+      {lendStore.dashboardModalStep === 1 && operationName === 'withdraw' && (
         <WithdrawAssets
           token={choosenToken!}
           userBalance={getTokenBalance()}
