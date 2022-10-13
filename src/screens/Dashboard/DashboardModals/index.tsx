@@ -1,3 +1,2 @@
-import DashboardModals from './DashboardModals';
-
+import DashboardModals from "./DashboardModals";
 export default DashboardModals;

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 const GridTable = styled.div<{
   desktopTemplate?: string;
@@ -8,7 +8,7 @@ const GridTable = styled.div<{
     display: grid;
     column-gap: 8px;
     grid-template-columns: ${({ mobileTemplate }) =>
-      mobileTemplate ?? '6fr 2fr 1fr'};
+      mobileTemplate ?? "6fr 2fr 1fr"};
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
@@ -19,7 +19,7 @@ const GridTable = styled.div<{
     margin-bottom: 8px;
     @media (min-width: 880px) {
       grid-template-columns: ${({ desktopTemplate }) =>
-        desktopTemplate ?? '6fr 2fr 1fr'};
+        desktopTemplate ?? "6fr 2fr 1fr"};
       padding: 14px 24px;
     }
   }
@@ -30,7 +30,7 @@ const GridTable = styled.div<{
     display: grid;
     column-gap: 8px;
     grid-template-columns: ${({ mobileTemplate }) =>
-      mobileTemplate ?? '6fr 2fr 1fr'};
+      mobileTemplate ?? "6fr 2fr 1fr"};
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
@@ -41,7 +41,7 @@ const GridTable = styled.div<{
     border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
     @media (min-width: 880px) {
       grid-template-columns: ${({ desktopTemplate }) =>
-        desktopTemplate ?? '6fr 2fr 1fr'};
+        desktopTemplate ?? "6fr 2fr 1fr"};
       margin: 0 24px;
     }
 

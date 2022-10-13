@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import useWindowSize from '@src/hooks/useWindowSize';
-import MobileAccountSupplyAndBorrow from './MobileAccountSupplyAndBorrow';
-import DesktopAccountSupplyAndBorrow from './DesktopAccountSupplyAndBorrow';
+import styled from "@emotion/styled";
+import React from "react";
+import useWindowSize from "@src/hooks/useWindowSize";
+import MobileAccountSupplyAndBorrow from "./MobileAccountSupplyAndBorrow";
+import DesktopAccountSupplyAndBorrow from "./DesktopAccountSupplyAndBorrow";
 
 interface IProps {}
 

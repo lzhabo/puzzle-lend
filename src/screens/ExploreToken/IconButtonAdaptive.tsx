@@ -1,8 +1,8 @@
-import SizedBox from '@components/SizedBox';
-import Button from '@components/Button';
-import React, { HTMLAttributes } from 'react';
-import useWindowSize from '@src/hooks/useWindowSize';
-import styled from '@emotion/styled';
+import SizedBox from "@components/SizedBox";
+import Button from "@components/Button";
+import React, { HTMLAttributes } from "react";
+import useWindowSize from "@src/hooks/useWindowSize";
+import styled from "@emotion/styled";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   icon: JSX.Element;

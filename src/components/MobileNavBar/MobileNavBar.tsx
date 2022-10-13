@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { ROUTES } from '@src/constants';
-import SizedBox from '@components/SizedBox';
-import Text from '@components/Text';
-import { useLocation, useNavigate } from 'react-router-dom';
-import isRoutesEquals from '@src/utils/isRoutesEquals';
-import Home from '@components/MobileNavBar/Home';
-import Invest from '@components/MobileNavBar/Invest';
+import styled from "@emotion/styled";
+import React from "react";
+import { ROUTES } from "@src/constants";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import { useLocation, useNavigate } from "react-router-dom";
+import isRoutesEquals from "@src/utils/isRoutesEquals";
+import Home from "@components/MobileNavBar/Home";
+import Invest from "@components/MobileNavBar/Invest";
 
 interface IProps {}
 
@@ -47,36 +47,37 @@ const MobileNavBar: React.FC<IProps> = () => {
   const navigate = useNavigate();
   const menuItems = [
     {
-      name: 'My supply',
+      name: "My supply",
       link: ROUTES.DASHBOARD,
       icon: (
         <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
+      big: false
     },
     {
-      name: 'Home',
+      name: "Home",
       link: ROUTES.DASHBOARD,
       icon: (
         <Home active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
+      big: false
     },
     {
-      name: 'My borrow',
+      name: "My borrow",
       link: ROUTES.DASHBOARD,
       icon: (
         <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
-    },
+      big: false
+    }
   ];
   return (
     <Root>
       {menuItems.map(({ icon, name, big, link }, index) => (
         <MenuItem
           key={index}
-          onClick={() => (name === 'NFT' ? window.open(link) : navigate(link))}>
+          onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}
+        >
           {icon}
           {name != null && <SizedBox height={6} />}
           {name != null && (
@@ -84,10 +85,11 @@ const MobileNavBar: React.FC<IProps> = () => {
               size="small"
               type={
                 isRoutesEquals(link, location.pathname)
-                  ? 'primary'
-                  : 'secondary'
+                  ? "primary"
+                  : "secondary"
               }
-              fitContent>
+              fitContent
+            >
               {name}
             </Text>
           )}

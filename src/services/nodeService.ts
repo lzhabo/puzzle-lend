@@ -1,9 +1,9 @@
-import { IEvaluateScript, ITransaction } from '@src/utils/types';
-import makeNodeRequest from '@src/utils/makeNodeRequest';
+import { IEvaluateScript, ITransaction } from "@src/utils/types";
+import makeNodeRequest from "@src/utils/makeNodeRequest";
 
 export interface INodeData {
   key: string;
-  type: 'integer' | 'string';
+  type: "integer" | "string";
   value: number | string;
 }
 
@@ -69,11 +69,11 @@ const nodeService = {
   },
   evaluate: async (
     address: string,
-    expression: string,
+    expression: string
   ): Promise<IEvaluateScript> => {
     const url = `/utils/script/evaluate/${address}`;
     const { data } = await makeNodeRequest(url, {
-      postData: { expr: expression },
+      postData: { expr: expression }
     });
     return data;
   },
@@ -90,23 +90,23 @@ const nodeService = {
       await Promise.all([
         makeNodeRequest(assetsUrl).then(({ data }) => data),
         makeNodeRequest(wavesUrl).then(({ data }) => ({
-          balances: [{ balance: data.regular, assetId: 'WAVES' }],
-        })),
+          balances: [{ balance: data.regular, assetId: "WAVES" }]
+        }))
       ])
     ).reduce<{ assetId: string; balance: number }[]>(
       (acc, { balances }) => [...acc, ...balances],
-      [],
+      []
     );
   },
   nodeKeysRequest: async (
     contract: string,
-    keys: string[] | string,
+    keys: string[] | string
   ): Promise<INodeData[]> => {
-    const searchKeys = typeof keys === 'string' ? [keys] : keys;
-    const search = new URLSearchParams(searchKeys?.map(s => ['key', s]));
+    const searchKeys = typeof keys === "string" ? [keys] : keys;
+    const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
     const keysArray = search.toString();
     const response = await makeNodeRequest(
-      `/addresses/data/${contract}?${keysArray}`,
+      `/addresses/data/${contract}?${keysArray}`
     );
     if (response.data) {
       return response.data;
@@ -116,7 +116,7 @@ const nodeService = {
   },
   nodeMatchRequest: async (
     contract: string,
-    match: string,
+    match: string
   ): Promise<INodeData[]> => {
     const url = `/addresses/data/${contract}?matches=${match}`;
     const response: { data: INodeData[] } = await makeNodeRequest(url);
@@ -138,14 +138,14 @@ const nodeService = {
   transactions: async (
     address: string,
     limit = 10,
-    after?: string,
+    after?: string
   ): Promise<ITransaction[] | null> => {
     const urlSearchParams = new URLSearchParams();
     if (after != null) {
-      urlSearchParams.set('after', after);
+      urlSearchParams.set("after", after);
     }
     const url = `/transactions/address/${address}/limit/${limit}?${
-      after != null ? urlSearchParams.toString() : ''
+      after != null ? urlSearchParams.toString() : ""
     }`;
     const response: { data: [ITransaction[]] } = await makeNodeRequest(url);
     if (response.data[0]) {
@@ -162,7 +162,7 @@ const nodeService = {
     } else {
       return null;
     }
-  },
+  }
 };
 
 export default nodeService;

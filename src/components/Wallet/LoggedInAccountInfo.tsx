@@ -1,16 +1,16 @@
-import styled from '@emotion/styled';
-import React, { useState } from 'react';
-import { Row } from '@components/Flex';
-import { ReactComponent as WalletIcon } from '@src/assets/icons/pink-wallet.svg';
-import SizedBox from '@components/SizedBox';
-import Text from '@components/Text';
-import centerEllipsis from '@src/utils/centerEllipsis';
-import arrowIcon from '@src/assets/icons/arrowRightBorderless.svg';
-import * as identityImg from 'identity-img';
-import { useStores } from '@stores';
-import Tooltip from '@components/Tooltip';
-import { observer } from 'mobx-react-lite';
-import WalletActionsTooltip from '../WalletActionsTooltip';
+import styled from "@emotion/styled";
+import React, { useState } from "react";
+import { Row } from "@components/Flex";
+import { ReactComponent as WalletIcon } from "@src/assets/icons/pink-wallet.svg";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
+import * as identityImg from "identity-img";
+import { useStores } from "@stores";
+import Tooltip from "@components/Tooltip";
+import { observer } from "mobx-react-lite";
+import WalletActionsTooltip from "../WalletActionsTooltip";
 
 interface IProps {}
 
@@ -57,7 +57,7 @@ const AddressContainer = styled.div<{ expanded: boolean }>`
   .menu-arrow {
     transition: 0.4s;
     transform: ${({ expanded }) =>
-      expanded ? 'rotate(-90deg)' : 'rotate(90deg)'};
+      expanded ? "rotate(-90deg)" : "rotate(90deg)"};
   }
 `;
 
@@ -70,19 +70,20 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
     <Root>
       <WalletIcon
         onClick={() => accountStore.setWalletModalOpened(true)}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
       />
       <SizedBox width={24} />
       <Tooltip
         config={{
-          placement: 'bottom-end',
-          trigger: 'click',
-          onVisibleChange: setAccountOpened,
+          placement: "bottom-end",
+          trigger: "click",
+          onVisibleChange: setAccountOpened
         }}
-        content={<WalletActionsTooltip address={address!} />}>
+        content={<WalletActionsTooltip address={address!} />}
+      >
         <AddressContainer expanded={accountOpened}>
           <img className="avatar" src={avatar!} alt="avatar" />
-          <Text>{centerEllipsis(address ?? '', 6)}</Text>
+          <Text>{centerEllipsis(address ?? "", 6)}</Text>
           <SizedBox width={10} />
           <img src={arrowIcon} className="menu-arrow" alt="arrow" />
         </AddressContainer>

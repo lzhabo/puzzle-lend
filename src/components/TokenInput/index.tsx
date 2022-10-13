@@ -1,3 +1,3 @@
-import TokenInput from './TokenInput';
+import TokenInput from "./TokenInput";
 
 export default TokenInput;

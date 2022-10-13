@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { Column } from '@components/Flex';
+import styled from "@emotion/styled";
+import { Column } from "@components/Flex";
 
 const Layout = styled(Column)`
   width: 100%;

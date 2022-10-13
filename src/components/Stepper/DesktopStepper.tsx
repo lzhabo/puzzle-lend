@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import DesktopStep from './DesktopStep';
-import ResetAllButton from '@components/Stepper/ResetAllButton';
-import SizedBox from '@components/SizedBox';
+import styled from "@emotion/styled";
+import React from "react";
+import DesktopStep from "./DesktopStep";
+import ResetAllButton from "@components/Stepper/ResetAllButton";
+import SizedBox from "@components/SizedBox";
 
 interface IProps {
   steps: string[];
@@ -41,25 +41,25 @@ const Stepper: React.FC<IProps> = ({
   activeStep,
   onStepClick,
   minStep,
-  onReset,
+  onReset
 }) => {
   return (
     <Root>
       {steps.map((name, step, array) => {
         const state =
           step === activeStep
-            ? 'current'
+            ? "current"
             : step > activeStep
-            ? 'next'
-            : 'previous';
+            ? "next"
+            : "previous";
         return (
-          <React.Fragment key={step + 'step-step'}>
+          <React.Fragment key={step + "step-step"}>
             <DesktopStep
               onClick={() => onStepClick(step)}
               title={name}
               state={state}
               index={step}
-              key={step + name + '_step'}
+              key={step + name + "_step"}
               disabled={
                 activeStep === 3
                   ? true

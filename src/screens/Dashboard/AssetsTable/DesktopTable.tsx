@@ -1,17 +1,17 @@
-import styled from '@emotion/styled';
-import React, { useMemo, useState, useCallback } from 'react';
-import Table from '@components/Table';
-import { ROUTES } from '@src/constants';
-import { Column, Row } from '@src/components/Flex';
-import Text from '@src/components/Text';
-import SquareTokenIcon from '@components/SquareTokenIcon';
-import SizedBox from '@components/SizedBox';
-import Button from '@src/components/Button';
-import { useStores } from '@stores';
-import { observer } from 'mobx-react-lite';
-import BN from '@src/utils/BN';
-import Skeleton from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
+import styled from "@emotion/styled";
+import React, { useMemo, useState, useCallback } from "react";
+import Table from "@components/Table";
+import { ROUTES } from "@src/constants";
+import { Column, Row } from "@src/components/Flex";
+import Text from "@src/components/Text";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import SizedBox from "@components/SizedBox";
+import Button from "@src/components/Button";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import BN from "@src/utils/BN";
+import Skeleton from "react-loading-skeleton";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -27,15 +27,15 @@ const DesktopTable: React.FC<IProps> = () => {
   const navigate = useNavigate();
   const columns = useMemo(
     () => [
-      { Header: 'Asset', accessor: 'asset' },
-      { Header: 'Total supply', accessor: 'supply' },
-      { Header: 'Supply APY', accessor: 'supplyApy' },
-      { Header: 'Total borrow', accessor: 'borrow' },
-      { Header: 'Borrow APY', accessor: 'borrowApy' },
-      { Header: '', accessor: 'borrowBtn' },
-      { Header: '', accessor: 'supplyBtn' },
+      { Header: "Asset", accessor: "asset" },
+      { Header: "Total supply", accessor: "supply" },
+      { Header: "Supply APY", accessor: "supplyApy" },
+      { Header: "Total borrow", accessor: "borrow" },
+      { Header: "Borrow APY", accessor: "borrowApy" },
+      { Header: "", accessor: "borrowBtn" },
+      { Header: "", accessor: "supplyBtn" }
     ],
-    [],
+    []
   );
 
   const openModal = useCallback(
@@ -44,22 +44,22 @@ const DesktopTable: React.FC<IProps> = () => {
       poolId: string,
       operationName: string,
       assetId: string,
-      step: 0 | 1,
+      step: 0 | 1
     ) => {
       e.stopPropagation();
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
-    [navigate],
+    [navigate]
   );
 
   useMemo(() => {
-    const data = lendStore.poolsStats.map(s => ({
+    const data = lendStore.poolsStats.map((s) => ({
       onClick: () => {
         navigate(
           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-            ':poolId',
-            lendStore.pool.address,
-          ).replace(':assetId', s.assetId),
+            ":poolId",
+            lendStore.pool.address
+          ).replace(":assetId", s.assetId)
         );
       },
       asset: (
@@ -78,16 +78,19 @@ const DesktopTable: React.FC<IProps> = () => {
       ),
       supply:
         BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      supplyApy: s.supplyAPY.toFormat(2) + ' %',
+      supplyApy: s.supplyAPY.toFormat(2) + " %",
       borrow:
         BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
-      borrowApy: s.borrowAPY.toFormat(2) + ' %',
+      borrowApy: s.borrowAPY.toFormat(2) + " %",
       borrowBtn: (
         <Button
           kind="secondary"
           size="medium"
           fixed
-          onClick={e => openModal(e, lendStore.poolId, 'borrow', s.assetId, 0)}>
+          onClick={(e) =>
+            openModal(e, lendStore.poolId, "borrow", s.assetId, 0)
+          }
+        >
           Borrow
         </Button>
       ),
@@ -96,10 +99,13 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={e => openModal(e, lendStore.poolId, 'supply', s.assetId, 0)}>
+          onClick={(e) =>
+            openModal(e, lendStore.poolId, "supply", s.assetId, 0)
+          }
+        >
           Supply
         </Button>
-      ),
+      )
     }));
     setFilteredAssets(data);
   }, [
@@ -107,7 +113,7 @@ const DesktopTable: React.FC<IProps> = () => {
     lendStore.poolsStats,
     lendStore.poolId,
     openModal,
-    navigate,
+    navigate
   ]);
 
   return (

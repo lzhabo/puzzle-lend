@@ -1,21 +1,21 @@
-import RootStore from '@stores/RootStore';
-import { Signer } from '@waves/signer';
-import { ProviderWeb } from '@waves.exchange/provider-web';
-import { ProviderCloud } from '@waves.exchange/provider-cloud';
-import { ProviderKeeper } from '@waves/provider-keeper';
-import { NODE_URL, TOKENS_LIST } from '@src/constants';
-import { action, autorun, makeAutoObservable, reaction } from 'mobx';
-import Balance from '@src/entities/Balance';
-import { getCurrentBrowser } from '@src/utils/getCurrentBrowser';
-import BN from '@src/utils/BN';
-import { nodeInteraction, waitForTx } from '@waves/waves-transactions';
-import nodeService from '@src/services/nodeService';
-import { THEME_TYPE } from '@src/themes/ThemeProvider';
+import RootStore from "@stores/RootStore";
+import { Signer } from "@waves/signer";
+import { ProviderWeb } from "@waves.exchange/provider-web";
+import { ProviderCloud } from "@waves.exchange/provider-cloud";
+import { ProviderKeeper } from "@waves/provider-keeper";
+import { NODE_URL, TOKENS_LIST } from "@src/constants";
+import { action, autorun, makeAutoObservable, reaction } from "mobx";
+import Balance from "@src/entities/Balance";
+import { getCurrentBrowser } from "@src/utils/getCurrentBrowser";
+import BN from "@src/utils/BN";
+import { nodeInteraction, waitForTx } from "@waves/waves-transactions";
+import nodeService from "@src/services/nodeService";
+import { THEME_TYPE } from "@src/themes/ThemeProvider";
 
 export enum LOGIN_TYPE {
-  SIGNER_SEED = 'SIGNER_SEED',
-  SIGNER_EMAIL = 'SIGNER_EMAIL',
-  KEEPER = 'KEEPER',
+  SIGNER_SEED = "SIGNER_SEED",
+  SIGNER_EMAIL = "SIGNER_EMAIL",
+  KEEPER = "KEEPER"
 }
 
 export interface IInvokeTxParams {
@@ -24,7 +24,7 @@ export interface IInvokeTxParams {
   payment: Array<{ assetId: string; amount: string }>;
   call: {
     function: string;
-    args: Array<{ type: 'integer' | 'string'; value: string }>;
+    args: Array<{ type: "integer" | "string"; value: string }>;
   };
 }
 
@@ -67,7 +67,7 @@ class AccountStore {
     reaction(
       () => this.address,
       () =>
-        Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]),
+        Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()])
     );
   }
 
@@ -117,7 +117,7 @@ class AccountStore {
 
   findBalanceByAssetId = (assetId: string) =>
     this.assetBalances &&
-    this.assetBalances.find(balance => balance.assetId === assetId);
+    this.assetBalances.find((balance) => balance.assetId === assetId);
 
   public address: string | null = null;
   @action.bound setAddress = (address: string | null) =>
@@ -132,7 +132,7 @@ class AccountStore {
 
   get isBrowserSupportsWavesKeeper(): boolean {
     const browser = getCurrentBrowser();
-    return ['chrome', 'firefox', 'opera', 'edge'].includes(browser);
+    return ["chrome", "firefox", "opera", "edge"].includes(browser);
   }
 
   setupSynchronizationWithKeeper = () =>
@@ -143,7 +143,7 @@ class AccountStore {
           attemptsCount = attemptsCount + 1;
           if (attemptsCount > 10) {
             clearInterval(interval);
-            reject('❌ There is no waves keeper');
+            reject("❌ There is no waves keeper");
           }
         } else {
           clearInterval(interval);
@@ -154,7 +154,7 @@ class AccountStore {
           .then(() => this.subscribeToKeeperUpdate())
           .catch(
             ({ code }: { code: string }) =>
-              code === '14' && this.subscribeToKeeperUpdate(),
+              code === "14" && this.subscribeToKeeperUpdate()
           );
         resolve(result);
       }, 500);
@@ -183,7 +183,7 @@ class AccountStore {
         break;
       case LOGIN_TYPE.SIGNER_SEED:
         this.setSigner(new Signer({ NODE_URL: NODE_URL }));
-        const provider = new ProviderWeb('https://waves.exchange/signer/');
+        const provider = new ProviderWeb("https://waves.exchange/signer/");
         await this.signer?.setProvider(provider);
         break;
       default:
@@ -202,7 +202,7 @@ class AccountStore {
     let attemptsCount = 0;
 
     autorun(
-      reaction => {
+      (reaction) => {
         if (attemptsCount === 2) {
           reaction.dispose();
         } else if ((window as any).WavesKeeper) {
@@ -212,19 +212,19 @@ class AccountStore {
           attemptsCount += 1;
         }
       },
-      { scheduler: run => setInterval(run, 5 * 1000) },
+      { scheduler: (run) => setInterval(run, 5 * 1000) }
     );
   };
 
   subscribeToKeeperUpdate = () =>
-    (window as any).WavesKeeper.on('update', (publicState: any) =>
-      this.setAddress(publicState.account?.address ?? null),
+    (window as any).WavesKeeper.on("update", (publicState: any) =>
+      this.setAddress(publicState.account?.address ?? null)
     );
 
   serialize = (): ISerializedAccountStore => ({
     selectedTheme: this.selectedTheme,
     address: this.address,
-    loginType: this.loginType,
+    loginType: this.loginType
   });
 
   updateAccountAssets = async (force = false) => {
@@ -237,7 +237,7 @@ class AccountStore {
 
     const address = this.address;
     const data = await nodeService.getAddressBalances(address);
-    const assetBalances = TOKENS_LIST.map(asset => {
+    const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
       const usdnEquivalent = BN.ZERO;
@@ -257,60 +257,60 @@ class AccountStore {
       : this.transferWithSigner(trParams);
 
   private transferWithSigner = async (
-    data: ITransferParams,
+    data: ITransferParams
   ): Promise<string | null> => {
     if (this.signer == null) {
       await this.login(this.loginType ?? LOGIN_TYPE.SIGNER_EMAIL);
     }
     if (this.signer == null) {
-      this.rootStore.notificationStore.notify('You need to login firstly', {
-        title: 'Error',
-        type: 'error',
+      this.rootStore.notificationStore.notify("You need to login firstly", {
+        title: "Error",
+        type: "error"
       });
       return null;
     }
     try {
       const ttx = this.signer.transfer({
         ...data,
-        fee: this.isAccScripted ? 500000 : 100000,
+        fee: this.isAccScripted ? 500000 : 100000
       });
       const txId = await ttx.broadcast().then((tx: any) => tx.id);
       await waitForTx(txId, {
-        apiBase: NODE_URL,
+        apiBase: NODE_URL
       });
       return txId;
     } catch (e: any) {
       console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
-        type: 'error',
-        title: 'Transaction is not completed',
+        type: "error",
+        title: "Transaction is not completed"
       });
       return null;
     }
   };
 
   private transferWithKeeper = async (
-    data: ITransferParams,
+    data: ITransferParams
   ): Promise<string | null> => {
     const tokenAmount = BN.formatUnits(
       data.amount,
-      this.assetToSend?.decimals,
+      this.assetToSend?.decimals
     ).toString();
     const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 4,
       data: {
         amount: { tokens: tokenAmount, assetId: data.assetId },
         fee: {
-          tokens: this.isAccScripted ? '0.005' : '0.001',
-          assetId: 'WAVES',
+          tokens: this.isAccScripted ? "0.005" : "0.001",
+          assetId: "WAVES"
         },
-        recipient: data.recipient,
-      },
+        recipient: data.recipient
+      }
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
@@ -323,15 +323,15 @@ class AccountStore {
       : this.invokeWithSigner(txParams);
 
   private invokeWithSigner = async (
-    txParams: IInvokeTxParams,
+    txParams: IInvokeTxParams
   ): Promise<string | null> => {
     if (this.signer == null) {
       await this.login(this.loginType ?? LOGIN_TYPE.SIGNER_EMAIL);
     }
     if (this.signer == null) {
-      this.rootStore.notificationStore.notify('You need to login firstly', {
-        title: 'Error',
-        type: 'error',
+      this.rootStore.notificationStore.notify("You need to login firstly", {
+        title: "Error",
+        type: "error"
       });
       return null;
     }
@@ -344,48 +344,48 @@ class AccountStore {
           ? 900000
           : 500000,
       payment: txParams.payment,
-      call: txParams.call,
+      call: txParams.call
     });
 
     const txId = await ttx.broadcast().then((tx: any) => tx.id);
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
 
   private invokeWithKeeper = async (
-    txParams: IInvokeTxParams,
+    txParams: IInvokeTxParams
   ): Promise<string | null> => {
     const data = {
       fee: {
-        assetId: 'WAVES',
+        assetId: "WAVES",
         amount:
           txParams.fee != null
             ? txParams.fee
             : this.isAccScripted
             ? 900000
-            : 500000,
+            : 500000
       },
       dApp: txParams.dApp,
       call: txParams.call,
-      payment: txParams.payment,
+      payment: txParams.payment
     };
     const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 16,
-      data,
+      data
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return TOKENS_LIST.map(t => {
+    return TOKENS_LIST.map((t) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
       return balance ?? new Balance(t);
     }).sort((a, b) => {

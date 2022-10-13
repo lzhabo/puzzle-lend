@@ -1,13 +1,13 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { Column } from '@components/Flex';
-import Text from '@components/Text';
-import Divider from '@components/Divider';
-import copy from 'copy-to-clipboard';
-import { observer } from 'mobx-react-lite';
-import { useStores } from '@stores';
-import { Anchor } from '@components/Anchor';
-import { EXPLORER_URL } from '@src/constants';
+import styled from "@emotion/styled";
+import React from "react";
+import { Column } from "@components/Flex";
+import Text from "@components/Text";
+import Divider from "@components/Divider";
+import copy from "copy-to-clipboard";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@stores";
+import { Anchor } from "@components/Anchor";
+import { EXPLORER_URL } from "@src/constants";
 
 interface IProps {
   address: string;
@@ -38,9 +38,9 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
 
   const handleCopyAddress = () => {
     address && copy(address);
-    notificationStore.notify('Your address was copied', {
-      type: 'success',
-      title: 'Congratulations!',
+    notificationStore.notify("Your address was copied", {
+      type: "success",
+      title: "Congratulations!"
     });
   };
   const handleLogout = () => accountStore.logout();
@@ -51,8 +51,9 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
         Copy address
       </Text>
       <Anchor
-        style={{ padding: '10px 0' }}
-        href={`${EXPLORER_URL}/address/${address}`}>
+        style={{ padding: "10px 0" }}
+        href={`${EXPLORER_URL}/address/${address}`}
+      >
         <Text>View in Waves Explorer</Text>
       </Anchor>
       <Divider className="divider" />

@@ -1,15 +1,15 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import Text from '@components/Text';
-import SizedBox from '@components/SizedBox';
-import { Column, Row } from '@src/components/Flex';
-import SquareTokenIcon from '@components/SquareTokenIcon';
-import Button from '@components/Button';
-import { useStores } from '@stores';
-import { observer } from 'mobx-react-lite';
-import BN from '@src/utils/BN';
-import { ROUTES } from '@src/constants';
-import { useNavigate } from 'react-router-dom';
+import styled from "@emotion/styled";
+import React from "react";
+import Text from "@components/Text";
+import SizedBox from "@components/SizedBox";
+import { Column, Row } from "@src/components/Flex";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import Button from "@components/Button";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import BN from "@src/utils/BN";
+import { ROUTES } from "@src/constants";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {}
 
@@ -54,21 +54,21 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Text>
           <SizedBox height={8} />
           <Wrapper>
-            {lendStore.accountSupply.map(s => {
+            {lendStore.accountSupply.map((s) => {
               const supplied = BN.formatUnits(s.selfSupply, s.decimals);
               const data = [
                 {
-                  title: 'Supplied',
-                  value: `${supplied.toFormat(4)} ${s.symbol}`,
+                  title: "Supplied",
+                  value: `${supplied.toFormat(4)} ${s.symbol}`
                 },
-                { title: 'Supply APY', value: s.supplyAPY.toFormat(2) + '%' },
+                { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
                 {
-                  title: 'Daily income',
+                  title: "Daily income",
                   value:
                     `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(
-                      6,
-                    )} ` + s.symbol,
-                },
+                      6
+                    )} ` + s.symbol
+                }
               ];
               return (
                 <Asset key={`token-${s.assetId}`}>
@@ -86,17 +86,18 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   <Data crossAxisSize="max">
                     {data.map(({ title, value }, index) => (
                       <Row
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() =>
                           navigate(
                             ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                              ':poolId',
-                              lendStore.pool.address,
-                            ).replace(':assetId', s.assetId),
+                              ":poolId",
+                              lendStore.pool.address
+                            ).replace(":assetId", s.assetId)
                           )
                         }
                         key={`asset-${index}`}
-                        justifyContent="space-between">
+                        justifyContent="space-between"
+                      >
                         <Text fitContent>{title}</Text>
                         <Text fitContent type="secondary">
                           {value}
@@ -128,23 +129,23 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Text>
           <SizedBox height={8} />
           <Wrapper>
-            {lendStore.accountBorrow.map(s => {
+            {lendStore.accountBorrow.map((s) => {
               const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
               const data = [
                 {
-                  title: 'Borrow APR',
-                  value: `${s.borrowAPY.toFormat(2)} %`,
+                  title: "Borrow APR",
+                  value: `${s.borrowAPY.toFormat(2)} %`
                 },
                 {
-                  title: 'To be repaid',
-                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                  title: "To be repaid",
+                  value: `${borrowed.toFormat(2)} ${s.symbol}`
                 },
                 {
-                  title: 'Daily loan interest',
+                  title: "Daily loan interest",
                   value:
                     BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
-                    ` ${s.symbol}`,
-                },
+                    ` ${s.symbol}`
+                }
               ];
               return (
                 <Asset key={`token-${s.assetId}`}>
@@ -162,17 +163,18 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   <Data crossAxisSize="max">
                     {data.map(({ title, value }, index) => (
                       <Row
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: "pointer" }}
                         onClick={() =>
                           navigate(
                             ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                              ':poolId',
-                              lendStore.pool.address,
-                            ).replace(':assetId', s.assetId),
+                              ":poolId",
+                              lendStore.pool.address
+                            ).replace(":assetId", s.assetId)
                           )
                         }
                         key={`asset-${index}`}
-                        justifyContent="space-between">
+                        justifyContent="space-between"
+                      >
                         <Text fitContent>{title}</Text>
                         <Text fitContent type="secondary">
                           {value}

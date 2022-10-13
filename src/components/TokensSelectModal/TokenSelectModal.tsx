@@ -1,16 +1,16 @@
-import React, { createRef, useState } from 'react';
-import useOnClickOutside from '@src/hooks/useOnClickOutside';
-import Dialog from '@components/Dialog';
-import Scrollbar from '@src/components/Scrollbar';
-import { Column } from '@src/components/Flex';
-import SizedBox from '@components/SizedBox';
-import { observer } from 'mobx-react-lite';
-import Text from '@components/Text';
-import Balance from '@src/entities/Balance';
-import Input from '@components/Input';
-import ButtonsGroup from '@components/ButtonsGroup';
-import styled from '@emotion/styled';
-import TokenInfo from './TokenInfo';
+import React, { createRef, useState } from "react";
+import useOnClickOutside from "@src/hooks/useOnClickOutside";
+import Dialog from "@components/Dialog";
+import Scrollbar from "@src/components/Scrollbar";
+import { Column } from "@src/components/Flex";
+import SizedBox from "@components/SizedBox";
+import { observer } from "mobx-react-lite";
+import Text from "@components/Text";
+import Balance from "@src/entities/Balance";
+import Input from "@components/Input";
+import ButtonsGroup from "@components/ButtonsGroup";
+import styled from "@emotion/styled";
+import TokenInfo from "./TokenInfo";
 
 interface IProps {
   onClose: () => void;
@@ -21,11 +21,11 @@ interface IProps {
 }
 
 const tokenCategories = [
-  'All',
-  'Global',
-  'Stablecoins',
-  'Waves DeFi',
-  'Waves Ducks',
+  "All",
+  "Global",
+  "Stablecoins",
+  "Waves DeFi",
+  "Waves Ducks"
 ];
 
 export enum tokenCategoriesEnum {
@@ -33,7 +33,7 @@ export enum tokenCategoriesEnum {
   global = 1,
   stable = 2,
   defi = 3,
-  ducks = 4,
+  ducks = 4
 }
 
 const Scroll = styled.div`
@@ -55,9 +55,9 @@ const TokenSelectModal: React.FC<IProps> = ({
   balances,
   onSelect,
   visible,
-  selectedTokenId,
+  selectedTokenId
 }) => {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<number>(0);
   const handleSearch = (event: any) => {
     setSearchValue(event.target.value);
@@ -71,7 +71,7 @@ const TokenSelectModal: React.FC<IProps> = ({
     onClose();
   };
   const filteredTokens = balances
-    .filter(v => {
+    .filter((v) => {
       if (!v || !v.symbol || !v.name) {
         return false;
       }
@@ -80,7 +80,7 @@ const TokenSelectModal: React.FC<IProps> = ({
         v.name.toLowerCase().includes(searchValue.toLowerCase())
       );
     })
-    .filter(balance => {
+    .filter((balance) => {
       if (activeFilter === 0) return true;
       return balance.category?.includes(tokenCategoriesEnum[activeFilter]);
     });
@@ -94,7 +94,8 @@ const TokenSelectModal: React.FC<IProps> = ({
         setActiveFilter(0);
         onClose();
       }}
-      title="Select a token">
+      title="Select a token"
+    >
       <Input
         icon="search"
         value={searchValue}
@@ -107,19 +108,19 @@ const TokenSelectModal: React.FC<IProps> = ({
         <ButtonsGroup
           values={tokenCategories}
           active={activeFilter}
-          onClick={v => setActiveFilter(v)}
+          onClick={(v) => setActiveFilter(v)}
         />
       </Scroll>
       <SizedBox height={32} />
       <Scrollbar style={{ margin: -24 }}>
         <Column crossAxisSize="max" style={{ maxHeight: 352 }}>
           {filteredTokens && filteredTokens.length > 0 ? (
-            filteredTokens.map(t => {
+            filteredTokens.map((t) => {
               const disabled = selectedTokenId === t.assetId;
               return (
                 <TokenInfo
                   hidden={disabled}
-                  style={{ position: 'relative' }}
+                  style={{ position: "relative" }}
                   withClickLogic
                   onClick={
                     !disabled ? () => handleTokenSelect(t.assetId) : () => null
@@ -130,7 +131,7 @@ const TokenSelectModal: React.FC<IProps> = ({
               );
             })
           ) : (
-            <Text style={{ padding: '10px 24px' }}>No tokens found</Text>
+            <Text style={{ padding: "10px 24px" }}>No tokens found</Text>
           )}
           <SizedBox height={32} width={16} />
         </Column>

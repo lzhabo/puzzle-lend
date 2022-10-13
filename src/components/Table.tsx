@@ -1,8 +1,8 @@
-import React from 'react';
-import { TableProps, useTable } from 'react-table';
-import styled from '@emotion/styled';
-import Text from '@components/Text';
-import Loading from '@components/Loading';
+import React from "react";
+import { TableProps, useTable } from "react-table";
+import styled from "@emotion/styled";
+import Text from "@components/Text";
+import Loading from "@components/Loading";
 
 interface IProps extends TableProps {
   columns: any[];
@@ -15,7 +15,7 @@ interface IProps extends TableProps {
 }
 
 const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
-  width: ${({ fitContent }) => (fitContent ? 'fit-content' : '100%')};
+  width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   border-radius: 16px;
   background: ${({ theme }) => `${theme.colors.white}`};
 
@@ -36,7 +36,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       transition: 0.4s;
 
       :hover {
-        ${({ hovered }) => hovered && 'cursor: pointer;'};
+        ${({ hovered }) => hovered && "cursor: pointer;"};
         ${({ hovered, theme }) =>
           hovered && `background: ${theme.colors.primary50};`};
       }
@@ -85,10 +85,7 @@ const Table: React.FC<IProps> = ({
   ...rest
 }) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data,
-    });
+    useTable({ columns, data });
   return (
     <Root {...rest} hovered={withHover} fitContent={fitContent}>
       <table {...getTableProps()}>
@@ -96,10 +93,11 @@ const Table: React.FC<IProps> = ({
           {headerGroups.map((headerGroup, index) => (
             <tr
               {...headerGroup.getHeaderGroupProps()}
-              key={index + 'tr-header'}>
+              key={index + "tr-header"}
+            >
               {headerGroup.headers.map((column, index) => (
-                <th {...column.getHeaderProps()} key={index + 'th'}>
-                  {column.render('Header')}
+                <th {...column.getHeaderProps()} key={index + "th"}>
+                  {column.render("Header")}
                 </th>
               ))}
             </tr>
@@ -112,18 +110,19 @@ const Table: React.FC<IProps> = ({
               <tr
                 style={{
                   opacity: row.original.disabled ? 0.5 : 1,
-                  cursor: row.original.disabled ? 'not-allowed' : 'pointer',
+                  cursor: row.original.disabled ? "not-allowed" : "pointer"
                 }}
                 {...row.getRowProps()}
-                key={i + 'tr'}
+                key={i + "tr"}
                 onClick={() =>
                   row.original.disabled &&
                   row.original.onClick &&
                   row.original.onClick()
-                }>
+                }
+              >
                 {row.cells.map((cell, index) => (
-                  <td {...cell.getCellProps()} key={index + 'td'}>
-                    {cell.render('Cell')}
+                  <td {...cell.getCellProps()} key={index + "td"}>
+                    {cell.render("Cell")}
                   </td>
                 ))}
               </tr>
@@ -136,9 +135,10 @@ const Table: React.FC<IProps> = ({
           type="secondary"
           weight={500}
           textAlign="center"
-          style={{ cursor: 'pointer', padding: '16px 0' }}
-          onClick={onLoadMore}>
-          {loading ? <Loading big /> : 'Load more'}
+          style={{ cursor: "pointer", padding: "16px 0" }}
+          onClick={onLoadMore}
+        >
+          {loading ? <Loading big /> : "Load more"}
         </Text>
       )}
     </Root>
