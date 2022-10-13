@@ -1,11 +1,11 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
-import { Row } from "../Flex";
-import SizedBox from "@components/SizedBox";
-import doneIcon from "@src/assets/icons/done.svg";
+import styled from '@emotion/styled';
+import React from 'react';
+import Text from '@components/Text';
+import { Row } from '../Flex';
+import SizedBox from '@components/SizedBox';
+import doneIcon from '@src/assets/icons/done.svg';
 
-export type TStep = "previous" | "current" | "next";
+export type TStep = 'previous' | 'current' | 'next';
 
 interface IProps {
   steps: string[];
@@ -41,7 +41,7 @@ const RopeContainer = styled.div`
 const Rope = styled.div<{ done: boolean }>`
   width: 56px;
   height: 2px;
-  background: ${({ done }) => (done ? "#F1F2FE" : "#C6C9F4")};
+  background: ${({ done }) => (done ? '#F1F2FE' : '#C6C9F4')};
 `;
 const TextContainer = styled(Text)<{ state: TStep }>`
   text-align: center;
@@ -50,8 +50,8 @@ const TextContainer = styled(Text)<{ state: TStep }>`
     text-align: left;
     max-width: none;
   }
-  font-weight: ${({ state }) => (state === "current" ? 500 : 400)};
-  color: ${({ state }) => (state === "next" ? "#8082C5" : "#363870")};
+  font-weight: ${({ state }) => (state === 'current' ? 500 : 400)};
+  color: ${({ state }) => (state === 'next' ? '#8082C5' : '#363870')};
 `;
 const IconContainer = styled.div<{ state: TStep }>`
   display: flex;
@@ -63,17 +63,17 @@ const IconContainer = styled.div<{ state: TStep }>`
   flex-shrink: 0;
   transition: 0.4s;
   position: relative;
-  background: ${({ state }) => (state === "current" ? "#7075E9" : "#F1F2FE")};
+  background: ${({ state }) => (state === 'current' ? '#7075E9' : '#F1F2FE')};
 
-  ${({ state }) => (state === "previous" ? "background: #c6c9f4;" : "")}
+  ${({ state }) => (state === 'previous' ? 'background: #c6c9f4;' : '')}
   & > div {
-    color: ${({ state }) => (state === "current" ? "#ffffff" : "#7075E9")};
-    ${({ state }) => (state === "previous" ? "color: #C6C9F4;" : "")}
+    color: ${({ state }) => (state === 'current' ? '#ffffff' : '#7075E9')};
+    ${({ state }) => (state === 'previous' ? 'color: #C6C9F4;' : '')}
   }
 
   ::after {
     transition: 0.4s;
-    opacity: ${({ state }) => (state === "previous" ? 1 : 0)};
+    opacity: ${({ state }) => (state === 'previous' ? 1 : 0)};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,24 +97,22 @@ const MobileStepper: React.FC<IProps> = ({
         alignItems="center"
         justifyContent="center"
         mainAxisSize="fit-content"
-        style={{ paddingLeft: 28 }}
-      >
+        style={{ paddingLeft: 28 }}>
         {steps.map((name, step, array) => {
           const state =
             step === activeStep
-              ? "current"
+              ? 'current'
               : step > activeStep
-              ? "next"
-              : "previous";
+              ? 'next'
+              : 'previous';
           const disabled =
             activeStep === 3 ? true : minStep != null ? minStep < step : false;
           return (
-            <React.Fragment key={step + "mobile-step"}>
+            <React.Fragment key={step + 'mobile-step'}>
               <IconContainer
-                style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+                style={{ cursor: disabled ? 'not-allowed' : 'pointer' }}
                 state={state}
-                onClick={() => !disabled && onStepClick(step)}
-              >
+                onClick={() => !disabled && onStepClick(step)}>
                 <Text fitContent size="small" weight={500}>
                   {step + 1}
                 </Text>
@@ -133,22 +131,20 @@ const MobileStepper: React.FC<IProps> = ({
         alignItems="center"
         justifyContent="center"
         mainAxisSize="fit-content"
-        style={{ whiteSpace: "pre-line" }}
-      >
+        style={{ whiteSpace: 'pre-line' }}>
         {steps.map((name, index) => {
           const state =
             index === activeStep
-              ? "current"
+              ? 'current'
               : index > activeStep
-              ? "next"
-              : "previous";
+              ? 'next'
+              : 'previous';
           return (
             <TextContainer
               size="small"
               weight={500}
               state={state}
-              key={index + "mobile-step-desc"}
-            >
+              key={index + 'mobile-step-desc'}>
               {name}
             </TextContainer>
           );

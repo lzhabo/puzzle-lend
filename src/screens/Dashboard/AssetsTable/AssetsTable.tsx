@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "@emotion/styled";
-import Text from "@src/components/Text";
-import SizedBox from "@components/SizedBox";
-import useWindowSize from "@src/hooks/useWindowSize";
-import DesktopTable from "@screens/Dashboard/AssetsTable/DesktopTable";
-import MobileAssetsTable from "@screens/Dashboard/AssetsTable/MobileAssetsTable";
+import React from 'react';
+import styled from '@emotion/styled';
+import Text from '@src/components/Text';
+import SizedBox from '@components/SizedBox';
+import useWindowSize from '@src/hooks/useWindowSize';
+import DesktopTable from '@screens/Dashboard/AssetsTable/DesktopTable';
+import MobileAssetsTable from '@screens/Dashboard/AssetsTable/MobileAssetsTable';
 
 interface IProps {}
 

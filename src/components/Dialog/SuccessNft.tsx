@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
-import React from "react";
-import malibu from "@src/assets/icons/malibu.svg";
-import frame from "@src/assets/icons/greenFrame.svg";
+import styled from '@emotion/styled';
+import React from 'react';
+import malibu from '@src/assets/icons/malibu.svg';
+import frame from '@src/assets/icons/greenFrame.svg';
 
 interface IProps {
   image: string;

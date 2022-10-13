@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { Row } from "@components/Flex";
-import IconButtonAdaptive from "@screens/ExploreToken/IconButtonAdaptive";
-import { ReactComponent as SwapIcon } from "@src/assets/icons/swapTransaction.svg";
-import { ReactComponent as InfoIcon } from "@src/assets/icons/information.svg";
-import { observer } from "mobx-react-lite";
-import { Anchor } from "@components/Anchor";
-import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
+import styled from '@emotion/styled';
+import React from 'react';
+import { Row } from '@components/Flex';
+import IconButtonAdaptive from '@screens/ExploreToken/IconButtonAdaptive';
+import { ReactComponent as SwapIcon } from '@src/assets/icons/swapTransaction.svg';
+import { ReactComponent as InfoIcon } from '@src/assets/icons/information.svg';
+import { observer } from 'mobx-react-lite';
+import { Anchor } from '@components/Anchor';
+import { useExploreTokenVM } from '@screens/ExploreToken/ExploreTokenVm';
 
 interface IProps {}
 

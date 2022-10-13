@@ -1,8 +1,8 @@
-import React from "react";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
-import styled from "@emotion/styled";
+import React from 'react';
+import { ReactComponent as CloseIcon } from '@src/assets/icons/close.svg';
+import styled from '@emotion/styled';
 
-interface IProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+type IProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Root = styled.button`
   width: 100%;

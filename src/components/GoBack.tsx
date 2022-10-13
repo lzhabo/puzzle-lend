@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { Row } from "@components/Flex";
-import arrow from "@src/assets/icons/backArrow.svg";
-import SizedBox from "@components/SizedBox";
-import { Link } from "react-router-dom";
-import Text from "@components/Text";
+import styled from '@emotion/styled';
+import React from 'react';
+import { Row } from '@components/Flex';
+import arrow from '@src/assets/icons/backArrow.svg';
+import SizedBox from '@components/SizedBox';
+import { Link } from 'react-router-dom';
+import Text from '@components/Text';
 
 interface IProps {
   link: string;

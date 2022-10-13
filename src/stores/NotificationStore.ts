@@ -1,8 +1,8 @@
-import notification from "rc-notification";
-import { makeAutoObservable } from "mobx";
-import RootStore from "@stores/RootStore";
-import getAlert, { closeAlertIcon } from "@src/utils/alertUtil";
-import { THEME_TYPE } from "@src/themes/ThemeProvider";
+import notification from 'rc-notification';
+import { makeAutoObservable } from 'mobx';
+import RootStore from '@stores/RootStore';
+import getAlert, { closeAlertIcon } from '@src/utils/alertUtil';
+import { THEME_TYPE } from '@src/themes/ThemeProvider';
 
 export type TNotifyOptions = Partial<{
   duration: number;
@@ -10,7 +10,7 @@ export type TNotifyOptions = Partial<{
   key: string;
 
   theme?: THEME_TYPE;
-  type: "error" | "info" | "warning" | "success";
+  type: 'error' | 'info' | 'warning' | 'success';
   link?: string;
   linkTitle?: string;
   title: string;
@@ -20,7 +20,7 @@ export type TNotifyOptions = Partial<{
 }>;
 
 const style = {
-  boxShadow: "0px 8px 24px rgba(54, 56, 112, 0.16)",
+  boxShadow: '0px 8px 24px rgba(54, 56, 112, 0.16)',
   borderRadius: 12,
   padding: 16,
 };
@@ -50,13 +50,13 @@ class NotificationStore {
       top: 80,
       right: 16,
       left: 16,
-      zIndex: "1000000000000000000",
+      zIndex: '1000000000000000000',
     };
     const desktopStyle = {
       top: 96,
       right: 16,
       left: width - 320 - 16,
-      zIndex: "1000000000000000000",
+      zIndex: '1000000000000000000',
     };
     this.rootStore = rootStore;
     notification.newInstance(
@@ -64,7 +64,7 @@ class NotificationStore {
         closeIcon: closeAlertIcon,
         style: width >= 880 ? desktopStyle : mobileStyle,
       },
-      (notification: any) => (this._instance = notification)
+      (notification: any) => (this._instance = notification),
     );
     makeAutoObservable(this);
   }
@@ -73,13 +73,13 @@ class NotificationStore {
     if (opts.key) {
       this._instance.removeNotice(opts.key);
     }
-    const type = opts.type || "info";
+    const type = opts.type || 'info';
 
     try {
       this._instance &&
         this._instance.notice({
           ...opts,
-          placement: "center",
+          placement: 'center',
           content: getAlert(content, {
             ...opts,
             type,
@@ -90,12 +90,12 @@ class NotificationStore {
             border: `1px solid ${
               this.rootStore.accountStore.selectedTheme ===
               THEME_TYPE.LIGHT_THEME
-                ? "#F1F2FE"
-                : "#363970"
+                ? '#F1F2FE'
+                : '#363970'
             }`,
             ...opts.style,
           },
-          className: "custom-notification",
+          className: 'custom-notification',
           duration: opts.duration ?? 5,
           key: opts.key,
           closable: true,

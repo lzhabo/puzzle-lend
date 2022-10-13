@@ -1,3 +1,3 @@
-import MobileNavBar from "./MobileNavBar";
+import MobileNavBar from './MobileNavBar';
 
 export default MobileNavBar;

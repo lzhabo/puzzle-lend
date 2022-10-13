@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
-import Text from "@components/Text";
-import { observer } from "mobx-react-lite";
-import BN from "@src/utils/BN";
-import BigNumberInput from "@components/BigNumberInput";
-import AmountInput from "@components/AmountInput";
-import { Row } from "../Flex";
-import SizedBox from "@components/SizedBox";
+import styled from '@emotion/styled';
+import React, { useState } from 'react';
+import Text from '@components/Text';
+import { observer } from 'mobx-react-lite';
+import BN from '@src/utils/BN';
+import BigNumberInput from '@components/BigNumberInput';
+import AmountInput from '@components/AmountInput';
+import { Row } from '../Flex';
+import SizedBox from '@components/SizedBox';
 
 interface IProps {
   assetId: string;
@@ -31,7 +31,7 @@ const InputContainer = styled.div<{
   readOnly?: boolean;
 }>`
   background: ${({ focused, theme }) =>
-    focused ? "#fffff" : theme.colors.primary100};
+    focused ? '#fffff' : theme.colors.primary100};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -41,12 +41,12 @@ const InputContainer = styled.div<{
   border-radius: 12px;
   width: 100%;
   position: relative;
-  cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
+  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'unset')};
 
   box-sizing: border-box;
 
   input {
-    cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
+    cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'unset')};
   }
 
   border: 1px solid
@@ -66,7 +66,7 @@ const InputContainer = styled.div<{
         : focused ?? theme.colors.blue500};
   }
 `;
-const LightTokenInput: React.FC<IProps> = (props) => {
+const LightTokenInput: React.FC<IProps> = props => {
   const [focused, setFocused] = useState(false);
 
   return (
@@ -78,10 +78,9 @@ const LightTokenInput: React.FC<IProps> = (props) => {
         <Text
           type="secondary"
           textAlign="right"
-          style={{ cursor: "pointer" }}
+          style={{ cursor: 'pointer' }}
           onClick={props.onMaxClick}
-          size="medium"
-        >
+          size="medium">
           MAX
         </Text>
       </Row>
@@ -89,17 +88,16 @@ const LightTokenInput: React.FC<IProps> = (props) => {
       <InputContainer
         focused={focused}
         readOnly={!props.setAmount}
-        error={props.error}
-      >
+        error={props.error}>
         <BigNumberInput
           renderInput={(props, ref) => (
             <AmountInput
               {...props}
-              onFocus={(e) => {
+              onFocus={e => {
                 props.onFocus && props.onFocus(e);
                 !props.readOnly && setFocused(true);
               }}
-              onBlur={(e) => {
+              onBlur={e => {
                 props.onBlur && props.onBlur(e);
                 setFocused(false);
               }}
@@ -109,16 +107,15 @@ const LightTokenInput: React.FC<IProps> = (props) => {
           autofocus={focused}
           decimals={props.decimals}
           value={props.amount}
-          onChange={(v) => props.setAmount && props.setAmount(v)}
+          onChange={v => props.setAmount && props.setAmount(v)}
           placeholder="0.00"
           readOnly={!props.setAmount}
         />
         <Text
-          style={{ whiteSpace: "nowrap" }}
+          style={{ whiteSpace: 'nowrap' }}
           type="secondary"
           size="small"
-          fitContent
-        >
+          fitContent>
           {props.usdnEquivalent}
         </Text>
       </InputContainer>

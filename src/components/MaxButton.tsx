@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
+import styled from '@emotion/styled';
+import React, { HTMLAttributes } from 'react';
 
-interface IProps extends HTMLAttributes<HTMLButtonElement> {}
+type IProps = HTMLAttributes<HTMLButtonElement>;
 
 const Root = styled.button`
   display: flex;

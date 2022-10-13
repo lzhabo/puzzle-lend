@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 interface IProps {
-  type?: "primary" | "default";
+  type?: 'primary' | 'default';
   background?: string;
 }
 
@@ -16,9 +16,9 @@ const Tag = styled.div<IProps>`
   font-size: 12px;
   line-height: 16px;
   color: ${({ type, theme }) =>
-    type === "primary" ? theme.colors.white : theme.colors.primary800};
+    type === 'primary' ? theme.colors.white : theme.colors.primary800};
   background: ${({ type, background, theme }) =>
-    type === "primary"
+    type === 'primary'
       ? theme.colors.blue500
       : background ?? theme.colors.primary100};
   max-width: fit-content;

@@ -1,13 +1,13 @@
-import React, { useMemo } from "react";
-import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, reaction } from "mobx";
-import { RootStore, useStores } from "@stores";
-import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
-import dayjs, { Dayjs } from "dayjs";
-import axios from "axios";
-import transactionsService from "@src/services/transactionsService";
-import nodeService from "@src/services/nodeService";
-import BN from "@src/utils/BN";
+import React, { useMemo } from 'react';
+import { useVM } from '@src/hooks/useVM';
+import { makeAutoObservable, reaction } from 'mobx';
+import { RootStore, useStores } from '@stores';
+import { POOLS, TOKENS_BY_ASSET_ID } from '@src/constants';
+import dayjs, { Dayjs } from 'dayjs';
+import axios from 'axios';
+import transactionsService from '@src/services/transactionsService';
+import nodeService from '@src/services/nodeService';
+import BN from '@src/utils/BN';
 
 const ctx = React.createContext<ExploreTokenVM | null>(null);
 
@@ -17,8 +17,8 @@ export const ExploreTokenVMProvider: React.FC<{
 }> = ({ assetId, poolId, children }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new ExploreTokenVM(rootStore, poolId ?? "", assetId),
-    [assetId, poolId, rootStore]
+    () => new ExploreTokenVM(rootStore, poolId ?? '', assetId),
+    [assetId, poolId, rootStore],
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -32,11 +32,11 @@ type TChartData = {
 };
 
 export type TChartDataRecord = {
-  "1d"?: TChartData;
-  "1w"?: TChartData;
-  "1m"?: TChartData;
-  "3m"?: TChartData;
-  "1y"?: TChartData;
+  '1d'?: TChartData;
+  '1w'?: TChartData;
+  '1m'?: TChartData;
+  '3m'?: TChartData;
+  '1y'?: TChartData;
   all?: TChartData;
 };
 
@@ -58,7 +58,7 @@ class ExploreTokenVM {
     return this.rootStore.lendStore.getStatByAssetId(this.asset.assetId);
   }
 
-  selectedChartPeriod: keyof TChartDataRecord = "1d";
+  selectedChartPeriod: keyof TChartDataRecord = '1d';
   setSelectedChartPeriod = (v: string) =>
     (this.selectedChartPeriod = v as keyof TChartDataRecord);
 
@@ -71,11 +71,11 @@ class ExploreTokenVM {
       this.chartData[period ?? this.selectedChartPeriod] ?? {};
     if (start == null || data == null || end == null) return [];
     const step = +(
-      end.diff(dayjs(start), "milliseconds") / data.length
+      end.diff(dayjs(start), 'milliseconds') / data.length
     ).toFixed(0);
     return data.map(([volume], i) => ({
       volume,
-      date: start.add(step * i, "milliseconds").toISOString(),
+      date: start.add(step * i, 'milliseconds').toISOString(),
     }));
   }
 
@@ -106,19 +106,19 @@ class ExploreTokenVM {
     nodeService
       .nodeMatchRequest(
         this.rootStore.lendStore.poolId,
-        `(.*)_(supplied%7Cborrowed)_${this.assetId}`
+        `(.*)_(supplied%7Cborrowed)_${this.assetId}`,
       )
-      .then((data) =>
+      .then(data =>
         data.reduce(
           (acc, v) => ({
-            supply: acc.supply.plus(v.key.includes("_supplied_") ? 1 : 0),
-            borrow: acc.borrow.plus(v.key.includes("_borrowed_") ? 1 : 0),
+            supply: acc.supply.plus(v.key.includes('_supplied_') ? 1 : 0),
+            borrow: acc.borrow.plus(v.key.includes('_borrowed_') ? 1 : 0),
           }),
           {
             supply: BN.ZERO,
             borrow: BN.ZERO,
-          }
-        )
+          },
+        ),
       )
       .then(this.setUsers);
 
@@ -130,8 +130,8 @@ class ExploreTokenVM {
     this.setLoading(true);
 
     const params = [
-      ["assetId", this.assetId],
-      ["after", this.operationsSkip],
+      ['assetId', this.assetId],
+      ['after', this.operationsSkip],
     ] as Array<[string, string | number | boolean]>;
     const txs = await transactionsService.getTransactions(params);
     // console.log(txs);
@@ -142,14 +142,14 @@ class ExploreTokenVM {
 
   get isAssetOk() {
     return this.rootStore.lendStore.poolsStats.some(
-      (t) => t.assetId === this.assetId
+      t => t.assetId === this.assetId,
     );
   }
   constructor(rootStore: RootStore, poolId: string, assetId: string) {
     this.rootStore = rootStore;
     this.assetId = assetId;
     makeAutoObservable(this);
-    const pool = POOLS.find((pool) => pool.address === poolId)!;
+    const pool = POOLS.find(pool => pool.address === poolId)!;
     this.rootStore.lendStore.setPool(pool);
     Promise.all([
       this.syncChart(),

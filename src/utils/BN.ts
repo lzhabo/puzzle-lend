@@ -1,6 +1,6 @@
-import { BigNumber as EthersBigNumber } from "@ethersproject/bignumber";
-import BigNumber from "bignumber.js";
-import { Undefinable } from "tsdef";
+import { BigNumber as EthersBigNumber } from '@ethersproject/bignumber';
+import BigNumber from 'bignumber.js';
+import { Undefinable } from 'tsdef';
 
 BigNumber.config({ EXPONENTIAL_AT: [-100, 100] });
 
@@ -10,7 +10,7 @@ const bigNumberify = (n: any): string | number => {
   if (n && n.toString) {
     const primitive = n.toString();
 
-    if (typeof primitive !== "object") {
+    if (typeof primitive !== 'object') {
       return primitive;
     }
   }
@@ -71,16 +71,16 @@ class BN extends BigNumber {
 
   toDecimalPlaces(
     decimalPlaces: number,
-    roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN
+    roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
   ): BN {
     return new BN(super.dp(decimalPlaces, roundingMode));
   }
 
   toBigFormat(decimalPlaces: number): string {
     if (super.toNumber() > 999 && super.toNumber() < 1000000) {
-      return (super.toNumber() / 1000).toFixed(1) + "K";
+      return (super.toNumber() / 1000).toFixed(1) + 'K';
     } else if (super.toNumber() > 1000000) {
-      return (super.toNumber() / 1000000).toFixed(1) + "M";
+      return (super.toNumber() / 1000000).toFixed(1) + 'M';
     } else if (super.toNumber() < 900) {
       return super.toFormat(decimalPlaces); // if value < 1000, nothing to do
     }
@@ -89,7 +89,7 @@ class BN extends BigNumber {
 
   toSignificant(
     significantDigits: number,
-    roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN
+    roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_DOWN,
   ): BN {
     return this.gte(1)
       ? this.toDecimalPlaces(significantDigits)
@@ -113,7 +113,7 @@ class BN extends BigNumber {
   }
 
   static toBN(p: Promise<EthersBigNumber | number | string>): Promise<BN> {
-    return p.then((v) => new BN(v));
+    return p.then(v => new BN(v));
   }
 
   static parseUnits(value: TValue, decimals = 8): BN {
@@ -134,7 +134,7 @@ class BN extends BigNumber {
 
   static ZERO = new BN(0);
   static MaxUint256 =
-    "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+    '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 }
 
 export type TEtherBigNumber = EthersBigNumber;

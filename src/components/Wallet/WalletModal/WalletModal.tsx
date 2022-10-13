@@ -1,16 +1,16 @@
-import styled from "@emotion/styled";
-import React from "react";
-import RcDialog from "rc-dialog";
-import "./wallet.css";
-import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
-import SizedBox from "@components/SizedBox";
-import WalletModalHeader from "./WalletModalHeader";
-import WalletModalBody from "@components/Wallet/WalletModal/WalletModalBody";
-import { WalletVMProvider } from "@components/Wallet/WalletModal/WalletVM";
-import { observer } from "mobx-react-lite";
+import styled from '@emotion/styled';
+import React from 'react';
+import RcDialog from 'rc-dialog';
+import './wallet.css';
+import { IDialogPropTypes } from 'rc-dialog/lib/IDialogPropTypes';
+import { ReactComponent as CloseIcon } from '@src/assets/icons/close.svg';
+import SizedBox from '@components/SizedBox';
+import WalletModalHeader from './WalletModalHeader';
+import WalletModalBody from '@components/Wallet/WalletModal/WalletModalBody';
+import { WalletVMProvider } from '@components/Wallet/WalletModal/WalletVM';
+import { observer } from 'mobx-react-lite';
 
-interface IProps extends IDialogPropTypes {}
+type IProps = IDialogPropTypes;
 
 const Root = styled.div`
   display: flex;
@@ -27,8 +27,7 @@ const WalletModal: React.FC<IProps> = ({ ...rest }) => (
     animation="zoom"
     maskAnimation="fade"
     destroyOnClose
-    {...rest}
-  >
+    {...rest}>
     <WalletVMProvider>
       <Root>
         <SizedBox height={48} />

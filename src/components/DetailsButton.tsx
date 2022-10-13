@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import React, { HTMLAttributes } from "react";
-import dots from "@src/assets/icons/dots.svg";
-import Tooltip from "@components/Tooltip";
+import styled from '@emotion/styled';
+import React, { HTMLAttributes } from 'react';
+import dots from '@src/assets/icons/dots.svg';
+import Tooltip from '@components/Tooltip';
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {}
+type IProps = HTMLAttributes<HTMLDivElement>;
 
 const Root = styled.div`
   img {
@@ -25,9 +25,8 @@ const Root = styled.div`
 const DetailsButton: React.FC<IProps> = ({ children, ...rest }) => {
   return (
     <Tooltip
-      config={{ placement: "bottom-end", trigger: "click" }}
-      content={<div>{children}</div>}
-    >
+      config={{ placement: 'bottom-end', trigger: 'click' }}
+      content={<div>{children}</div>}>
       <Root {...rest}>
         <img src={dots} alt="dots" />
       </Root>

@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
+import styled from '@emotion/styled';
+import React from 'react';
+import { ReactComponent as CloseIcon } from '@src/assets/icons/close.svg';
 
 interface IProps {
   closed: boolean;
@@ -17,11 +17,11 @@ const Root = styled.div<{ closed: boolean }>`
   }
   align-items: center;
   justify-content: center;
-  height: ${({ closed }) => (closed ? "0px" : "80px")};
+  height: ${({ closed }) => (closed ? '0px' : '80px')};
   @media (min-width: 880px) {
-    height: ${({ closed }) => (closed ? "0px" : "56px")};
+    height: ${({ closed }) => (closed ? '0px' : '56px')};
   }
-  padding: ${({ closed }) => (closed ? "0px" : "0 48px")};
+  padding: ${({ closed }) => (closed ? '0px' : '0 48px')};
   transition: 0.5s;
   overflow: hidden;
   background: #363870;

@@ -1,11 +1,11 @@
-import React from "react";
-import RcDialog from "rc-dialog";
+import React from 'react';
+import RcDialog from 'rc-dialog';
 // import "rc-dialog/assets/index.css";
 // import "./styles.css";
-import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
-import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
+import { IDialogPropTypes } from 'rc-dialog/lib/IDialogPropTypes';
+import { ReactComponent as CloseIcon } from '@src/assets/icons/close.svg';
 
-interface IProps extends IDialogPropTypes {}
+type IProps = IDialogPropTypes;
 
 const Dialog: React.FC<IProps> = ({ children, ...rest }) => {
   return (
@@ -13,8 +13,7 @@ const Dialog: React.FC<IProps> = ({ children, ...rest }) => {
       closeIcon={<CloseIcon style={{ marginTop: 8 }} />}
       animation="zoom"
       maskAnimation="fade"
-      {...rest}
-    >
+      {...rest}>
       {children}
     </RcDialog>
   );

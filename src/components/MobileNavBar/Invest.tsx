@@ -1,5 +1,5 @@
-import React from "react";
-import { useTheme } from "@emotion/react";
+import React from 'react';
+import { useTheme } from '@emotion/react';
 
 interface IProps extends React.SVGProps<SVGSVGElement> {
   active?: boolean;
@@ -13,8 +13,7 @@ const Invest: React.FC<IProps> = ({ active }) => {
       width="25"
       height="24"
       viewBox="0 0 25 24"
-      fill="none"
-    >
+      fill="none">
       <script
         type="text/javascript"
         src="chrome-extension://fnjhmkhhmkbjkkabndcnnogagogbneec/in-page.js"

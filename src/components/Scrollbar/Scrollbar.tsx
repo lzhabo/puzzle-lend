@@ -1,7 +1,7 @@
-import React from "react";
-import PerfectScrollbar, { ScrollBarProps } from "react-perfect-scrollbar";
+import React from 'react';
+import PerfectScrollbar, { ScrollBarProps } from 'react-perfect-scrollbar';
 
-import { ScrollbarRoot } from "./styles";
+import { ScrollbarRoot } from './styles';
 
 interface IScrollbarProps extends ScrollBarProps {
   onScrollX?: (ref: any) => void;
@@ -28,8 +28,7 @@ const Scrollbar: React.FC<IScrollbarProps> = ({
         useBothWheelAxes: true,
       }}
       onScrollX={onScrollX}
-      {...rest}
-    >
+      {...rest}>
       {children}
     </PerfectScrollbar>
   </ScrollbarRoot>

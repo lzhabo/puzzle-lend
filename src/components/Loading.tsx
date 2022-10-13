@@ -1,6 +1,6 @@
-import React, { HTMLAttributes } from "react";
-import { useEffect, useState } from "react";
-import { useTheme } from "@emotion/react";
+import React, { HTMLAttributes } from 'react';
+import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
 
 interface IProps extends HTMLAttributes<HTMLSpanElement> {
   big?: boolean;
@@ -18,11 +18,10 @@ const Loading: React.FC<IProps> = ({ big, ...rest }) => {
   return (
     <span
       {...rest}
-      style={{ width: 10, color: theme.colors.primary100, ...rest.style }}
-    >
+      style={{ width: 10, color: theme.colors.primary100, ...rest.style }}>
       {big
-        ? Array.from({ length }, () => "●").join("")
-        : Array.from({ length }, () => ".").join("")}
+        ? Array.from({ length }, () => '●').join('')
+        : Array.from({ length }, () => '.').join('')}
     </span>
   );
 };

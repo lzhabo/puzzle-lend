@@ -1,25 +1,25 @@
-import axios from "axios";
+import axios from 'axios';
 
-const testnetNodes = ["https://nodes-testnet.wavesnodes.com"];
+const testnetNodes = ['https://nodes-testnet.wavesnodes.com'];
 
 const mainnetNodes = [
-  "https://nodes-puzzle.wavesnodes.com",
-  "https://wavesducks.wavesnodes.com",
-  "https://nodes.swop.fi",
-  "https://nodes.wavesnodes.com",
+  'https://nodes-puzzle.wavesnodes.com',
+  'https://wavesducks.wavesnodes.com',
+  'https://nodes.swop.fi',
+  'https://nodes.wavesnodes.com',
 ];
 
 interface IParams {
-  chainId?: "T" | "W";
+  chainId?: 'T' | 'W';
   postData?: any;
 }
 
 const makeNodeRequest = async (
   request: string,
-  params?: IParams
+  params?: IParams,
 ): Promise<any> => {
   const nodes =
-    params?.chainId == null || params.chainId === "W"
+    params?.chainId == null || params.chainId === 'W'
       ? mainnetNodes
       : testnetNodes;
   return new Promise(async (resolve, reject) => {

@@ -1,3 +1,3 @@
-import Modal from "./Modal";
+import DashboardModals from './DashboardModals';
 
-export default Modal;
+export default DashboardModals;

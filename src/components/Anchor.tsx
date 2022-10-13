@@ -1,4 +1,4 @@
-import React, { AnchorHTMLAttributes } from "react";
+import React, { AnchorHTMLAttributes } from 'react';
 
 export const Anchor: React.FC<AnchorHTMLAttributes<HTMLAnchorElement>> = ({
   children,

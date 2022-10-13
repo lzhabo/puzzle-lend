@@ -13,7 +13,7 @@ export interface ITransaction {
     {
       amount: number;
       assetId: null | string;
-    }
+    },
   ];
   call: {
     function: string;
@@ -25,7 +25,7 @@ export interface ITransaction {
       {
         type: string;
         value: number;
-      }
+      },
     ];
   };
   height: number;
@@ -38,7 +38,7 @@ export interface ITransaction {
         address: string;
         asset: string;
         amount: number;
-      }
+      },
     ];
     issues: [];
     reissues: [];
@@ -55,14 +55,14 @@ export interface ITransaction {
             {
               type: string;
               value: number;
-            }
+            },
           ];
         };
         payment: [
           {
             assetId: null;
             amount: number;
-          }
+          },
         ];
         stateChanges: {
           data: [
@@ -75,7 +75,7 @@ export interface ITransaction {
               key: string;
               type: string;
               value: number;
-            }
+            },
           ];
           transfers: [
             {
@@ -87,7 +87,7 @@ export interface ITransaction {
               address: string;
               asset: string;
               amount: number;
-            }
+            },
           ];
           issues: [];
           reissues: [];
@@ -112,7 +112,7 @@ export interface ITransaction {
                   {
                     type: string;
                     value: string;
-                  }
+                  },
                 ];
               };
               payment: [];
@@ -127,7 +127,7 @@ export interface ITransaction {
                     key: string;
                     type: string;
                     value: number;
-                  }
+                  },
                 ];
                 transfers: [];
                 issues: [];
@@ -145,7 +145,7 @@ export interface ITransaction {
                     status: string;
                     cancelHeight: number;
                     cancelTransactionId: string;
-                  }
+                  },
                 ];
                 leaseCancels: [
                   {
@@ -158,7 +158,7 @@ export interface ITransaction {
                     status: string;
                     cancelHeight: number;
                     cancelTransactionId: string;
-                  }
+                  },
                 ];
                 invokes: [];
               };
@@ -179,7 +179,7 @@ export interface ITransaction {
                   {
                     type: string;
                     value: string;
-                  }
+                  },
                 ];
               };
               payment: [];
@@ -201,7 +201,7 @@ export interface ITransaction {
                         {
                           type: string;
                           value: number;
-                        }
+                        },
                       ];
                     };
                     payment: [];
@@ -216,14 +216,14 @@ export interface ITransaction {
                           key: string;
                           type: string;
                           value: number;
-                        }
+                        },
                       ];
                       transfers: [
                         {
                           address: string;
                           asset: string;
                           amount: number;
-                        }
+                        },
                       ];
                       issues: [];
                       reissues: [];
@@ -233,10 +233,10 @@ export interface ITransaction {
                       leaseCancels: [];
                       invokes: [];
                     };
-                  }
+                  },
                 ];
               };
-            }
+            },
           ];
         };
       },
@@ -252,14 +252,14 @@ export interface ITransaction {
             {
               type: string;
               value: number;
-            }
+            },
           ];
         };
         payment: [
           {
             assetId: string;
             amount: number;
-          }
+          },
         ];
         stateChanges: {
           data: [
@@ -277,14 +277,14 @@ export interface ITransaction {
               key: string;
               type: string;
               value: number;
-            }
+            },
           ];
           transfers: [
             {
               address: string;
               asset: string;
               amount: number;
-            }
+            },
           ];
           issues: [];
           reissues: [];
@@ -303,7 +303,7 @@ export interface ITransaction {
                 {
                   assetId: string;
                   amount: number;
-                }
+                },
               ];
               stateChanges: {
                 data: [
@@ -326,7 +326,7 @@ export interface ITransaction {
                     key: string;
                     type: string;
                     value: number;
-                  }
+                  },
                 ];
                 transfers: [];
                 issues: [];
@@ -337,7 +337,7 @@ export interface ITransaction {
                 leaseCancels: [];
                 invokes: [];
               };
-            }
+            },
           ];
         };
       },
@@ -349,14 +349,14 @@ export interface ITransaction {
             {
               type: string;
               value: number;
-            }
+            },
           ];
         };
         payment: [
           {
             assetId: string;
             amount: number;
-          }
+          },
         ];
         stateChanges: {
           data: [
@@ -369,7 +369,7 @@ export interface ITransaction {
               key: string;
               type: string;
               value: number;
-            }
+            },
           ];
           transfers: [
             {
@@ -381,7 +381,7 @@ export interface ITransaction {
               address: string;
               asset: null;
               amount: number;
-            }
+            },
           ];
           issues: [];
           reissues: [];
@@ -406,7 +406,7 @@ export interface ITransaction {
                   {
                     type: string;
                     value: string;
-                  }
+                  },
                 ];
               };
               payment: [];
@@ -421,7 +421,7 @@ export interface ITransaction {
                     key: string;
                     type: string;
                     value: number;
-                  }
+                  },
                 ];
                 transfers: [];
                 issues: [];
@@ -439,7 +439,7 @@ export interface ITransaction {
                     status: string;
                     cancelHeight: number;
                     cancelTransactionId: string;
-                  }
+                  },
                 ];
                 leaseCancels: [
                   {
@@ -452,14 +452,14 @@ export interface ITransaction {
                     status: string;
                     cancelHeight: number;
                     cancelTransactionId: string;
-                  }
+                  },
                 ];
                 invokes: [];
               };
-            }
+            },
           ];
         };
-      }
+      },
     ];
   };
 }

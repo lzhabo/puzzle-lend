@@ -1,13 +1,13 @@
-import styled from "@emotion/styled";
-import { Column, Row } from "@src/components/Flex";
-import React from "react";
-import Text from "@components/Text";
-import Tooltip from "@components/Tooltip";
-import SizedBox from "@components/SizedBox";
-import CircularProgressbar from "@components/CircularProgressbar";
-import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
-import { useTheme } from "@emotion/react";
+import styled from '@emotion/styled';
+import { Column, Row } from '@src/components/Flex';
+import React from 'react';
+import Text from '@components/Text';
+import Tooltip from '@components/Tooltip';
+import SizedBox from '@components/SizedBox';
+import CircularProgressbar from '@components/CircularProgressbar';
+import { observer } from 'mobx-react-lite';
+import { useStores } from '@stores';
+import { useTheme } from '@emotion/react';
 
 interface IProps {}
 
@@ -45,21 +45,21 @@ const AccountHealth: React.FC<IProps> = () => {
   if (accountStore.address == null) return <></>;
   const data = [
     {
-      title: "Supply balance",
+      title: 'Supply balance',
       value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
-      description: "USD value of your deposits in total",
+      description: 'USD value of your deposits in total',
     },
     {
-      title: "Borrow balance",
+      title: 'Borrow balance',
       value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
-      description: "USD value of your borrows in total",
+      description: 'USD value of your borrows in total',
     },
     {
-      title: "NET APY",
+      title: 'NET APY',
       value: `${lendStore.netApy.toFormat(2)} %`,
       border: true,
       description:
-        "Your annual net profit(expenses) relative to your deposits(loans) USD value.",
+        'Your annual net profit(expenses) relative to your deposits(loans) USD value.',
     },
   ];
   return (
@@ -70,9 +70,9 @@ const AccountHealth: React.FC<IProps> = () => {
         </Text>
         <CircularProgressbar
           style={{
-            position: "absolute",
+            position: 'absolute',
             top: -75,
-            right: "calc(50% - 55px)",
+            right: 'calc(50% - 55px)',
           }}
           text="Account Health"
           percent={lendStore.health.toDecimalPlaces(2).toNumber()}
@@ -86,10 +86,9 @@ const AccountHealth: React.FC<IProps> = () => {
             justifyContent="space-between"
             style={{
               marginBottom: 14,
-              borderTop: border ? `1px solid ${theme.colors.primary100}` : "",
-              paddingTop: border ? `14px` : "",
-            }}
-          >
+              borderTop: border ? `1px solid ${theme.colors.primary100}` : '',
+              paddingTop: border ? `14px` : '',
+            }}>
             <Tooltip content={<Text>{description}</Text>}>
               <Title fitContent type="secondary">
                 {title}

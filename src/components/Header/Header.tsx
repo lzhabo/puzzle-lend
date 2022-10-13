@@ -1,20 +1,20 @@
-import styled from "@emotion/styled";
-import React, { useState } from "react";
-import mobileMenuIcon from "@src/assets/icons/mobileMenu.svg";
-import closeIcon from "@src/assets/icons/close.svg";
-import { Column, Row } from "@components/Flex";
-import MobileMenu from "@components/Header/MobileMenu";
-import SizedBox from "@components/SizedBox";
-import Wallet from "@components/Wallet/Wallet";
-import { observer } from "mobx-react-lite";
-import { ROUTES } from "@src/constants";
-import { useLocation } from "react-router-dom";
-import { Anchor } from "@components/Anchor";
-import { useTheme } from "@emotion/react";
-import Tooltip from "@components/Tooltip";
-import LinkGroup from "@components/LinkGroup";
-import DarkMode from "@components/Header/DarkMode";
-import isRoutesEquals from "@src/utils/isRoutesEquals";
+import styled from '@emotion/styled';
+import React, { useState } from 'react';
+import mobileMenuIcon from '@src/assets/icons/mobileMenu.svg';
+import closeIcon from '@src/assets/icons/close.svg';
+import { Column, Row } from '@components/Flex';
+import MobileMenu from '@components/Header/MobileMenu';
+import SizedBox from '@components/SizedBox';
+import Wallet from '@components/Wallet/Wallet';
+import { observer } from 'mobx-react-lite';
+import { ROUTES } from '@src/constants';
+import { useLocation } from 'react-router-dom';
+import { Anchor } from '@components/Anchor';
+import { useTheme } from '@emotion/react';
+import Tooltip from '@components/Tooltip';
+import LinkGroup from '@components/LinkGroup';
+import DarkMode from '@components/Header/DarkMode';
+import isRoutesEquals from '@src/utils/isRoutesEquals';
 
 interface IProps {}
 
@@ -69,7 +69,7 @@ const MenuItem = styled(Anchor)<{ selected?: boolean }>`
   box-sizing: border-box;
   border-bottom: 4px solid
     ${({ selected, theme }) =>
-      selected ? theme.colors.blue500 : "transparent"};
+      selected ? theme.colors.blue500 : 'transparent'};
   height: 100%;
   margin: 0 12px;
 
@@ -105,24 +105,24 @@ const Header: React.FC<IProps> = () => {
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    document.body.classList.toggle("noscroll", state);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.classList.toggle('noscroll', state);
     setMobileMenuOpened(state);
   };
 
   const menuItems = [
-    { name: "Dashboard", link: ROUTES.DASHBOARD },
-    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" },
+    { name: 'Dashboard', link: ROUTES.DASHBOARD },
+    { name: 'Guidebook', link: 'https://puzzle-lend.gitbook.io/guidebook/' },
   ];
 
   const communityMenu = [
-    { name: "Telegram chat", link: "https://t.me/puzzleswap", outer: true },
+    { name: 'Telegram chat', link: 'https://t.me/puzzleswap', outer: true },
     {
-      name: "Notifications bot",
-      link: "https://t.me/puzzle_swap",
+      name: 'Notifications bot',
+      link: 'https://t.me/puzzle_swap',
       outer: true,
     },
-    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
+    { name: 'Alerts bot', link: 'https://t.me/puzzle_alerts_bot', outer: true },
   ];
   return (
     <Root>
@@ -147,8 +147,7 @@ const Header: React.FC<IProps> = () => {
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
                 href={link}
-                target={link !== "https://puzzlemarket.org/" ? "_self" : ""}
-              >
+                target={link !== 'https://puzzlemarket.org/' ? '_self' : ''}>
                 {name}
               </MenuItem>
             ))}
@@ -167,8 +166,8 @@ const Header: React.FC<IProps> = () => {
           <SizedBox width={24} />
           <Tooltip
             config={{
-              placement: "bottom-start",
-              trigger: "click",
+              placement: 'bottom-start',
+              trigger: 'click',
             }}
             content={
               <Column crossAxisSize="max">
@@ -176,8 +175,7 @@ const Header: React.FC<IProps> = () => {
                 <SizedBox height={8} />
                 <DarkMode />
               </Column>
-            }
-          >
+            }>
             <img
               onClick={() => toggleMenu(!mobileMenuOpened)}
               className="icon"

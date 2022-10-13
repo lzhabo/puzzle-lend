@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "@emotion/styled";
+import React from 'react';
+import styled from '@emotion/styled';
 
 const Root = styled.input<{ small?: boolean }>`
-  font-size: ${({ small }) => (small ? "16px;" : "20px")};
+  font-size: ${({ small }) => (small ? '16px;' : '20px')};
   line-height: 24px;
   border: none;
   background: transparent;
@@ -16,7 +16,7 @@ const Root = styled.input<{ small?: boolean }>`
     margin: 0;
   }
 
-  [type="number"] {
+  [type='number'] {
     -moz-appearance: textfield;
   }
 
@@ -34,16 +34,16 @@ const AmountInput = React.forwardRef<HTMLInputElement, TProps>(
       ref={ref}
       small={props.small}
       type="number"
-      onWheel={(e) => {
+      onWheel={e => {
         e.target && (e.target as any).blur();
         onWheel && onWheel(e);
       }}
       onBlur={props.onBlur}
       onFocus={props.onFocus}
     />
-  )
+  ),
 );
 
-AmountInput.displayName = "AmountInput";
+AmountInput.displayName = 'AmountInput';
 
 export default AmountInput;

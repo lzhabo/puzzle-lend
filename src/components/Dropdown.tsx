@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import styled from "@emotion/styled";
-import Text from "./Text";
-import arrow from "@src/assets/icons/orderArrow.svg";
-import { Row } from "./Flex";
+import React, { useEffect } from 'react';
+import styled from '@emotion/styled';
+import Text from './Text';
+import arrow from '@src/assets/icons/orderArrow.svg';
+import { Row } from './Flex';
 
 interface IProps {
   title?: string;
@@ -26,7 +26,7 @@ const Arrow = styled.img<{ isExpanded?: boolean }>`
   cursor: pointer;
   transition: transform 0.4s;
   transform: ${({ isExpanded }) =>
-    isExpanded ? "rotate(-90deg)" : "rotate(90deg)"};
+    isExpanded ? 'rotate(-90deg)' : 'rotate(90deg)'};
 `;
 const CollapseBlock = styled.div`
   overflow: hidden;
@@ -63,7 +63,7 @@ const Dropdown: React.FC<IProps> = ({ title, children, isOpened = false }) => {
     }
   }, [isOpened]);
 
-  const classes = `list-group-item ${isExpanded ? "is-expanded" : null}`;
+  const classes = `list-group-item ${isExpanded ? 'is-expanded' : null}`;
   const currentHeight = isExpanded ? height : 0;
 
   return (
@@ -76,8 +76,7 @@ const Dropdown: React.FC<IProps> = ({ title, children, isOpened = false }) => {
       </Row>
       <CollapseBlock
         className="card-collapse"
-        style={{ height: `${currentHeight}px` }}
-      >
+        style={{ height: `${currentHeight}px` }}>
         <Text className="card-body" ref={ref}>
           {children}
         </Text>

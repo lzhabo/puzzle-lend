@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
-import React, { CSSProperties } from "react";
-import { usePopperTooltip } from "react-popper-tooltip";
-import { Config } from "react-popper-tooltip/dist/types";
+import styled from '@emotion/styled';
+import React, { CSSProperties } from 'react';
+import { usePopperTooltip } from 'react-popper-tooltip';
+import { Config } from 'react-popper-tooltip/dist/types';
 
 interface IProps {
   content: string | JSX.Element;
@@ -35,13 +35,14 @@ const Tooltip: React.FC<IProps> = ({
   config,
 }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } =
-    usePopperTooltip({ ...config });
+    usePopperTooltip({
+      ...config,
+    });
   return (
     <Container>
       <div
         ref={setTriggerRef}
-        style={{ cursor: "pointer", ...containerStyles }}
-      >
+        style={{ cursor: 'pointer', ...containerStyles }}>
         {children}
       </div>
       {visible && (

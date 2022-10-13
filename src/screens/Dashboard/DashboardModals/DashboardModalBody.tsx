@@ -7,7 +7,7 @@ type UrlParamsTypes = {
   tokenId?: string;
   operationName?: string;
   modalPoolId?: string;
-}
+};
 
 interface IProps {
   urlParams: UrlParamsTypes;

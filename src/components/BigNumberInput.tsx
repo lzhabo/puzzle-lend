@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 
-import BN from "@src/utils/BN";
+import BN from '@src/utils/BN';
 
 export interface IBigNumberInputProps {
   className?: string;
@@ -9,7 +9,7 @@ export interface IBigNumberInputProps {
   onChange: (value: BN) => void;
   renderInput?: (
     props: React.HTMLProps<HTMLInputElement>,
-    ref: React.RefObject<HTMLInputElement>
+    ref: React.RefObject<HTMLInputElement>,
   ) => React.ReactElement;
   autofocus?: boolean;
   placeholder?: string;
@@ -25,7 +25,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
   onChange,
   renderInput,
   autofocus,
-  placeholder = "0.00",
+  placeholder = '0.00',
   max,
   min,
   disabled,
@@ -34,7 +34,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
 }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const [inputValue, _setInputValue] = React.useState<string>("");
+  const [inputValue, _setInputValue] = React.useState<string>('');
 
   const setInputValue = (value: string): void => {
     if (!inputRef.current) {
@@ -52,13 +52,13 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
   // update current value
   React.useEffect(() => {
     if (!value) {
-      setInputValue("");
+      setInputValue('');
     } else {
-      const parseInputValue = BN.parseUnits(inputValue || "0", decimals);
+      const parseInputValue = BN.parseUnits(inputValue || '0', decimals);
 
       if (!parseInputValue || !parseInputValue.eq(value)) {
         setInputValue(
-          BN.formatUnits(value, decimals).toSignificant(6).toString()
+          BN.formatUnits(value, decimals).toSignificant(6).toString(),
         );
       }
     }
@@ -75,11 +75,11 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
     let { value } = event.currentTarget;
 
     // Replace comma to the dot
-    value = value.replace(",", ".");
+    value = value.replace(',', '.');
 
     // Replace leading zeros
     if (/^0+[^.]/.test(value)) {
-      value = value.replace(/^0+/, "");
+      value = value.replace(/^0+/, '');
     }
 
     // Limit the number of decimal places to token decimals
@@ -87,7 +87,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
       return;
     }
 
-    if (value === "") {
+    if (value === '') {
       onChange(BN.ZERO);
       setInputValue(value);
       return;
@@ -111,7 +111,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
     ...rest,
     placeholder,
     onChange: handleChange,
-    type: "text",
+    type: 'text',
     value: inputValue,
     readOnly,
     disabled,

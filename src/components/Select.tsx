@@ -1,17 +1,17 @@
-import styled from "@emotion/styled";
-import React, { HTMLAttributes, useState } from "react";
-import Tooltip from "./Tooltip";
-import arrowIcon from "@src/assets/icons/arrowRightBorderless.svg";
-import check from "@src/assets/icons/checkMark.svg";
-import SizedBox from "@components/SizedBox";
-import { Column } from "./Flex";
+import styled from '@emotion/styled';
+import React, { HTMLAttributes, useState } from 'react';
+import Tooltip from './Tooltip';
+import arrowIcon from '@src/assets/icons/arrowRightBorderless.svg';
+import check from '@src/assets/icons/checkMark.svg';
+import SizedBox from '@components/SizedBox';
+import { Column } from './Flex';
 
 interface IOption {
   key: string;
   title: string;
 }
 
-interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
+interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   options: IOption[];
   selected?: IOption;
   onSelect: (key: IOption) => void;
@@ -37,7 +37,7 @@ const Root = styled.div<{ focused?: boolean }>`
   .menu-arrow {
     transition: 0.4s;
     transform: ${({ focused }) =>
-      focused ? "rotate(-90deg)" : "rotate(90deg)"};
+      focused ? 'rotate(-90deg)' : 'rotate(90deg)'};
   }
 `;
 const Option = styled.div<{ active?: boolean }>`
@@ -50,7 +50,7 @@ const Option = styled.div<{ active?: boolean }>`
   font-size: 14px;
   line-height: 20px;
   color: ${({ active, theme }) =>
-    active ? "#3638708F" : theme.colors.primary800};
+    active ? '#3638708F' : theme.colors.primary800};
   padding: 10px 12px 10px 22px;
   background: ${({ theme }) => `${theme.colors.white}`};
   margin: 0 -16px;
@@ -73,35 +73,32 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
   return (
     <Tooltip
       config={{
-        placement: "bottom-start",
-        trigger: "click",
+        placement: 'bottom-start',
+        trigger: 'click',
         onVisibleChange: setFocused,
       }}
       content={
         <Column crossAxisSize="max">
-          {options.map((v) => {
+          {options.map(v => {
             const active = selected?.key === v.key;
             return (
               <Option
                 active={active}
-                key={v.key + "_option"}
+                key={v.key + '_option'}
                 onClick={() => {
                   onSelect(v);
-                }}
-              >
+                }}>
                 {v.title}
               </Option>
             );
           })}
         </Column>
-      }
-    >
+      }>
       <Root
         focused={focused}
         onClick={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        {...rest}
-      >
+        {...rest}>
         {selected?.title ?? options[0].title}
         <SizedBox width={10} />
         <img src={arrowIcon} className="menu-arrow" alt="arrow" />

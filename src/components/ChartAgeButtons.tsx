@@ -1,9 +1,9 @@
-import React, { HTMLAttributes } from "react";
-import styled from "@emotion/styled";
-import { Row } from "@components/Flex";
-import { TChartDataRecord } from "@screens/ExploreToken/ExploreTokenVm";
+import React, { HTMLAttributes } from 'react';
+import styled from '@emotion/styled';
+import { Row } from '@components/Flex';
+import { TChartDataRecord } from '@screens/ExploreToken/ExploreTokenVm';
 
-interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   value: keyof TChartDataRecord;
   onChange: (value: string) => void;
 }
@@ -16,12 +16,12 @@ const Root = styled(Row)`
 `;
 
 const ageButtons = [
-  { title: "1D", value: "1d" },
-  { title: "7D", value: "1w" },
-  { title: "1M", value: "1m" },
-  { title: "3M", value: "3m" },
-  { title: "1Y", value: "1y" },
-  { title: "All", value: "all" },
+  { title: '1D', value: '1d' },
+  { title: '7D', value: '1w' },
+  { title: '1M', value: '1m' },
+  { title: '3M', value: '3m' },
+  { title: '1Y', value: '1y' },
+  { title: 'All', value: 'all' },
 ];
 
 const ChartAgeButton = styled.div<{ selected?: boolean }>`
@@ -33,10 +33,10 @@ const ChartAgeButton = styled.div<{ selected?: boolean }>`
   box-sizing: border-box;
   height: 24px;
   background: ${({ selected, theme }) =>
-    selected ? theme.colors.white : "transparent"};
+    selected ? theme.colors.white : 'transparent'};
   border-radius: 6px;
   box-shadow: ${({ selected }) =>
-    selected ? "0px 8px 24px rgba(54, 56, 112, 0.16)" : "none"};
+    selected ? '0px 8px 24px rgba(54, 56, 112, 0.16)' : 'none'};
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
@@ -60,8 +60,7 @@ const ChartAgeButtons: React.FC<IProps> = ({
       <ChartAgeButton
         key={value}
         selected={selected === value}
-        onClick={() => onChange(value)}
-      >
+        onClick={() => onChange(value)}>
         {title}
       </ChartAgeButton>
     ))}

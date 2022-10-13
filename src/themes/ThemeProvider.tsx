@@ -1,14 +1,14 @@
-import React from "react";
-import { ThemeProvider } from "@emotion/react";
-import { useObserver } from "mobx-react-lite";
+import React from 'react';
+import { ThemeProvider } from '@emotion/react';
+import { useObserver } from 'mobx-react-lite';
 
-import darkTheme from "@src/themes/darkTheme";
-import lightTheme from "@src/themes/lightTheme";
-import { useStores } from "@stores";
+import darkTheme from '@src/themes/darkTheme';
+import lightTheme from '@src/themes/lightTheme';
+import { useStores } from '@stores';
 
 export enum THEME_TYPE {
-  LIGHT_THEME = "lightTheme",
-  DARK_THEME = "darkTheme",
+  LIGHT_THEME = 'lightTheme',
+  DARK_THEME = 'darkTheme',
 }
 
 export const themes = {

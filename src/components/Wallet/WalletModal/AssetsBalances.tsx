@@ -1,18 +1,18 @@
-import React, { HTMLAttributes } from "react";
-import { observer } from "mobx-react-lite";
-import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
-import InvestRow from "@components/InvestRow";
-import { Column } from "@components/Flex";
-import SizedBox from "@components/SizedBox";
-import Text from "@components/Text";
-import Button from "@components/Button";
-import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
-import styled from "@emotion/styled";
-import { useStores } from "@stores";
-import Skeleton from "react-loading-skeleton";
-import BN from "@src/utils/BN";
+import React, { HTMLAttributes } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useWalletVM } from '@components/Wallet/WalletModal/WalletVM';
+import InvestRow from '@components/InvestRow';
+import { Column } from '@components/Flex';
+import SizedBox from '@components/SizedBox';
+import Text from '@components/Text';
+import Button from '@components/Button';
+import { ReactComponent as NotFoundIcon } from '@src/assets/notFound.svg';
+import styled from '@emotion/styled';
+import { useStores } from '@stores';
+import Skeleton from 'react-loading-skeleton';
+import BN from '@src/utils/BN';
 
-interface IProps extends HTMLAttributes<HTMLDivElement> {}
+type IProps = HTMLAttributes<HTMLDivElement>;
 
 const Root = styled.div`
   display: flex;
@@ -25,7 +25,7 @@ const AssetsBalances: React.FC<IProps> = () => {
   const { accountStore } = useStores();
   if (accountStore.assetBalances === null)
     return (
-      <Root style={{ padding: "0 24px" }}>
+      <Root style={{ padding: '0 24px' }}>
         <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       </Root>
     );
@@ -33,7 +33,7 @@ const AssetsBalances: React.FC<IProps> = () => {
   return (
     <Root>
       {vm.balances.length !== 0 ? (
-        vm.balances.map((b) => {
+        vm.balances.map(b => {
           return (
             <InvestRow
               rateChange={BN.ZERO}
@@ -41,7 +41,7 @@ const AssetsBalances: React.FC<IProps> = () => {
               logo={b.logo}
               topLeftInfo={b.name}
               topRightInfo={b.formatBalance}
-              bottomLeftInfo={"$ "}
+              bottomLeftInfo={'$ '}
               bottomRightInfo={b.formatUsdnEquivalent}
               withClickLogic
               onClick={() => {

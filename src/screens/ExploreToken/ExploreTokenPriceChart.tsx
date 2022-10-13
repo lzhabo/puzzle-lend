@@ -1,22 +1,22 @@
-import styled from "@emotion/styled";
-import React from "react";
-import Text from "@components/Text";
-import Card from "@components/Card";
-import { observer } from "mobx-react-lite";
+import styled from '@emotion/styled';
+import React from 'react';
+import Text from '@components/Text';
+import Card from '@components/Card';
+import { observer } from 'mobx-react-lite';
 import {
   Line,
   LineChart,
   Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
-} from "recharts";
-import useWindowSize from "@src/hooks/useWindowSize";
-import dayjs from "dayjs";
-import BN from "@src/utils/BN";
-import { Row } from "@src/components/Flex";
-import Spinner from "@components/Spinner";
-import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
-import ChartAgeButtons from "@src/components/ChartAgeButtons";
+} from 'recharts';
+import useWindowSize from '@src/hooks/useWindowSize';
+import dayjs from 'dayjs';
+import BN from '@src/utils/BN';
+import { Row } from '@src/components/Flex';
+import Spinner from '@components/Spinner';
+import { useExploreTokenVM } from '@screens/ExploreToken/ExploreTokenVm';
+import ChartAgeButtons from '@src/components/ChartAgeButtons';
 
 interface IProps {}
 
@@ -125,21 +125,21 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
             <XAxis
               tickLine={false}
               dataKey="date"
-              tickFormatter={(date) => dayjs(date).format("MM:HH, MMM DD")}
-              style={{ fill: "#8082c5" }}
+              tickFormatter={date => dayjs(date).format('MM:HH, MMM DD')}
+              style={{ fill: '#8082c5' }}
             />
             <RechartsTooltip
-              labelFormatter={(date) => (
+              labelFormatter={date => (
                 <Text type="secondary" size="small">
-                  {dayjs(date).format("MM:HH, MMM DD")}
+                  {dayjs(date).format('MM:HH, MMM DD')}
                 </Text>
               )}
               formatter={(volume: number) => (
                 <Text size="medium">$&nbsp;{new BN(volume).toFormat(2)}</Text>
               )}
               contentStyle={{
-                border: "none",
-                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+                border: 'none',
+                filter: 'drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))',
               }}
             />
             <Line

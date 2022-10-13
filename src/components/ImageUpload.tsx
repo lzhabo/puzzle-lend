@@ -1,12 +1,12 @@
-import styled from "@emotion/styled";
-import React from "react";
-import { compressImage, getB64FileLength, toBase64 } from "@src/utils/files";
-import { useStores } from "@stores";
-import plus from "@src/assets/icons/plus.svg";
-import Text from "@components/Text";
-import { Column, Row } from "@components/Flex";
-import SizedBox from "@components/SizedBox";
-import { ReactComponent as Cross } from "@src/assets/icons/darkClose.svg";
+import styled from '@emotion/styled';
+import React from 'react';
+import { compressImage, getB64FileLength, toBase64 } from '@src/utils/files';
+import { useStores } from '@stores';
+import plus from '@src/assets/icons/plus.svg';
+import Text from '@components/Text';
+import { Column, Row } from '@components/Flex';
+import SizedBox from '@components/SizedBox';
+import { ReactComponent as Cross } from '@src/assets/icons/darkClose.svg';
 
 interface IProps {
   fileName: string | null;
@@ -37,7 +37,7 @@ const Root = styled.div`
     color: black;
   }
 
-  .upload-btn-wrapper input[type="file"] {
+  .upload-btn-wrapper input[type='file'] {
     cursor: pointer;
     width: 56px;
     height: 56px;
@@ -88,7 +88,7 @@ const ImageUpload: React.FC<IProps> = ({
     if (!files || !files[0]) return;
     const file: File = files[0];
     if (!/(gif|jpe?g|png|bmp|svg\+xml)$/i.test(file.type)) {
-      notificationStore.notify("Please choose other file extension");
+      notificationStore.notify('Please choose other file extension');
     }
     try {
       const b64 = await toBase64(file);
@@ -105,7 +105,7 @@ const ImageUpload: React.FC<IProps> = ({
         {image == null && (
           <img
             src={plus}
-            style={{ top: 16, right: 16, position: "absolute" }}
+            style={{ top: 16, right: 16, position: 'absolute' }}
             alt="plus"
           />
         )}
