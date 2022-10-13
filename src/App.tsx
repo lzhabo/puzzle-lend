@@ -11,7 +11,7 @@ import { ROUTES } from "@src/constants";
 import Dashboard from "@screens/Dashboard";
 import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
-import DashboardModal from "@components/DashboardModals";
+import DashboardModal from "@screens/Dashboard/DashboardModals";
 
 const Root = styled(Column)`
   width: 100%;

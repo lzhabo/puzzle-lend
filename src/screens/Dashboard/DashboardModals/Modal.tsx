@@ -6,9 +6,9 @@ import { observer } from 'mobx-react-lite';
 import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
-import DashboardModalBody from '@components/DashboardModals/DashboardModalBody';
+import DashboardModalBody from '@screens/Dashboard/DashboardModals/DashboardModalBody';
 import Dialog from '@components/Dialog';
-import { DashboardWalletVMProvider } from '@components/DashboardModals/DashboardWalletVM';
+import { DashboardWalletVMProvider } from '@screens/Dashboard/DashboardModals/DashboardWalletVM';
 import './modal.css';
 
 interface UrlParamsProps {
