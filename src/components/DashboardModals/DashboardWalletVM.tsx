@@ -18,10 +18,6 @@ export const DashboardWalletUseVM = () => useVM(ctx);
 class DashboardWalletVM {
   rootStore: RootStore;
 
-  headerExpanded = true;
-
-  setHeaderExpanded = (state: boolean) => (this.headerExpanded = state);
-
   // tokenToSend: Balance | null = null;
   // public setTokenToSend = (v: Balance) => (this.tokenToSend = v);
 

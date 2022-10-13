@@ -29,14 +29,6 @@ const Root = styled(Column)`
   }
 `;
 
-const ListWrapper = styled.div<{ headerExpanded: boolean }>`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: 0.4s;
-  overflow: hidden;
-`;
-
 const WalletModalBody: React.FC<IProps> = ({
   urlParams
 }) => {
@@ -81,30 +73,28 @@ const WalletModalBody: React.FC<IProps> = ({
 
   return (
     <Root>
-      <ListWrapper headerExpanded={vm.headerExpanded}>
-        {lendStore.dashboardModalStep === 0 && urlParams.operationName === 'supply' && (
-          <SupplyAssets
-            token={choosenToken!}
-            userBalance={getTokenBalance()}
-            modalAmount={vm.supplyAmount}
-            modalSetAmount={vm.setSupplyAmount}
-            onMaxClick={supplyMaxClickFunc}
-            onSubmit={vm.submitSupply}
-            onClose={vm.onCloseModal}
-          />
-        )}
-        {lendStore.dashboardModalStep === 1 && urlParams.operationName === 'withdraw' && (
-          <WithdrawAssets
-            token={choosenToken!}
-            userBalance={getTokenBalance()}
-            modalAmount={vm.supplyAmount}
-            modalSetAmount={vm.setSupplyAmount}
-            onMaxClick={supplyMaxClickFunc}
-            onSubmit={vm.submitSupply}
-            onClose={vm.onCloseModal}
-          />
-        )}
-      </ListWrapper>
+      {lendStore.dashboardModalStep === 0 && urlParams.operationName === 'supply' && (
+        <SupplyAssets
+          token={choosenToken!}
+          userBalance={getTokenBalance()}
+          modalAmount={vm.supplyAmount}
+          modalSetAmount={vm.setSupplyAmount}
+          onMaxClick={supplyMaxClickFunc}
+          onSubmit={vm.submitSupply}
+          onClose={vm.onCloseModal}
+        />
+      )}
+      {lendStore.dashboardModalStep === 1 && urlParams.operationName === 'withdraw' && (
+        <WithdrawAssets
+          token={choosenToken!}
+          userBalance={getTokenBalance()}
+          modalAmount={vm.supplyAmount}
+          modalSetAmount={vm.setSupplyAmount}
+          onMaxClick={supplyMaxClickFunc}
+          onSubmit={vm.submitSupply}
+          onClose={vm.onCloseModal}
+        />
+      )}
     </Root>
   );
 };
