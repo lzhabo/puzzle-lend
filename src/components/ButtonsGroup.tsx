@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import React from 'react';
+import styled from "@emotion/styled";
+import React from "react";
 
 interface IProps {
   values: string[];
@@ -33,7 +33,8 @@ const ButtonsGroup: React.FC<IProps> = ({ values, active, onClick }) => {
         <Btn
           key={index}
           onClick={() => onClick(index)}
-          active={active === index}>
+          active={active === index}
+        >
           {v}
         </Btn>
       ))}

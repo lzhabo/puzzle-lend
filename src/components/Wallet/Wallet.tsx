@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { useStores } from '@stores';
-import { observer } from 'mobx-react-lite';
-import Button from '@components/Button';
-import LoginModal from './LoginModal';
-import LoggedInAccountInfo from '@components/Wallet/LoggedInAccountInfo';
+import styled from "@emotion/styled";
+import React from "react";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import Button from "@components/Button";
+import LoginModal from "./LoginModal";
+import LoggedInAccountInfo from "@components/Wallet/LoggedInAccountInfo";
 
 interface IProps {}
 
@@ -25,7 +25,8 @@ const Wallet: React.FC<IProps> = () => {
         <Button
           size="medium"
           onClick={() => accountStore.setLoginModalOpened(true)}
-          fixed>
+          fixed
+        >
           Connect wallet
         </Button>
       ) : (
@@ -33,7 +34,7 @@ const Wallet: React.FC<IProps> = () => {
       )}
       <LoginModal
         visible={accountStore.loginModalOpened}
-        onLogin={loginType => accountStore.login(loginType)}
+        onLogin={(loginType) => accountStore.login(loginType)}
         onClose={() => accountStore.setLoginModalOpened(false)}
       />
     </Root>

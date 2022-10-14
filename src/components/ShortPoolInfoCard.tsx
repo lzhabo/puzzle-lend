@@ -1,12 +1,12 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import Text from '@components/Text';
-import SizedBox from '@components/SizedBox';
-import Card from '@components/Card';
-import { observer } from 'mobx-react-lite';
-import Button from '@components/Button';
-import { Column, Row } from '@components/Flex';
-import SquareTokenIcon from '@components/SquareTokenIcon';
+import styled from "@emotion/styled";
+import React from "react";
+import Text from "@components/Text";
+import SizedBox from "@components/SizedBox";
+import Card from "@components/Card";
+import { observer } from "mobx-react-lite";
+import Button from "@components/Button";
+import { Column, Row } from "@components/Flex";
+import SquareTokenIcon from "@components/SquareTokenIcon";
 
 interface IProps {
   title: string;
@@ -53,7 +53,7 @@ const DepositToPool: React.FC<IProps> = ({
   poolName,
   poolLogo,
   apy,
-  onChangePool,
+  onChangePool
 }) => {
   return (
     <Root>
@@ -65,11 +65,12 @@ const DepositToPool: React.FC<IProps> = ({
         paddingMobile="16px"
         flexDirection="row"
         justifyContent="space-between"
-        alignItems="center">
-        <Row style={{ alignItems: 'center' }}>
+        alignItems="center"
+      >
+        <Row style={{ alignItems: "center" }}>
           <SquareTokenIcon src={poolLogo} alt="logo" />
           <SizedBox width={8} />
-          <Column style={{ height: '100%' }}>
+          <Column style={{ height: "100%" }}>
             <Text className="cardTitle" weight={500}>
               {poolName}
             </Text>
@@ -79,7 +80,7 @@ const DepositToPool: React.FC<IProps> = ({
                   APY <b>{apy}</b>
                 </span>
               ) : (
-                '-'
+                "-"
               )}
             </Text>
           </Column>
@@ -90,7 +91,8 @@ const DepositToPool: React.FC<IProps> = ({
           onClick={() => {
             onChangePool && onChangePool();
           }}
-          style={{ whiteSpace: 'nowrap' }}>
+          style={{ whiteSpace: "nowrap" }}
+        >
           Change pool
         </Button>
       </Card>

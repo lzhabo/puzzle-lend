@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import React, { ChangeEvent, useState } from 'react';
-import Text from '@components/Text';
-import { ReactComponent as SearchIcon } from '@src/assets/icons/search.svg';
+import styled from "@emotion/styled";
+import React, { ChangeEvent, useState } from "react";
+import Text from "@components/Text";
+import { ReactComponent as SearchIcon } from "@src/assets/icons/search.svg";
 
 interface IProps
   extends Omit<
@@ -9,7 +9,7 @@ interface IProps
       React.InputHTMLAttributes<HTMLInputElement>,
       HTMLInputElement
     >,
-    'onChange' | 'prefix'
+    "onChange" | "prefix"
   > {
   icon?: string;
   value?: string;
@@ -24,7 +24,7 @@ interface IProps
 
 const Root = styled.div<{ focused?: boolean; error?: boolean }>`
   width: 100%;
-  background: ${({ focused }) => (focused ? '#fffff' : '#f1f2fe')};
+  background: ${({ focused }) => (focused ? "#fffff" : "#f1f2fe")};
 
   background: ${({ theme, focused }) =>
     focused ? theme.colors.white : theme.colors.primary100};
@@ -39,7 +39,7 @@ const Root = styled.div<{ focused?: boolean; error?: boolean }>`
 
   :hover {
     border-color: ${({ focused, error }) =>
-      error ? '#ED827E' : !focused ? '#C6C9F4' : '#7075E9'};
+      error ? "#ED827E" : !focused ? "#C6C9F4" : "#7075E9"};
   }
 
   align-items: center;
@@ -84,7 +84,7 @@ const Input: React.FC<IProps> = ({
   return (
     <>
       <Root focused={focused} error={error} {...rest}>
-        {icon === 'search' && <SearchIcon style={{ marginRight: 16 }} />}
+        {icon === "search" && <SearchIcon style={{ marginRight: 16 }} />}
         {prefix && prefix}
         <input
           onChange={onChange}

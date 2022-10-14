@@ -1,6 +1,6 @@
-import React from 'react';
-import { ReactComponent as CheckedCheckbox } from '@src/assets/icons/checked.svg';
-import { ReactComponent as NoCheckedCheckbox } from '@src/assets/icons/noChecked.svg';
+import React from "react";
+import { ReactComponent as CheckedCheckbox } from "@src/assets/icons/checked.svg";
+import { ReactComponent as NoCheckedCheckbox } from "@src/assets/icons/noChecked.svg";
 
 interface IProps {
   checked?: boolean;
@@ -10,12 +10,12 @@ interface IProps {
 const Checkbox: React.FC<IProps> = ({ checked, onChange }) => {
   return checked ? (
     <CheckedCheckbox
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: "pointer" }}
       onClick={() => onChange(false)}
     />
   ) : (
     <NoCheckedCheckbox
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: "pointer" }}
       onClick={() => onChange(true)}
     />
   );

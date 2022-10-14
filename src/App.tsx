@@ -1,17 +1,17 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { observer } from 'mobx-react-lite';
-import Header from '@components/Header';
-import { Column } from '@components/Flex';
-import { useStores } from '@stores';
-import WalletModal from '@components/Wallet/WalletModal';
-import MobileNavBar from './components/MobileNavBar';
-import { ROUTES, OPERATIONS_TYPE } from '@src/constants';
-import Dashboard from '@screens/Dashboard';
-import ExploreToken from '@screens/ExploreToken';
-import NotFound from '@screens/NotFound';
-import DashboardModal from '@screens/Dashboard/DashboardModals';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import styled from "@emotion/styled";
+import { observer } from "mobx-react-lite";
+import Header from "@components/Header";
+import { Column } from "@components/Flex";
+import { useStores } from "@stores";
+import WalletModal from "@components/Wallet/WalletModal";
+import MobileNavBar from "./components/MobileNavBar";
+import { ROUTES, OPERATIONS_TYPE } from "@src/constants";
+import Dashboard from "@screens/Dashboard";
+import ExploreToken from "@screens/ExploreToken";
+import NotFound from "@screens/NotFound";
+import DashboardModal from "@screens/Dashboard/DashboardModals";
 
 const Root = styled(Column)`
   width: 100%;

@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import React, { CSSProperties } from 'react';
-import Text from '@src/components/Text';
+import styled from "@emotion/styled";
+import React, { CSSProperties } from "react";
+import Text from "@src/components/Text";
 
 type ITab = {
   name: string;
@@ -28,7 +28,7 @@ const Tab = styled.div<{ active?: boolean }>`
   border-bottom: 4px solid #7075e9;
   cursor: pointer;
   border-bottom: ${({ active, theme }) =>
-    active ? `4px solid ${theme.colors.blue500}` : '4px solid transparent'};
+    active ? `4px solid ${theme.colors.blue500}` : "4px solid transparent"};
   margin-bottom: -1px;
   user-select: none;
 
@@ -43,7 +43,7 @@ const Tabs: React.FC<IProps> = ({
   activeTab,
   setActive,
   style,
-  tabStyle,
+  tabStyle
 }) => {
   return (
     <Root style={style}>
@@ -52,11 +52,12 @@ const Tabs: React.FC<IProps> = ({
           key={index}
           active={index === activeTab}
           onClick={() => setActive(index)}
-          style={tabStyle}>
+          style={tabStyle}
+        >
           <Text weight={500}>
             {name}
             {additionalInfo != null && additionalInfo !== 0 && (
-              <span style={{ color: '#8082C5', marginLeft: 10 }}>
+              <span style={{ color: "#8082C5", marginLeft: 10 }}>
                 {additionalInfo}
               </span>
             )}

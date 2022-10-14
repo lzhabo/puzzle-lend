@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { Column, Row } from '@components/Flex';
-import React from 'react';
-import Text from '@components/Text';
-import Skeleton from 'react-loading-skeleton';
+import styled from "@emotion/styled";
+import { Column, Row } from "@components/Flex";
+import React from "react";
+import Text from "@components/Text";
+import Skeleton from "react-loading-skeleton";
 
 const Root = styled(Column)`
   & > * {
@@ -33,7 +33,7 @@ const StatisticsGroup: React.FC<{
         {loading || value == null ? (
           <Skeleton height={20} width={110} />
         ) : (
-          <Text style={{ textAlign: 'right', color: valueColor }} size="medium">
+          <Text style={{ textAlign: "right", color: valueColor }} size="medium">
             {value}
           </Text>
         )}

@@ -1,8 +1,8 @@
-import { IToken } from '@src/constants';
-import BN from '@src/utils/BN';
-import tokenLogos from '@src/constants/tokenLogos';
+import { IToken } from "@src/constants";
+import BN from "@src/utils/BN";
+import tokenLogos from "@src/constants/tokenLogos";
 
-export interface IAssetBalance extends Omit<IToken, 'logo'> {
+export interface IAssetBalance extends Omit<IToken, "logo"> {
   balance?: BN;
   usdnEquivalent?: BN;
   logo?: string;
@@ -34,7 +34,7 @@ class Balance implements IAssetBalance {
   }
 
   get formatBalance() {
-    if (this.balance == null) return '—';
+    if (this.balance == null) return "—";
     const value = BN.formatUnits(this.balance ?? 0, this.decimals);
     if (value.eq(0)) return value.toFormat(2);
     return value.gt(0.01) ? value.toFormat(2) : value.toFormat(6);
@@ -42,7 +42,7 @@ class Balance implements IAssetBalance {
 
   get formatUsdnEquivalent() {
     if (this.usdnEquivalent == null) {
-      return '—';
+      return "—";
     }
     if (this.usdnEquivalent.eq(0)) return `~ 0.00 $`;
     const v = this.usdnEquivalent.gt(0.01)

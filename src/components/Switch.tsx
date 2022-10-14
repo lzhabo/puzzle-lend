@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import React from 'react';
+import styled from "@emotion/styled";
+import React from "react";
 
 interface IProps {
   value: boolean;
@@ -42,7 +42,7 @@ const Root = styled.div`
 
   .slider:before {
     position: absolute;
-    content: '';
+    content: "";
     width: 18px;
     height: 18px;
     left: 3px;

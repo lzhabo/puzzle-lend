@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { Column } from '@src/components/Flex';
-import { observer } from 'mobx-react-lite';
+import styled from "@emotion/styled";
+import React from "react";
+import { Column } from "@src/components/Flex";
+import { observer } from "mobx-react-lite";
 
 type UrlParamsTypes = {
   tokenId?: string;

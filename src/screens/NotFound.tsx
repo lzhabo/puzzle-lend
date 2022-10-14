@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import noPage from '@src/assets/404.svg';
-import Text from '@components/Text';
-import SizedBox from '@components/SizedBox';
+import styled from "@emotion/styled";
+import React from "react";
+import noPage from "@src/assets/404.svg";
+import Text from "@components/Text";
+import SizedBox from "@components/SizedBox";
 
 interface IProps {}
 

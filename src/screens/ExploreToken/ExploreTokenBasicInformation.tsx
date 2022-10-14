@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { Column } from '@components/Flex';
-import ExploreTokenPriceChart from '@screens/ExploreToken/ExploreTokenPriceChart';
-import ExploreTokenPriceStatistics from '@screens/ExploreToken/ExploreTokenPriceStatistics';
-import useWindowSize from '@src/hooks/useWindowSize';
-import SizedBox from '@components/SizedBox';
+import styled from "@emotion/styled";
+import { Column } from "@components/Flex";
+import ExploreTokenPriceChart from "@screens/ExploreToken/ExploreTokenPriceChart";
+import ExploreTokenPriceStatistics from "@screens/ExploreToken/ExploreTokenPriceStatistics";
+import useWindowSize from "@src/hooks/useWindowSize";
+import SizedBox from "@components/SizedBox";
 
 const Root = styled(Column)`
   width: 100%;

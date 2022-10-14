@@ -1,13 +1,13 @@
-import React from 'react';
-import styled from '@emotion/styled';
-import { TNotifyOptions } from '@stores/NotificationStore';
-import { ReactComponent as CloseIcon } from '@src/assets/icons/close.svg';
-import { ReactComponent as ErrorIcon } from '@src/assets/icons/error.svg';
-import { ReactComponent as SuccessIcon } from '@src/assets/icons/success.svg';
-import { ReactComponent as WarningIcon } from '@src/assets/icons/warning.svg';
-import { ReactComponent as InfoIcon } from '@src/assets/icons/information.svg';
-import { Column, Row } from '@components/Flex';
-import Text from '@components/Text';
+import React from "react";
+import styled from "@emotion/styled";
+import { TNotifyOptions } from "@stores/NotificationStore";
+import { ReactComponent as CloseIcon } from "@src/assets/icons/close.svg";
+import { ReactComponent as ErrorIcon } from "@src/assets/icons/error.svg";
+import { ReactComponent as SuccessIcon } from "@src/assets/icons/success.svg";
+import { ReactComponent as WarningIcon } from "@src/assets/icons/warning.svg";
+import { ReactComponent as InfoIcon } from "@src/assets/icons/information.svg";
+import { Column, Row } from "@components/Flex";
+import Text from "@components/Text";
 
 const Root = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ const Link = styled.a`
 
 const getAlert = (
   content: string,
-  { type, title, link, linkTitle, onClick, onClickText }: TNotifyOptions,
+  { type, title, link, linkTitle, onClick, onClickText }: TNotifyOptions
 ) => {
   if (!type) return null;
   return (
@@ -48,7 +48,8 @@ const getAlert = (
             size="small"
             type="secondary"
             className="notifications-text"
-            style={{ marginTop: 2, width: '100%', wordBreak: 'break-word' }}>
+            style={{ marginTop: 2, width: "100%", wordBreak: "break-word" }}
+          >
             {content}
           </Text>
           {link && (
@@ -68,23 +69,23 @@ const getAlert = (
 };
 
 const Icon: React.FunctionComponent<{
-  type: 'error' | 'info' | 'warning' | 'success';
+  type: "error" | "info" | "warning" | "success";
 }> = ({ type }) => {
   let icon = null;
   const Root = styled.div`
     margin-right: 16px;
   `;
   switch (type) {
-    case 'error':
+    case "error":
       icon = <ErrorIcon />;
       break;
-    case 'success':
+    case "success":
       icon = <SuccessIcon />;
       break;
-    case 'info':
+    case "info":
       icon = <InfoIcon />;
       break;
-    case 'warning':
+    case "warning":
       icon = <WarningIcon />;
       break;
   }

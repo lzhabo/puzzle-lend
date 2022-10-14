@@ -1,15 +1,15 @@
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 
 type TTextType =
-  | 'primary'
-  | 'secondary'
-  | 'light'
-  | 'blue500'
-  | 'error'
-  | 'success'
-  | 'purple300';
-type TTextSize = 'small' | 'medium' | 'large' | 'big';
-type TTextAlign = 'center' | 'left' | 'right' | 'justify' | 'end';
+  | "primary"
+  | "secondary"
+  | "light"
+  | "blue500"
+  | "error"
+  | "success"
+  | "purple300";
+type TTextSize = "small" | "medium" | "large" | "big";
+type TTextAlign = "center" | "left" | "right" | "justify" | "end";
 
 const Text = styled.p<{
   type?: TTextType;
@@ -22,27 +22,27 @@ const Text = styled.p<{
   textAlign?: TTextAlign;
 }>`
   margin: 0;
-  width: ${({ fitContent }) => (fitContent ? 'fit-content' : '100%')};
+  width: ${({ fitContent }) => (fitContent ? "fit-content" : "100%")};
   font-weight: ${({ weight }) => weight ?? 400};
-  white-space: ${({ nowrap }) => (nowrap ? 'nowrap' : 'unset')};
-  text-decoration: ${({ crossed }) => (crossed ? 'line-through' : 'unset')};
-  text-align: ${({ textAlign }) => textAlign ?? 'default'};
+  white-space: ${({ nowrap }) => (nowrap ? "nowrap" : "unset")};
+  text-decoration: ${({ crossed }) => (crossed ? "line-through" : "unset")};
+  text-align: ${({ textAlign }) => textAlign ?? "default"};
   ${({ type, theme }) =>
     (() => {
       switch (type) {
-        case 'primary':
+        case "primary":
           return `color: ${theme.colors?.primary800};`;
-        case 'secondary':
+        case "secondary":
           return `color: ${theme.colors?.primary650};`;
-        case 'blue500':
+        case "blue500":
           return `color: ${theme.colors?.blue500};`;
-        case 'light':
+        case "light":
           return `color: ${theme.colors?.white};`;
-        case 'error':
+        case "error":
           return `color: ${theme.colors?.error500};`;
-        case 'success':
+        case "success":
           return `color: ${theme.colors?.success};`;
-        case 'purple300':
+        case "purple300":
           return `color: ${theme.colors?.primary300};`;
         default:
           return `color: ${theme.colors?.primary800};`;
@@ -54,16 +54,16 @@ const Text = styled.p<{
   ${({ size }) =>
     (() => {
       switch (size) {
-        case 'small':
-          return 'font-size: 12px; line-height: 16px;';
-        case 'medium':
-          return 'font-size: 14px; line-height: 20px;';
-        case 'big':
-          return 'font-size: 20px; line-height: 24px;';
-        case 'large':
-          return 'font-size: 32px;line-height: 40px;';
+        case "small":
+          return "font-size: 12px; line-height: 16px;";
+        case "medium":
+          return "font-size: 14px; line-height: 20px;";
+        case "big":
+          return "font-size: 20px; line-height: 24px;";
+        case "large":
+          return "font-size: 32px;line-height: 40px;";
         default:
-          return 'font-size: 16px; line-height: 24px;';
+          return "font-size: 16px; line-height: 24px;";
       }
     })()}
 `;

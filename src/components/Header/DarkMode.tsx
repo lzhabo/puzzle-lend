@@ -1,14 +1,14 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import moon from '@src/assets/icons/moon.svg';
-import Img from '@components/Img';
-import Text from '@components/Text';
-import Switch from '@components/Switch';
-import { observer } from 'mobx-react-lite';
-import { useStores } from '@stores';
-import { THEME_TYPE } from '@src/themes/ThemeProvider';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import moon from "@src/assets/icons/moon.svg";
+import Img from "@components/Img";
+import Text from "@components/Text";
+import Switch from "@components/Switch";
+import { observer } from "mobx-react-lite";
+import { useStores } from "@stores";
+import { THEME_TYPE } from "@src/themes/ThemeProvider";
 
-type IProps = HTMLAttributes<HTMLDivElement>;
+interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
 const Root = styled.div`
   display: flex;

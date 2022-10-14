@@ -1,15 +1,15 @@
-import styled from '@emotion/styled';
-import React, { useCallback, useEffect, useState } from 'react';
-import MaxButton from '@components/MaxButton';
-import Text from '@components/Text';
-import { observer } from 'mobx-react-lite';
-import Balance from '@src/entities/Balance';
-import BN from '@src/utils/BN';
-import BigNumberInput from '@components/BigNumberInput';
-import AmountInput from '@components/AmountInput';
-import _ from 'lodash';
-import TokenSelect from '@components/TokenInput/TokenSelect';
-import TokenSelectModal from '../TokensSelectModal';
+import styled from "@emotion/styled";
+import React, { useCallback, useEffect, useState } from "react";
+import MaxButton from "@components/MaxButton";
+import Text from "@components/Text";
+import { observer } from "mobx-react-lite";
+import Balance from "@src/entities/Balance";
+import BN from "@src/utils/BN";
+import BigNumberInput from "@components/BigNumberInput";
+import AmountInput from "@components/AmountInput";
+import _ from "lodash";
+import TokenSelect from "@components/TokenInput/TokenSelect";
+import TokenSelectModal from "../TokensSelectModal";
 
 interface IProps {
   balances: Balance[];
@@ -61,12 +61,12 @@ const InputContainer = styled.div<{
   border-radius: 12px;
   width: 100%;
   position: relative;
-  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'unset')};
+  cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
 
   box-sizing: border-box;
 
   input {
-    cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'unset')};
+    cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
   }
 
   border: 1px solid
@@ -80,11 +80,11 @@ const InputContainer = styled.div<{
         : focused ?? theme.colors.blue500};
   }
 `;
-const TokenInput: React.FC<IProps> = props => {
+const TokenInput: React.FC<IProps> = (props) => {
   const [focused, setFocused] = useState(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const selectedAssetBalance = props.balances?.find(
-    ({ assetId }) => assetId === props.assetId,
+    ({ assetId }) => assetId === props.assetId
   );
   const [amount, setAmount] = useState<BN>(props.amount);
 
@@ -101,7 +101,7 @@ const TokenInput: React.FC<IProps> = props => {
     _.debounce((value: BN) => {
       props.setAmount && props.setAmount(value);
     }, 500),
-    [],
+    []
   );
 
   return (
@@ -125,11 +125,11 @@ const TokenInput: React.FC<IProps> = props => {
           renderInput={(props, ref) => (
             <AmountInput
               {...props}
-              onFocus={e => {
+              onFocus={(e) => {
                 props.onFocus && props.onFocus(e);
                 !props.readOnly && setFocused(true);
               }}
-              onBlur={e => {
+              onBlur={(e) => {
                 props.onBlur && props.onBlur(e);
                 setFocused(false);
               }}
@@ -144,10 +144,11 @@ const TokenInput: React.FC<IProps> = props => {
           readOnly={!props.setAmount}
         />
         <Text
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: "nowrap" }}
           type="secondary"
           size="small"
-          fitContent>
+          fitContent
+        >
           {props.usdnEquivalent}
         </Text>
       </InputContainer>

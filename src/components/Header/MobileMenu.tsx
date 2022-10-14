@@ -1,14 +1,14 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import SizedBox from '@components/SizedBox';
-import LinkGroup from '@components/LinkGroup';
-import Divider from '@components/Divider';
-import Wallet from '@components/Wallet/Wallet';
-import Scrollbar from '@components/Scrollbar';
-import { Column } from '../Flex';
-import { observer } from 'mobx-react-lite';
-import { ROUTES } from '@src/constants';
-import DarkMode from '@components/Header/DarkMode';
+import styled from "@emotion/styled";
+import React from "react";
+import SizedBox from "@components/SizedBox";
+import LinkGroup from "@components/LinkGroup";
+import Divider from "@components/Divider";
+import Wallet from "@components/Wallet/Wallet";
+import Scrollbar from "@components/Scrollbar";
+import { Column } from "../Flex";
+import { observer } from "mobx-react-lite";
+import { ROUTES } from "@src/constants";
+import DarkMode from "@components/Header/DarkMode";
 
 interface IProps {
   onClose: () => void;
@@ -29,7 +29,7 @@ const Root = styled.div<{ bannerClosed: boolean; opened: boolean }>`
   transition: 0.2s;
   overflow: hidden;
 
-  ${({ opened }) => (!opened ? `height: 0px;` : '')}
+  ${({ opened }) => (!opened ? `height: 0px;` : "")}
   .menu-body {
     display: flex;
     flex-direction: column;
@@ -43,30 +43,30 @@ const WalletWrapper = styled.div`
 `;
 
 const toolsMenu = [
-  { name: 'Notifications bot', link: 'https://t.me/puzzle_swap', outer: true },
-  { name: 'Alerts bot', link: 'https://t.me/puzzle_alerts_bot', outer: true },
+  { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true },
+  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true }
 ];
 const communityMenu = [
-  { name: 'Telegram', link: 'https://t.me/puzzleswap', outer: true },
-  { name: 'Twitter', link: 'https://twitter.com/puzzle_swap', outer: true },
-  { name: 'Medium', link: 'https://medium.com/@puzzleswap', outer: true },
+  { name: "Telegram", link: "https://t.me/puzzleswap", outer: true },
+  { name: "Twitter", link: "https://twitter.com/puzzle_swap", outer: true },
+  { name: "Medium", link: "https://medium.com/@puzzleswap", outer: true }
 ];
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
   const mainFunctional = [
-    { name: 'Dashboard', link: ROUTES.DASHBOARD, outer: false },
+    { name: "Dashboard", link: ROUTES.DASHBOARD, outer: false },
     {
-      name: 'Guidebook',
-      link: 'https://puzzle-lend.gitbook.io/guidebook/',
-      outer: true,
-    },
+      name: "Guidebook",
+      link: "https://puzzle-lend.gitbook.io/guidebook/",
+      outer: true
+    }
   ];
   return (
     <Root {...{ bannerClosed, opened }}>
       <div className="menu-body">
         <Divider />
         <Scrollbar style={{ margin: 24, marginBottom: 0 }}>
-          <Column crossAxisSize="max" style={{ maxHeight: '50vh' }}>
+          <Column crossAxisSize="max" style={{ maxHeight: "50vh" }}>
             <LinkGroup onClick={onClose} title="" links={mainFunctional} />
             <SizedBox height={24} />
             <LinkGroup title="Tools" links={toolsMenu} />

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import { Link } from 'react-router-dom';
-import Text from '@components/Text';
-import { Anchor } from '@components/Anchor';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import { Link } from "react-router-dom";
+import Text from "@components/Text";
+import { Anchor } from "@components/Anchor";
 
 interface ILinkGroupItem {
   name: string;
@@ -54,7 +54,7 @@ const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
           <StyledLink to={link} key={key}>
             {name}
           </StyledLink>
-        ),
+        )
       )}
     </Root>
   );

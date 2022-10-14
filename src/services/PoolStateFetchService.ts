@@ -1,7 +1,7 @@
-import nodeService from '@src/services/nodeService';
-import { getStateByKey } from '@src/utils/getStateByKey';
-import BN from '@src/utils/BN';
-import { IToken, TOKENS_BY_ASSET_ID } from '@src/constants';
+import nodeService from "@src/services/nodeService";
+import { getStateByKey } from "@src/utils/getStateByKey";
+import BN from "@src/utils/BN";
+import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 
 export type TPoolToken = {
   cf: BN;
@@ -17,26 +17,26 @@ class PoolStateFetchService {
   }
   fetchSetups = async (): Promise<TPoolToken[]> => {
     const settingKeys = [
-      'setup_tokens',
-      'setup_ltvs',
-      'setup_lts',
-      'setup_penalties',
-      'setup_interest',
-      'setup_active',
+      "setup_tokens",
+      "setup_ltvs",
+      "setup_lts",
+      "setup_penalties",
+      "setup_interest",
+      "setup_active"
     ];
 
     const settings = await nodeService.nodeKeysRequest(this.pool, settingKeys);
 
     const splitRecord = (rec?: string | number) =>
-      rec ? String(rec).split(',') : null;
+      rec ? String(rec).split(",") : null;
 
-    const tokens = splitRecord(getStateByKey(settings, 'setup_tokens'));
-    const ltvs = splitRecord(getStateByKey(settings, 'setup_ltvs')); //cf
-    const lts = splitRecord(getStateByKey(settings, 'setup_lts')); //lt
-    const penalties = splitRecord(getStateByKey(settings, 'setup_penalties'));
-    const interest = splitRecord(getStateByKey(settings, 'setup_interest'));
-    const active = getStateByKey(settings, 'setup_active');
-    if (tokens == null || !active) throw new Error('pool not active');
+    const tokens = splitRecord(getStateByKey(settings, "setup_tokens"));
+    const ltvs = splitRecord(getStateByKey(settings, "setup_ltvs")); //cf
+    const lts = splitRecord(getStateByKey(settings, "setup_lts")); //lt
+    const penalties = splitRecord(getStateByKey(settings, "setup_penalties"));
+    const interest = splitRecord(getStateByKey(settings, "setup_interest"));
+    const active = getStateByKey(settings, "setup_active");
+    if (tokens == null || !active) throw new Error("pool not active");
     // console.log(
     //   poolTokens.map((t) => ({
     //     t: t.assetId,
@@ -59,52 +59,52 @@ class PoolStateFetchService {
         interest:
           interest && interest[index]
             ? new BN(interest![index]).div(1e8)
-            : BN.ZERO,
+            : BN.ZERO
       };
     });
   };
 
   getPrices = async () => {
-    const response = await nodeService.evaluate(this.pool, 'getPrices(false)');
+    const response = await nodeService.evaluate(this.pool, "getPrices(false)");
     const value = response?.result?.value?._2?.value as string;
 
     return value
-      .split('|')
-      .filter((str: string) => str !== '')
+      .split("|")
+      .filter((str: string) => str !== "")
       .map((str: string) => {
-        const [min, max] = str.split(',');
+        const [min, max] = str.split(",");
         return { min: BN.formatUnits(min, 6), max: BN.formatUnits(max, 6) };
       });
   };
   calculateTokenRates = async () => {
     const response = await nodeService.evaluate(
       this.pool,
-      'calculateTokenRates(false)',
+      "calculateTokenRates(false)"
     );
     const value = response?.result?.value?._2?.value as string;
 
     return value
-      .split(',')
-      .filter(v => v !== '')
-      .map(v => {
-        const [borrowRate, supplyRate] = v.split('|');
+      .split(",")
+      .filter((v) => v !== "")
+      .map((v) => {
+        const [borrowRate, supplyRate] = v.split("|");
         return {
           borrowRate: BN.formatUnits(borrowRate, 16),
-          supplyRate: BN.formatUnits(supplyRate, 16),
+          supplyRate: BN.formatUnits(supplyRate, 16)
         };
       });
   };
   calculateTokensInterest = async () => {
     const response = await nodeService.evaluate(
       this.pool,
-      'calculateTokensInterest(false)',
+      "calculateTokensInterest(false)"
     );
     const value = response?.result?.value?._2?.value as string;
 
     return value
-      .split(',')
-      .filter(v => v !== '')
-      .map(v => BN.formatUnits(v, 8));
+      .split(",")
+      .filter((v) => v !== "")
+      .map((v) => BN.formatUnits(v, 8));
   };
 }
 
