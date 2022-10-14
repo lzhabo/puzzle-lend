@@ -1,16 +1,16 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import SizedBox from '@components/SizedBox';
-import { Column } from '@components/Flex';
-import Text from '@components/Text';
-import { useStores } from '@stores';
-import { ReactComponent as Copy } from '@src/assets/icons/copy.svg';
-import { ReactComponent as Link } from '@src/assets/icons/whiteLink.svg';
-import { ReactComponent as Disconnect } from '@src/assets/icons/disconnect.svg';
-import { observer } from 'mobx-react-lite';
-import { useWalletVM } from '@components/Wallet/WalletModal/WalletVM';
-import { EXPLORER_URL } from '@src/constants';
-import { themes } from '@src/themes/ThemeProvider';
+import styled from "@emotion/styled";
+import React from "react";
+import SizedBox from "@components/SizedBox";
+import { Column } from "@components/Flex";
+import Text from "@components/Text";
+import { useStores } from "@stores";
+import { ReactComponent as Copy } from "@src/assets/icons/copy.svg";
+import { ReactComponent as Link } from "@src/assets/icons/whiteLink.svg";
+import { ReactComponent as Disconnect } from "@src/assets/icons/disconnect.svg";
+import { observer } from "mobx-react-lite";
+import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
+import { EXPLORER_URL } from "@src/constants";
+import { themes } from "@src/themes/ThemeProvider";
 
 interface IProps {}
 
@@ -22,9 +22,9 @@ const Root = styled(Column)<{ headerExpanded: boolean }>`
   overflow: hidden;
   padding: 0 24px;
   box-sizing: border-box;
-  height: ${({ headerExpanded }) => (headerExpanded ? '212px' : '0px')};
+  height: ${({ headerExpanded }) => (headerExpanded ? "212px" : "0px")};
   @media (min-width: 560px) {
-    height: ${({ headerExpanded }) => (headerExpanded ? '212px' : '0px')};
+    height: ${({ headerExpanded }) => (headerExpanded ? "212px" : "0px")};
   }
 `;
 const Actions = styled.div`
@@ -57,20 +57,19 @@ const WalletModalHeader: React.FC<IProps> = () => {
   const action = [
     {
       icon: <Copy className="img" />,
-      text: 'Copy address',
-      onClick: vm.handleCopyAddress,
+      text: "Copy address",
+      onClick: vm.handleCopyAddress
     },
     {
       icon: <Link className="img" />,
-      text: 'View on Explorer',
-      onClick: () =>
-        window.open(`${EXPLORER_URL}/address/${address}`, '_blank'),
+      text: "View on Explorer",
+      onClick: () => window.open(`${EXPLORER_URL}/address/${address}`, "_blank")
     },
     {
       icon: <Disconnect className="img" />,
-      text: 'Disconnect',
-      onClick: vm.handleLogOut,
-    },
+      text: "Disconnect",
+      onClick: vm.handleLogOut
+    }
   ];
   const whiteText = { color: themes.lightTheme.colors.white };
   return (

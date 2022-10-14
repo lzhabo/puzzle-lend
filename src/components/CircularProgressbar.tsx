@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import { CircularProgressbar as Bar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import { CircularProgressbar as Bar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   percent: number;

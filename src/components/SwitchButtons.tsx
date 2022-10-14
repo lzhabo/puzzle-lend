@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import { Row } from '@components/Flex';
+import styled from "@emotion/styled";
+import React from "react";
+import { Row } from "@components/Flex";
 
 interface IProps {
   values: [string, string];
@@ -38,7 +38,7 @@ const Item = styled.div<{ active?: boolean }>`
   color: ${({ active, theme }) =>
     active ? theme.colors.blue500 : theme.colors.primary650};
   ${({ active }) =>
-    active && 'box-shadow: 0 8px 24px rgba(54, 56, 112, 0.16); z-index: 1'};
+    active && "box-shadow: 0 8px 24px rgba(54, 56, 112, 0.16); z-index: 1"};
 
   border-radius: 10px;
   cursor: pointer;
@@ -48,7 +48,7 @@ const SwitchButtons: React.FC<IProps> = ({
   values,
   active,
   onActivate,
-  border,
+  border
 }) => {
   return (
     <Root border={border}>

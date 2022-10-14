@@ -1,7 +1,7 @@
-import { makeAutoObservable } from 'mobx';
-import AccountStore, { ISerializedAccountStore } from '@stores/AccountStore';
-import NotificationStore from '@stores/NotificationStore';
-import LendStore from '@stores/LendStore';
+import { makeAutoObservable } from "mobx";
+import AccountStore, { ISerializedAccountStore } from "@stores/AccountStore";
+import NotificationStore from "@stores/NotificationStore";
+import LendStore from "@stores/LendStore";
 
 export interface ISerializedRootStore {
   accountStore?: ISerializedAccountStore;
@@ -21,6 +21,6 @@ export default class RootStore {
   }
 
   serialize = (): ISerializedRootStore => ({
-    accountStore: this.accountStore.serialize(),
+    accountStore: this.accountStore.serialize()
   });
 }

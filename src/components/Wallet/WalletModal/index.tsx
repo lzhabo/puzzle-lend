@@ -1,3 +1,3 @@
-import WalletModal from './WalletModal';
+import WalletModal from "./WalletModal";
 
 export default WalletModal;

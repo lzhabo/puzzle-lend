@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
-import { useVM } from '@src/hooks/useVM';
-import { makeAutoObservable } from 'mobx';
-import { RootStore, useStores } from '@stores';
-import copy from 'copy-to-clipboard';
-import Balance from '@src/entities/Balance';
-import { LOGIN_TYPE } from '@src/stores/AccountStore';
-import centerEllipsis from '@src/utils/centerEllipsis';
-import BN from '@src/utils/BN';
-import { TOKENS_LIST } from '@src/constants';
+import React, { useMemo } from "react";
+import { useVM } from "@src/hooks/useVM";
+import { makeAutoObservable } from "mobx";
+import { RootStore, useStores } from "@stores";
+import copy from "copy-to-clipboard";
+import Balance from "@src/entities/Balance";
+import { LOGIN_TYPE } from "@src/stores/AccountStore";
+import centerEllipsis from "@src/utils/centerEllipsis";
+import BN from "@src/utils/BN";
+import { TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
 
@@ -33,13 +33,13 @@ class WalletVM {
   handleCopyAddress = () => {
     const { accountStore, notificationStore } = this.rootStore;
     if (accountStore.address) {
-      copy(accountStore.address ?? '');
-      notificationStore.notify('Your address was copied', {
-        type: 'success',
-        title: 'Congratulations!',
+      copy(accountStore.address ?? "");
+      notificationStore.notify("Your address was copied", {
+        type: "success",
+        title: "Congratulations!"
       });
     } else {
-      notificationStore.notify('There is no address', { type: 'error' });
+      notificationStore.notify("There is no address", { type: "error" });
     }
   };
 
@@ -48,19 +48,19 @@ class WalletVM {
       this.rootStore.accountStore.setWalletModalOpened(false),
       this.rootStore.accountStore.setAssetBalances(null),
       this.rootStore.accountStore.setAddress(null),
-      this.rootStore.accountStore.setLoginType(null),
+      this.rootStore.accountStore.setLoginType(null)
     ]);
 
   get signInInfo() {
     const { loginType, address } = this.rootStore.accountStore;
     return `${
-      loginType === LOGIN_TYPE.KEEPER ? 'Keeper' : 'Signer'
-    }: ${centerEllipsis(address ?? '', 6)}`;
+      loginType === LOGIN_TYPE.KEEPER ? "Keeper" : "Signer"
+    }: ${centerEllipsis(address ?? "", 6)}`;
   }
 
   get balances() {
     const { accountStore } = this.rootStore;
-    return TOKENS_LIST.map(t => {
+    return TOKENS_LIST.map((t) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
       return balance ?? new Balance(t);
     })
@@ -77,7 +77,7 @@ class WalletVM {
     const { balances } = this.rootStore.accountStore;
     const balancesAmount = balances.reduce(
       (acc, b) => acc.plus(b.usdnEquivalent ?? 0),
-      BN.ZERO,
+      BN.ZERO
     );
     return balancesAmount.plus(BN.ZERO).toFormat(2);
   }

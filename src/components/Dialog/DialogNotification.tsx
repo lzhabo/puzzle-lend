@@ -1,27 +1,27 @@
-import React from 'react';
-import { IDialogPropTypes } from 'rc-dialog/lib/IDialogPropTypes';
-import Dialog from '@components/Dialog/Dialog';
-import { Column } from '../Flex';
-import { ReactComponent as SuccessIcon } from '@src/assets/icons/successLarge.svg';
-import { ReactComponent as ErrorIcon } from '@src/assets/icons/errorLarge.svg';
-import { ReactComponent as WarningIcon } from '@src/assets/icons/warningLarge.svg';
-import SizedBox from '@components/SizedBox';
-import Text from '@components/Text';
-import styled from '@emotion/styled';
-import { Link } from 'react-router-dom';
-import Button from '@components/Button';
-import { AccountStore } from '@stores';
-import { Anchor } from '@components/Anchor';
-import SuccessNft from '@components/Dialog/SuccessNft';
-import { EXPLORER_URL } from '@src/constants';
+import React from "react";
+import { IDialogPropTypes } from "rc-dialog/lib/IDialogPropTypes";
+import Dialog from "@components/Dialog/Dialog";
+import { Column } from "../Flex";
+import { ReactComponent as SuccessIcon } from "@src/assets/icons/successLarge.svg";
+import { ReactComponent as ErrorIcon } from "@src/assets/icons/errorLarge.svg";
+import { ReactComponent as WarningIcon } from "@src/assets/icons/warningLarge.svg";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
+import Button from "@components/Button";
+import { AccountStore } from "@stores";
+import { Anchor } from "@components/Anchor";
+import SuccessNft from "@components/Dialog/SuccessNft";
+import { EXPLORER_URL } from "@src/constants";
 
 export interface IDialogNotificationProps extends IDialogPropTypes {
   title: string;
   description?: string;
   icon?: JSX.Element;
-  type?: 'success' | 'error' | 'warning';
+  type?: "success" | "error" | "warning";
   buttons?: React.FC[];
-  buttonsDirection?: 'row' | 'column';
+  buttonsDirection?: "row" | "column";
 }
 
 const Root = styled(Column)`
@@ -34,9 +34,9 @@ const Root = styled(Column)`
   }
 `;
 
-const ButtonsContainer = styled.div<{ direction?: 'row' | 'column' }>`
+const ButtonsContainer = styled.div<{ direction?: "row" | "column" }>`
   display: flex;
-  flex-direction: ${({ direction }) => direction ?? 'column'};
+  flex-direction: ${({ direction }) => direction ?? "column"};
   width: 100%;
   margin: -4px;
 
@@ -49,8 +49,8 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
   title,
   description,
   icon,
-  type = 'success',
-  buttonsDirection = 'column',
+  type = "success",
+  buttonsDirection = "column",
   buttons = [],
   ...rest
 }) => {
@@ -63,9 +63,9 @@ const DialogNotification: React.FC<IDialogNotificationProps> = ({
             <React.Fragment>{icon}</React.Fragment>
           ) : (
             <React.Fragment>
-              {type === 'success' && <SuccessIcon />}
-              {type === 'error' && <ErrorIcon />}
-              {type === 'warning' && <WarningIcon />}
+              {type === "success" && <SuccessIcon />}
+              {type === "error" && <ErrorIcon />}
+              {type === "warning" && <WarningIcon />}
             </React.Fragment>
           )}
         </>
@@ -99,30 +99,30 @@ type TBuildSuccessLiquidityDialogParamsProps = {
 export const buildSuccessLiquidityDialogParams = ({
   accountStore,
   txId,
-  poolDomain,
+  poolDomain
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/tx/${txId}`;
   const poolLink = `/pools/${poolDomain}/invest`;
   return {
-    title: 'Successfully provided',
+    title: "Successfully provided",
     description: `Liquidity successfully provided to the . You can track your reward on the pool page.`,
-    type: 'success',
+    type: "success",
     buttons: [
       () => (
-        <Link to={poolLink} style={{ width: '100%' }}>
+        <Link to={poolLink} style={{ width: "100%" }}>
           <Button size="medium" fixed>
             Go to the pool page
           </Button>
         </Link>
       ),
       () => (
-        <Anchor href={txLink} style={{ width: '100%' }}>
+        <Anchor href={txLink} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
             View on Waves Explorer
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -135,19 +135,19 @@ type TbuildErrorDialogParamsProps = {
 export const buildErrorDialogParams = ({
   title,
   description,
-  onTryAgain,
+  onTryAgain
 }: TbuildErrorDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
-    type: 'error',
+    type: "error",
     buttons: [
       () => (
         <Button size="medium" fixed onClick={onTryAgain}>
           Try again
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 type TBuildWarningLiquidityDialogParamsProps = {
@@ -163,13 +163,13 @@ export const buildWarningLiquidityDialogParams = ({
   description,
   onContinue,
   continueText,
-  onCancel,
+  onCancel
 }: TBuildWarningLiquidityDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
-    type: 'warning',
-    buttonsDirection: 'row',
+    type: "warning",
+    buttonsDirection: "row",
     buttons: [
       () => (
         <Button size="medium" fixed onClick={onCancel} kind="secondary">
@@ -180,8 +180,8 @@ export const buildWarningLiquidityDialogParams = ({
         <Button size="medium" fixed onClick={onContinue}>
           {continueText}
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -189,20 +189,20 @@ type TBuildParamsProps = {
   title: string;
   description: string;
   buttons?: React.FC[];
-  type: 'success' | 'error' | 'warning';
+  type: "success" | "error" | "warning";
 };
 export const buildDialogParams = ({
   title,
   description,
   buttons,
-  type,
+  type
 }: TBuildParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
     type,
-    buttonsDirection: 'row',
-    buttons,
+    buttonsDirection: "row",
+    buttons
   };
 };
 
@@ -217,19 +217,19 @@ type TBuildSuccessNFTSaleDialogParamsProps = {
 export const buildSuccessNFTSaleDialogParams = ({
   name,
   picture,
-  onContinue,
+  onContinue
 }: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
   return {
     title: `You’ve got “${name}” NFT!`,
-    description: 'You can use it to pay for the creation of the pool',
+    description: "You can use it to pay for the creation of the pool",
     icon: <SuccessNft image={picture} />,
     buttons: [
       () => (
         <Button size="medium" fixed onClick={onContinue}>
           Use it to create the pool
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -242,20 +242,20 @@ type TBuildSuccessBoostProps = {
 
 export const buildSuccessBoostParams = ({
   description,
-  domain,
+  domain
 }: TBuildSuccessBoostProps): IDialogNotificationProps => {
   return {
     title: `Successfully boosted!`,
     description,
     buttons: [
       () => (
-        <Anchor href={`/pools/${domain}/invest`} style={{ width: '100%' }}>
+        <Anchor href={`/pools/${domain}/invest`} style={{ width: "100%" }}>
           <Button key="explorer" size="medium" kind="secondary" fixed>
             Back to Pool page
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 //CancelOrder
@@ -269,16 +269,16 @@ type TBuildCancelOrderProps = {
 export const buildCancelOrderParams = ({
   onOrderCancel,
   onCancel,
-  many,
+  many
 }: TBuildCancelOrderProps): IDialogNotificationProps => {
   return {
     icon: <></>,
     title: many
-      ? 'Are you sure you want cancel all orders?'
-      : 'Are you sure you want cancel the order?',
+      ? "Are you sure you want cancel all orders?"
+      : "Are you sure you want cancel the order?",
     description: many
-      ? 'The current orders progress will not be canceled, but further execution will stop'
-      : 'The current order progress will not be canceled, but further execution will stop',
+      ? "The current orders progress will not be canceled, but further execution will stop"
+      : "The current order progress will not be canceled, but further execution will stop",
     buttons: [
       () => (
         <Button
@@ -286,8 +286,9 @@ export const buildCancelOrderParams = ({
           size="medium"
           kind="danger"
           fixed
-          onClick={onOrderCancel}>
-          {many ? 'Cancel all orders' : 'Cancel the order'}
+          onClick={onOrderCancel}
+        >
+          {many ? "Cancel all orders" : "Cancel the order"}
         </Button>
       ),
       () => (
@@ -296,11 +297,12 @@ export const buildCancelOrderParams = ({
           size="medium"
           kind="secondary"
           fixed
-          onClick={onCancel}>
+          onClick={onCancel}
+        >
           Back to trade
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 export default DialogNotification;

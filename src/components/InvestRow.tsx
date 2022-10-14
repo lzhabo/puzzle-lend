@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import { Column, Row } from '@src/components/Flex';
-import SizedBox from '@components/SizedBox';
-import Text from '@components/Text';
-import SquareTokenIcon from '@components/SquareTokenIcon';
-import Skeleton from 'react-loading-skeleton';
-import BN from '@src/utils/BN';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import { Column, Row } from "@src/components/Flex";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import Skeleton from "react-loading-skeleton";
+import BN from "@src/utils/BN";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   logo?: string;
@@ -23,7 +23,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   justify-content: space-between;
   box-sizing: border-box;
   width: 100%;
-  cursor: ${({ withClickLogic }) => (withClickLogic ? 'pointer' : 'default')};
+  cursor: ${({ withClickLogic }) => (withClickLogic ? "pointer" : "default")};
   padding: 8px 24px;
 
   :hover {
@@ -81,15 +81,17 @@ const InvestRow: React.FC<IProps> = ({
         <Text
           weight={500}
           size="medium"
-          style={{ whiteSpace: 'nowrap' }}
-          textAlign="right">
+          style={{ whiteSpace: "nowrap" }}
+          textAlign="right"
+        >
           {topRightInfo}
         </Text>
         <Text
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: "nowrap" }}
           textAlign="right"
           type="secondary"
-          size="small">
+          size="small"
+        >
           {bottomRightInfo}
         </Text>
       </Column>

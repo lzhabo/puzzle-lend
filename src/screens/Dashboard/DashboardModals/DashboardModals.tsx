@@ -1,22 +1,22 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { observer } from 'mobx-react-lite';
-import { Row } from '@components/Flex';
-import SizedBox from '@components/SizedBox';
-import SwitchButtons from '@components/SwitchButtons';
-import { OPERATIONS_TYPE } from '@src/constants';
-import { sleep } from '@src/utils/sleep';
-import DashboardModalBody from '@screens/Dashboard/DashboardModals/DashboardModalBody';
-import Dialog from '@components/Dialog';
+import React, { useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import { observer } from "mobx-react-lite";
+import { Row } from "@components/Flex";
+import SizedBox from "@components/SizedBox";
+import SwitchButtons from "@components/SwitchButtons";
+import { OPERATIONS_TYPE } from "@src/constants";
+import { sleep } from "@src/utils/sleep";
+import DashboardModalBody from "@screens/Dashboard/DashboardModals/DashboardModalBody";
+import Dialog from "@components/Dialog";
 import {
   DashboardVMProvider,
-  DashboardUseVM,
-} from '@screens/Dashboard/DashboardModals/DashboardModalVM';
+  DashboardUseVM
+} from "@screens/Dashboard/DashboardModals/DashboardModalVM";
 
-type IProps = {
+interface IProps {
   operationName: OPERATIONS_TYPE;
-};
+}
 
 const TabsWrapper = styled(Row)`
   border-radius: 16px 16px 0px 0px;
@@ -24,24 +24,16 @@ const TabsWrapper = styled(Row)`
   margin-top: -56px;
 `;
 
-const DashboardModal: React.FC<IProps> = ({ operationName }) => {
-  return (
-    <DashboardVMProvider>
-      <DashboardModalContent operationName={operationName} />
-    </DashboardVMProvider>
-  );
-};
-
 const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   const vm = DashboardUseVM();
   const navigate = useNavigate();
-  const [getModalTitles, setModalTitles] = useState<[string, string]>(['', '']);
+  const [getModalTitles, setModalTitles] = useState<[string, string]>(["", ""]);
   const [isOpen, setOpen] = useState<boolean>(false);
   const urlParams = useParams<any>();
 
   useMemo(() => {
-    const supplyTitles: [string, string] = ['Supply', 'Withdraw'];
-    const borrowTitles: [string, string] = ['Borrow', 'Repay'];
+    const supplyTitles: [string, string] = ["Supply", "Withdraw"];
+    const borrowTitles: [string, string] = ["Borrow", "Repay"];
     if (
       [OPERATIONS_TYPE.SUPPLY, OPERATIONS_TYPE.WITHDRAW].includes(operationName)
     )
@@ -60,7 +52,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
           : OPERATIONS_TYPE.SUPPLY;
       vm.setDashboardModalStep(step);
       return navigate(
-        `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`,
+        `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`
       );
     }
 
@@ -73,7 +65,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
           : OPERATIONS_TYPE.REPAY;
       vm.setDashboardModalStep(step);
       return navigate(
-        `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`,
+        `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`
       );
     }
   };
@@ -81,7 +73,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   const closeTab = async () => {
     setOpen(false);
     await sleep(400);
-    return navigate('/');
+    return navigate("/");
   };
 
   return (
@@ -90,7 +82,8 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
       title="Operations"
       visible={isOpen}
       onClose={() => closeTab()}
-      style={{ maxWidth: '415px' }}>
+      style={{ maxWidth: "415px" }}
+    >
       <SizedBox height={72} />
       <TabsWrapper>
         <SwitchButtons
@@ -102,6 +95,14 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
       </TabsWrapper>
       <DashboardModalBody urlParams={urlParams} operationName={operationName} />
     </Dialog>
+  );
+};
+
+const DashboardModal: React.FC<IProps> = ({ operationName }) => {
+  return (
+    <DashboardVMProvider>
+      <DashboardModalContent operationName={operationName} />
+    </DashboardVMProvider>
   );
 };
 

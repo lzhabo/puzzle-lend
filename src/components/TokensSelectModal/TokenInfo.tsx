@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import { Column, Row } from '@src/components/Flex';
-import SizedBox from '@components/SizedBox';
-import Text from '@components/Text';
-import Balance from '@src/entities/Balance';
-import SquareTokenIcon from '@components/SquareTokenIcon';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import { Column, Row } from "@src/components/Flex";
+import SizedBox from "@components/SizedBox";
+import Text from "@components/Text";
+import Balance from "@src/entities/Balance";
+import SquareTokenIcon from "@components/SquareTokenIcon";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   token: Balance;
@@ -19,7 +19,7 @@ const Root = styled.div<{ withClickLogic?: boolean }>`
   justify-content: space-between;
   box-sizing: border-box;
   width: 100%;
-  cursor: ${({ withClickLogic }) => (withClickLogic ? 'pointer' : 'default')};
+  cursor: ${({ withClickLogic }) => (withClickLogic ? "pointer" : "default")};
   padding: 10px 24px;
 
   :hover {
@@ -78,14 +78,15 @@ const TokenInfo: React.FC<IProps> = ({ token, hidden, ...rest }) => {
         </Column>
       </Row>
       <Column alignItems="flex-end">
-        <Text style={{ whiteSpace: 'nowrap' }} textAlign="right">
+        <Text style={{ whiteSpace: "nowrap" }} textAlign="right">
           {token.formatBalance}
         </Text>
         <Text
-          style={{ whiteSpace: 'nowrap' }}
+          style={{ whiteSpace: "nowrap" }}
           textAlign="right"
           type="secondary"
-          size="small">
+          size="small"
+        >
           {token.formatUsdnEquivalent}
         </Text>
       </Column>

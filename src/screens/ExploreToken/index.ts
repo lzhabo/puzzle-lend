@@ -1,3 +1,3 @@
-import ExploreToken from './ExploreToken';
+import ExploreToken from "./ExploreToken";
 
 export default ExploreToken;

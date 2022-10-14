@@ -1,12 +1,12 @@
-import RootStore from '@stores/RootStore';
+import RootStore from "@stores/RootStore";
 import PoolStateFetchService, {
-  TPoolToken,
-} from '@src/services/PoolStateFetchService';
-import BN from '@src/utils/BN';
-import nodeService from '@src/services/nodeService';
-import { getStateByKey } from '@src/utils/getStateByKey';
-import { makeAutoObservable, reaction } from 'mobx';
-import { POOLS } from '@src/constants';
+  TPoolToken
+} from "@src/services/PoolStateFetchService";
+import BN from "@src/utils/BN";
+import nodeService from "@src/services/nodeService";
+import { getStateByKey } from "@src/utils/getStateByKey";
+import { makeAutoObservable, reaction } from "mobx";
+import { POOLS } from "@src/constants";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -46,7 +46,7 @@ class LendStore {
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
   getStatByAssetId = (assetId: string) =>
-    this.poolsStats.find(s => s.assetId === assetId);
+    this.poolsStats.find((s) => s.assetId === assetId);
   pool = POOLS[0];
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
   get poolId() {
@@ -69,28 +69,28 @@ class LendStore {
         `total_borrowed_${assetId}`,
         ...(address
           ? [`${address}_supplied_${assetId}`, `${address}_borrowed_${assetId}`]
-          : []),
+          : [])
       ],
-      [] as string[],
+      [] as string[]
     );
     const [state, rates, prices, interests] = await Promise.all([
       nodeService.nodeKeysRequest(this.poolId, keys),
       this.fetchService.calculateTokenRates(),
       this.fetchService.getPrices(),
-      this.fetchService.calculateTokensInterest(),
+      this.fetchService.calculateTokensInterest()
     ]);
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
-      const totalSupply = new BN(sup ?? '0').times(rates[index].supplyRate);
+      const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
 
       const sSup = getStateByKey(state, `${address}_supplied_${token.assetId}`);
-      const selfSupply = new BN(sSup ?? '0').times(rates[index].supplyRate);
+      const selfSupply = new BN(sSup ?? "0").times(rates[index].supplyRate);
 
       const bor = getStateByKey(state, `total_borrowed_${token.assetId}`);
-      const totalBorrow = new BN(bor ?? '0').times(rates[index].borrowRate);
+      const totalBorrow = new BN(bor ?? "0").times(rates[index].borrowRate);
 
       const sBor = getStateByKey(state, `${address}_borrowed_${token.assetId}`);
-      const selfBorrow = new BN(sBor ?? '0').times(rates[index].borrowRate);
+      const selfBorrow = new BN(sBor ?? "0").times(rates[index].borrowRate);
 
       const UR = totalBorrow.div(totalSupply);
       const supplyInterest = interests[index].times(UR).times(0.8);
@@ -109,12 +109,12 @@ class LendStore {
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         selfBorrow: selfBorrow.toDecimalPlaces(0),
         supplyAPY: calcApy(supplyInterest),
-        borrowAPY: calcApy(interests[index]),
+        borrowAPY: calcApy(interests[index])
       };
     });
     this.setPoolsStats(stats);
     console.log(
-      stats.map(t => ({
+      stats.map((t) => ({
         ...t,
         totalSupply: t.totalSupply.toString(),
         supplyAPY: t.supplyAPY.toString(),
@@ -123,8 +123,8 @@ class LendStore {
         selfSupply: t.selfSupply.toString(),
         selfBorrow: t.selfBorrow.toString(),
         dailyIncome: t.dailyIncome.toString(),
-        dailyLoan: t.dailyLoan.toString(),
-      })),
+        dailyLoan: t.dailyLoan.toString()
+      }))
     );
   };
 
@@ -154,7 +154,7 @@ class LendStore {
       .filter(({ selfSupply }) => selfSupply.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
-          BN.formatUnits(v.selfSupply, v.decimals),
+          BN.formatUnits(v.selfSupply, v.decimals)
         );
         return acc.plus(balance);
       }, BN.ZERO);
@@ -166,7 +166,7 @@ class LendStore {
       .filter(({ selfBorrow }) => selfBorrow.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
-          BN.formatUnits(v.selfBorrow, v.decimals),
+          BN.formatUnits(v.selfBorrow, v.decimals)
         );
         return acc.plus(balance);
       }, BN.ZERO);
@@ -178,7 +178,7 @@ class LendStore {
         BN.formatUnits(stat.totalSupply, stat.decimals)
           .times(stat.prices.min)
           .plus(acc),
-      BN.ZERO,
+      BN.ZERO
     );
   }
 
@@ -189,7 +189,7 @@ class LendStore {
           .times(stat.prices.min)
           .times(stat.supplyAPY)
           .plus(acc),
-      BN.ZERO,
+      BN.ZERO
     );
 
     const baseAmount = this.poolsStats.reduce(
@@ -197,7 +197,7 @@ class LendStore {
         BN.formatUnits(stat.selfSupply, stat.decimals)
           .times(stat.prices.min)
           .plus(acc),
-      BN.ZERO,
+      BN.ZERO
     );
 
     const borrowApy = this.poolsStats.reduce(
@@ -206,7 +206,7 @@ class LendStore {
           .times(stat.prices.min)
           .times(stat.borrowAPY)
           .plus(acc),
-      BN.ZERO,
+      BN.ZERO
     );
 
     return baseAmount.eq(0)

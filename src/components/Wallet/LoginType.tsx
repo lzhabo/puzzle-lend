@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import React, { HTMLAttributes } from 'react';
-import Text from '@components/Text';
-import { LOGIN_TYPE } from '@stores/AccountStore';
+import styled from "@emotion/styled";
+import React, { HTMLAttributes } from "react";
+import Text from "@components/Text";
+import { LOGIN_TYPE } from "@stores/AccountStore";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -18,7 +18,7 @@ const Root = styled.div<{ disable?: boolean }>`
   box-sizing: border-box;
   border-radius: 12px;
   margin: 4px 0;
-  cursor: ${({ disable }) => (disable ? 'not-allowed' : 'pointer')};
+  cursor: ${({ disable }) => (disable ? "not-allowed" : "pointer")};
 `;
 const Icon = styled.img`
   width: 24px;

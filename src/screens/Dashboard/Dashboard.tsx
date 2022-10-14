@@ -1,22 +1,22 @@
-import styled from '@emotion/styled';
-import React from 'react';
-import Layout from '@components/Layout';
-import Text from '@components/Text';
-import SizedBox from '@components/SizedBox';
-import { DashboardVMProvider, useDashboardVM } from './DashboardVm';
-import { Observer } from 'mobx-react-lite';
-import WhatIsLend from '@screens/Dashboard/WhatIsLend';
-import FAQ from '@screens/Dashboard/FAQ';
-import { useStores } from '@stores';
-import AssetsTable from '@screens/Dashboard/AssetsTable';
-import AccountSupplyAndBorrow from '@screens/Dashboard/AccountSupplyAndBorrow';
-import AccountHealth from '@screens/Dashboard/AccountHealth';
-import { Column } from '@src/components/Flex';
-import { useTheme } from '@emotion/react';
-import bg from '@src/assets/dashboard/puzzleBg.svg';
-import { Navigate, RouteProps, useParams } from 'react-router-dom';
-import { POOLS, ROUTES } from '@src/constants';
-import { Outlet } from 'react-router-dom';
+import styled from "@emotion/styled";
+import React from "react";
+import Layout from "@components/Layout";
+import Text from "@components/Text";
+import SizedBox from "@components/SizedBox";
+import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
+import { Observer } from "mobx-react-lite";
+import WhatIsLend from "@screens/Dashboard/WhatIsLend";
+import FAQ from "@screens/Dashboard/FAQ";
+import { useStores } from "@stores";
+import AssetsTable from "@screens/Dashboard/AssetsTable";
+import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
+import AccountHealth from "@screens/Dashboard/AccountHealth";
+import { Column } from "@src/components/Flex";
+import { useTheme } from "@emotion/react";
+import bg from "@src/assets/dashboard/puzzleBg.svg";
+import { Navigate, RouteProps, useParams } from "react-router-dom";
+import { POOLS, ROUTES } from "@src/constants";
+import { Outlet } from "react-router-dom";
 
 interface IProps {}
 
@@ -40,14 +40,14 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   .apy-group {
     width: 20px;
     height: 20px;
-    transform: ${({ apySort }) => (apySort ? 'scale(1)' : 'scale(1, -1)')};
+    transform: ${({ apySort }) => (apySort ? "scale(1)" : "scale(1, -1)")};
   }
 
   .liquidity-group {
     width: 20px;
     height: 20px;
     transform: ${({ liquiditySort }) =>
-      liquiditySort ? 'scale(1)' : 'scale(1, -1)'};
+      liquiditySort ? "scale(1)" : "scale(1, -1)"};
   }
 `;
 const Subtitle = styled(Text)`
@@ -85,8 +85,9 @@ const DashboardImpl: React.FC<IProps> = () => {
             <Text weight={500} size="large">
               Lending protocol built on the
               <a
-                style={{ color: '#7075E9', paddingLeft: 4 }}
-                href="https://waves.tech/">
+                style={{ color: "#7075E9", paddingLeft: 4 }}
+                href="https://waves.tech/"
+              >
                 Waves blockchain
               </a>
             </Text>
@@ -105,7 +106,7 @@ const DashboardImpl: React.FC<IProps> = () => {
                   {/*todo поправитть на маленьком экране*/}
                   <TotalLiquidity>
                     <Text style={{ color: theme.colors.white }}>
-                      Total liquidity :{' '}
+                      Total liquidity :{" "}
                       <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                     </Text>
                   </TotalLiquidity>
@@ -128,7 +129,7 @@ const DashboardImpl: React.FC<IProps> = () => {
 
 const Dashboard: React.FC<IProps & RouteProps> = () => {
   const params = useParams<{ poolId: string }>();
-  if (params.poolId && !POOLS.some(p => p.address === params.poolId)) {
+  if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
     return <Navigate to={ROUTES.ROOT} />;
   }
   return (

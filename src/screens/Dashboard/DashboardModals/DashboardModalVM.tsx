@@ -1,11 +1,17 @@
-import React, { useMemo } from 'react';
-import { useVM } from '@src/hooks/useVM';
-import { makeAutoObservable } from 'mobx';
-import { RootStore, useStores } from '@stores';
+import React, { useMemo } from "react";
+import { useVM } from "@src/hooks/useVM";
+import { makeAutoObservable } from "mobx";
+import { RootStore, useStores } from "@stores";
 
 const ctx = React.createContext<DashboardModalVM | null>(null);
 
 export const DashboardUseVM = () => useVM(ctx);
+
+export const DashboardVMProvider: React.FC = ({ children }) => {
+  const rootStore = useStores();
+  const store = useMemo(() => new DashboardModalVM(rootStore), [rootStore]);
+  return <ctx.Provider value={store}>{children}</ctx.Provider>;
+};
 
 class DashboardModalVM {
   rootStore: RootStore;
@@ -22,9 +28,3 @@ class DashboardModalVM {
     this.dashboardModalStep = step;
   };
 }
-
-export const DashboardVMProvider: React.FC = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new DashboardModalVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
