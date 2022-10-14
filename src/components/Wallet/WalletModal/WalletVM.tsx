@@ -22,7 +22,7 @@ export const useWalletVM = () => useVM(ctx);
 class WalletVM {
   rootStore: RootStore;
 
-  headerExpanded: boolean = true;
+  headerExpanded = true;
   setHeaderExpanded = (state: boolean) => (this.headerExpanded = state);
 
   constructor(rootStore: RootStore) {
