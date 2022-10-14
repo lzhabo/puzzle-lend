@@ -39,13 +39,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
 
   const openModal = useCallback(
-    (
-      e: any,
-      poolId: string,
-      operationName: string,
-      assetId: string,
-      step: 0 | 1
-    ) => {
+    (e: any, poolId: string, operationName: string, assetId: string) => {
       e.stopPropagation();
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
@@ -82,9 +76,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
         <Button
-          onClick={(e) =>
-            openModal(e, lendStore.poolId, "supply", s.assetId, 0)
-          }
+          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
           kind="secondary"
           size="medium"
           fixed
@@ -93,7 +85,12 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         </Button>
       ),
       withdrawBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
+        >
           Withdraw
         </Button>
       )
@@ -148,18 +145,34 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       dailyLoan:
         BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+        >
           Borrow
         </Button>
       ),
       repayBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "repay", s.assetId)}
+        >
           Repay
         </Button>
       )
     }));
     setFilteredBorrows(data);
-  }, [lendStore.accountBorrow, lendStore.pool.address, navigate]);
+  }, [
+    lendStore.pool.address,
+    lendStore.poolId,
+    lendStore.accountBorrow,
+    openModal,
+    navigate
+  ]);
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (

@@ -40,8 +40,14 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
     )
       setModalTitles(supplyTitles);
     else setModalTitles(borrowTitles);
+
+    if (
+      [OPERATIONS_TYPE.WITHDRAW, OPERATIONS_TYPE.REPAY].includes(operationName)
+    )
+      vm.setDashboardModalStep(1);
+    else vm.setDashboardModalStep(0);
     setOpen(true);
-  }, [operationName]);
+  }, [operationName, vm]);
 
   const setActiveTab = (step: 0 | 1) => {
     if (
@@ -62,8 +68,8 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
     ) {
       const operation =
         operationName === OPERATIONS_TYPE.BORROW
-          ? OPERATIONS_TYPE.BORROW
-          : OPERATIONS_TYPE.REPAY;
+          ? OPERATIONS_TYPE.REPAY
+          : OPERATIONS_TYPE.BORROW;
       vm.setDashboardModalStep(step);
       return navigate(
         `/${urlParams?.modalPoolId}/${operation}/${urlParams?.tokenId}`
@@ -94,7 +100,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
           border
         />
       </TabsWrapper>
-      {lendStore.initialized && (
+      {lendStore.poolsStats && (
         <DashboardModalBody
           urlParams={urlParams}
           operationName={operationName}

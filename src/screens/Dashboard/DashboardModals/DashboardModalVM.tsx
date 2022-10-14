@@ -4,6 +4,7 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { EXPLORER_URL } from "@src/constants";
 import BN from "@src/utils/BN";
+import LendStore from "@src/stores/LendStore";
 
 const ctx = React.createContext<DashboardModalVM | null>(null);
 
@@ -31,7 +32,23 @@ class DashboardModalVM {
   repayAmount = BN.ZERO;
   withdrawAmount = BN.ZERO;
 
+  get currentPoolId() {
+    const { lendStore } = this.rootStore;
+    return lendStore.poolId;
+  }
+
+  get userHealth() {
+    const { lendStore } = this.rootStore;
+    return lendStore.health;
+  }
+
+  get userCollateral() {
+    const { lendStore } = this.rootStore;
+    return lendStore.userCollateral;
+  }
+
   setModalAmount = (amount: BN) => {
+    console.log(amount.toString(), "AMOUNT");
     this.modalAmount = amount;
   };
   setDashboardModalStep = (step: 0 | 1) => {
@@ -39,7 +56,8 @@ class DashboardModalVM {
   };
 
   submitBorrow = async (amount: any, assetId: any, contractAddress: string) => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { accountStore, notificationStore, lendStore } = this.rootStore;
+    if (lendStore.poolId == null) return;
 
     await accountStore
       .invoke({
@@ -78,7 +96,8 @@ class DashboardModalVM {
   };
 
   submitSupply = async (amount: any, assetId: any, contractAddress: string) => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { accountStore, notificationStore, lendStore } = this.rootStore;
+    if (lendStore.poolId == null) return;
 
     await accountStore
       .invoke({
@@ -123,7 +142,8 @@ class DashboardModalVM {
     assetId: any,
     contractAddress: string
   ) => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { accountStore, notificationStore, lendStore } = this.rootStore;
+    if (lendStore.poolId == null) return;
 
     await accountStore
       .invoke({
@@ -162,7 +182,8 @@ class DashboardModalVM {
   };
 
   submitRepay = async (amount: any, assetId: any, contractAddress: string) => {
-    const { accountStore, notificationStore } = this.rootStore;
+    const { accountStore, notificationStore, lendStore } = this.rootStore;
+    if (lendStore.poolId == null) return;
 
     await accountStore
       .invoke({

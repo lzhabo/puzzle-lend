@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
-import styled from "@emotion/styled";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useStores } from "@src/stores";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -16,95 +15,35 @@ import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
+import {
+  Footer,
+  Root
+} from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
+import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
+import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
+import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
 import { ReactComponent as Back } from "@src/assets/icons/arrowBackWithTail.svg";
 import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
   token: TPoolStats;
+  poolStats: TPoolStats[];
   modalAmount: BN;
   userBalance: BN;
-  modalSetAmount?: (amount: BN) => void;
-  onMaxClick?: (amount?: BN) => void;
-  onClose?: () => void;
+  poolId: string;
+  modalSetAmount: (amount: BN) => void;
+  onMaxClick: (amount: BN) => void;
   onSubmit?: (amount: BN, assetId: string, contractAddress: string) => void;
 }
 
-const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 300px;
-  padding: 24px 0;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  margin-top: auto;
-`;
-
-const InputContainer = styled.div<{
-  focused?: boolean;
-  error?: boolean;
-  invalid?: boolean;
-  readOnly?: boolean;
-}>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  height: 56px;
-  border-radius: 12px;
-  width: 100%;
-  position: relative;
-  cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
-
-  box-sizing: border-box;
-
-  input {
-    cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
-  }
-`;
-
-const TokenToDollar = styled.div`
-  display: flex;
-  align-items: center;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 5px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-
-  svg {
-    margin-left: 5px;
-  }
-
-  &:hover {
-    background-color: #fff;
-  }
-`;
-
-const DollarSymbol = styled.div`
-  display: flex;
-  align-items: center;
-  position: absolute;
-  font-size: 18px;
-  left: 67px;
-  top: 50%;
-  color: #363870;
-  transform: translateY(-50%);
-`;
-
 const WithdrawAssets: React.FC<IProps> = ({
   token,
+  poolStats,
+  poolId,
   modalAmount,
   userBalance,
   modalSetAmount,
   onMaxClick,
-  onClose,
   onSubmit
 }) => {
   const navigate = useNavigate();
@@ -133,73 +72,64 @@ const WithdrawAssets: React.FC<IProps> = ({
       : 0;
   };
 
-  // todo: BNNNN
   const countAccountHealth = (currentWithdraw: any) => {
-    // let currentWithdrawAmount = currentWithdraw.toDecimalPlaces(0);
-    let borrowCapacity = BN.ZERO;
-    let borrowCapacityUsed = BN.ZERO;
+    let currentWithdrawAmount = currentWithdraw;
 
-    // if (!isNative) currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
+    if (!isNative)
+      currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
 
-    // tokens.forEach((item: IToken) => {
-    //   const tokenData: any = lendStore.poolDataTokensWithStats[item.assetId];
-    //   if (+tokenData.selfSupply > 0) {
-    //     let localborrowCapacity = formatVal(tokenData.selfSupply, tokenData.decimals)
-    //       .toDecimalPlaces(2)
-    //       .times(tokenData.minPrice)
-    //       .times(+tokenData.setupLtv / 100);
+    const bc = poolStats.reduce((acc: BN, stat: TPoolStats) => {
+      const deposit = formatVal(stat.selfSupply, stat.decimals);
+      if (deposit.eq(0)) return acc;
+      const cf = stat.cf;
+      let assetBc = cf.times(1).times(deposit).times(stat.prices.min);
 
-    //     if (tokenData.assetId === token.assetId) {
-    //       localborrowCapacity = formatVal(tokenData.selfSupply.minus(currentWithdrawAmount), tokenData.decimals)
-    //         .toDecimalPlaces(2)
-    //         .times(tokenData.minPrice)
-    //         .times(+tokenData.setupLtv / 100);
-    //     }
+      if (stat.assetId === token?.assetId) {
+        assetBc = formatVal(
+          stat.selfSupply.minus(currentWithdrawAmount),
+          stat.decimals
+        )
+          .times(stat.prices.min)
+          .times(cf);
+      }
 
-    //     borrowCapacity = borrowCapacity.plus(localborrowCapacity);
-    //   }
+      return acc.plus(assetBc);
+    }, BN.ZERO);
 
-    //   if (+tokenData.selfBorrow > 0) {
-    //     borrowCapacityUsed = formatVal(tokenData.selfBorrow, tokenData.decimals)
-    //       .times(tokenData.maxPrice)
-    //       .div(+tokenData.setupLts / 100)
-    //       .plus(borrowCapacityUsed);
-    //   }
-    // });
+    let bcu = poolStats.reduce((acc: BN, stat: TPoolStats) => {
+      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+      const lt = stat.lt;
+      let assetBcu = borrow.times(stat.prices.max).div(lt);
+      return acc.plus(assetBcu);
+    }, BN.ZERO);
 
-    // case when user did'nt borrow anything
-    if (token.selfSupply.isEqualTo(0)) {
-      const newSupply = formatVal(currentWithdraw, token?.decimals)
-        .times(token.prices.min)
-        .times(token.lt);
-      borrowCapacityUsed = borrowCapacityUsed.minus(newSupply);
-    }
+    const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
 
-    const accountHealth: number = +BN.formatUnits(1, 0)
-      .minus(borrowCapacityUsed.div(borrowCapacity))
-      .times(100);
-
-    if (+borrowCapacity < 0 || accountHealth < 0) {
+    if (bc.lt(0) || accountHealth.lt(0)) {
       setAccountHealth(0);
       return 0;
     }
 
-    setAccountHealth(accountHealth);
-    return accountHealth;
+    setAccountHealth(+accountHealth);
+    return +accountHealth;
   };
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
   }, [modalAmount]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debounce = useCallback(
-    _.debounce((value: BN) => {
-      modalSetAmount && modalSetAmount(value);
-    }, 500),
-    []
+  const debounce = useMemo(
+    () => _.debounce((val: BN) => modalSetAmount(val), 500),
+    [modalSetAmount]
   );
 
+  const handleDebounce = useCallback(
+    (val: BN) => {
+      setAmount(val);
+      debounce(val);
+    },
+    [debounce]
+  );
   const getReserves = () => {
     return (+formatVal(token?.totalSupply, token?.decimals).minus(
       formatVal(token?.totalBorrow, token?.decimals)
@@ -211,11 +141,6 @@ const WithdrawAssets: React.FC<IProps> = ({
     let selfSupply = token?.selfSupply;
 
     if (!isNative) selfSupply = selfSupply.times(token?.prices?.min);
-    console.log(
-      +v.toDecimalPlaces(0, 2),
-      +selfSupply.toDecimalPlaces(0, 2),
-      "v-self"
-    );
 
     // will be fixed in new app, problem of BigNumber input
     const formattedVal = v.minus(100);
@@ -235,8 +160,7 @@ const WithdrawAssets: React.FC<IProps> = ({
     }
 
     if (!isError) setError("");
-    setAmount(v);
-    debounce(v);
+    handleDebounce(v);
   };
 
   const maxWithdraw = (val: BN) => {
@@ -261,8 +185,7 @@ const WithdrawAssets: React.FC<IProps> = ({
     if (isNativeToken && !isNative)
       fixedValue = fixedValue.div(token?.prices?.min).toDecimalPlaces(0);
 
-    setAmount(fixedValue);
-    debounce(fixedValue);
+    handleDebounce(fixedValue);
     setConvertToNative(isNativeToken);
   };
 
@@ -272,11 +195,7 @@ const WithdrawAssets: React.FC<IProps> = ({
     if (!isNative) amountVal = amountVal.div(token?.prices?.min);
 
     // will be fixed in new app, problem of BigNumber input
-    onSubmit!(
-      amountVal.toDecimalPlaces(0, 2),
-      token.assetId,
-      "lendStore.activePoolContract"
-    );
+    onSubmit!(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
   };
 
   return (
@@ -284,7 +203,7 @@ const WithdrawAssets: React.FC<IProps> = ({
       <Row>
         <Row
           alignItems="center"
-          onClick={() => navigate(`/dashboard/token/${token.assetId}`)}
+          onClick={() => navigate(`/dashboard/token/${token?.assetId}`)}
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -294,7 +213,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token.name || ""}
+              {token?.name || ""}
             </Text>
           </Column>
         </Row>
@@ -310,13 +229,13 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Column>
       </Row>
       <SizedBox height={16} />
-      <InputContainer focused={focused} readOnly={!modalAmount}>
+      <ModalInputContainer focused={focused} readOnly={!modalAmount}>
         {!isNative && <DollarSymbol>$</DollarSymbol>}
         {onMaxClick && (
           <MaxButton
             onClick={() => {
               setFocused(true);
-              onMaxClick && onMaxClick(maxWithdraw(token.selfSupply));
+              onMaxClick && onMaxClick(maxWithdraw(token?.selfSupply));
             }}
           />
         )}
@@ -368,11 +287,11 @@ const WithdrawAssets: React.FC<IProps> = ({
             <Swap />
           </TokenToDollar>
         )}
-      </InputContainer>
+      </ModalInputContainer>
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          {token.name} liquidity
+          {token?.name} liquidity
         </Text>
         <Text size="medium" fitContent>
           {getReserves()} {token?.symbol}
@@ -397,11 +316,11 @@ const WithdrawAssets: React.FC<IProps> = ({
           fitContent
           onClick={() => {
             setFocused(true);
-            onMaxClick && onMaxClick(maxWithdraw(token.selfSupply));
+            onMaxClick && onMaxClick(maxWithdraw(token?.selfSupply));
           }}
           style={{ cursor: "pointer" }}
         >
-          {(+formatVal(token.selfSupply, token?.decimals)).toFixed(4)}
+          {(+formatVal(token?.selfSupply, token?.decimals)).toFixed(4)}
         </Text>
       </Row>
       <SizedBox height={14} />

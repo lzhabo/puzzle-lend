@@ -45,10 +45,16 @@ class LendStore {
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+
+  userCollateral: BN = BN.ZERO;
+  private setUserCollateral = (v: BN) => (this.userCollateral = v);
+
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
+
   pool = POOLS[0];
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+
   get poolId() {
     return this.pool.address;
   }
@@ -73,12 +79,15 @@ class LendStore {
       ],
       [] as string[]
     );
-    const [state, rates, prices, interests] = await Promise.all([
-      nodeService.nodeKeysRequest(this.poolId, keys),
-      this.fetchService.calculateTokenRates(),
-      this.fetchService.getPrices(),
-      this.fetchService.calculateTokensInterest()
-    ]);
+    const [state, rates, prices, interests, userCollateral] = await Promise.all(
+      [
+        nodeService.nodeKeysRequest(this.poolId, keys),
+        this.fetchService.calculateTokenRates(),
+        this.fetchService.getPrices(),
+        this.fetchService.calculateTokensInterest(),
+        this.fetchService.getUserCollateral(address || "")
+      ]
+    );
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
@@ -113,6 +122,7 @@ class LendStore {
       };
     });
     this.setPoolsStats(stats);
+    this.setUserCollateral(new BN(userCollateral));
     console.log(
       stats.map((t) => ({
         ...t,

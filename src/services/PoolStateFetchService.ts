@@ -76,6 +76,16 @@ class PoolStateFetchService {
         return { min: BN.formatUnits(min, 6), max: BN.formatUnits(max, 6) };
       });
   };
+  getUserCollateral = async (userId?: string): Promise<any> => {
+    const response = await nodeService.evaluate(
+      this.pool,
+      `getUserCollateral(false, "${userId}", true, "")`
+    );
+
+    const userCollateral = response?.result?.value?._2?.value;
+
+    return userCollateral || 0;
+  };
   calculateTokenRates = async () => {
     const response = await nodeService.evaluate(
       this.pool,

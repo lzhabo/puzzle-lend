@@ -39,13 +39,7 @@ const DesktopTable: React.FC<IProps> = () => {
   );
 
   const openModal = useCallback(
-    (
-      e: any,
-      poolId: string,
-      operationName: string,
-      assetId: string,
-      step: 0 | 1
-    ) => {
+    (e: any, poolId: string, operationName: string, assetId: string) => {
       e.stopPropagation();
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
@@ -87,9 +81,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) =>
-            openModal(e, lendStore.poolId, "borrow", s.assetId, 0)
-          }
+          onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
         >
           Borrow
         </Button>
@@ -99,9 +91,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) =>
-            openModal(e, lendStore.poolId, "supply", s.assetId, 0)
-          }
+          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
         >
           Supply
         </Button>
