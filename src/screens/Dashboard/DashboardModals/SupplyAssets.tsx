@@ -50,7 +50,9 @@ const InputContainer = styled.div<{
   invalid?: boolean;
   readOnly?: boolean;
 }>`
-  background: ${({ focused, error }) => (focused ? "#ffffff" : "#F1F2FE")};
+  position: relative;
+  background: ${({ focused, theme }) =>
+    focused ? theme.colors.white : theme.colors.primary100};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -59,9 +61,7 @@ const InputContainer = styled.div<{
   height: 56px;
   border-radius: 12px;
   width: 100%;
-  position: relative;
   cursor: ${({ readOnly }) => (readOnly ? "not-allowed" : "unset")};
-
   box-sizing: border-box;
 
   input {
@@ -69,16 +69,22 @@ const InputContainer = styled.div<{
   }
 
   border: 1px solid
-    ${({ focused, readOnly, error }) =>
-      error ? "#ED827E" : focused && !readOnly ? "#7075E9" : "#f1f2fe"};
+    ${({ focused, readOnly, theme }) =>
+      focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
 
   :hover {
-    border-color: ${({ readOnly, focused, error }) =>
-      error
-        ? "#ED827E"
-        : !readOnly && !focused
-        ? "#C6C9F4"
-        : focused ?? "#7075E9"};
+    border-color: ${({ readOnly, focused, theme }) =>
+      !readOnly && !focused
+        ? theme.colors.primary650
+        : focused ?? theme.colors.blue500};
+  }
+
+  .swap {
+    stroke: ${({ theme }) => theme.colors.primary800};
+
+    path {
+      fill: ${({ theme }) => theme.colors.primary800};
+    }
   }
 `;
 
@@ -86,19 +92,21 @@ const TokenToDollar = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
-  right: 10px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   padding: 5px 8px;
-  border-radius: 6px;
+  border-radius: 0 12px 12px 0;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 
   svg {
-    margin-left: 5px;
+    width: 24px;
+    margin-left: 8px;
   }
 
   &:hover {
-    background-color: #fff;
+    background-color: ${({ theme }) => theme.colors.primary50};
   }
 `;
 
@@ -109,7 +117,7 @@ const DollarSymbol = styled.div`
   font-size: 18px;
   left: 67px;
   top: 50%;
-  color: #363870;
+  color: ${({ theme }) => theme.colors.primary800};
   transform: translateY(-50%);
 `;
 
@@ -295,7 +303,7 @@ const SupplyAssets: React.FC<IProps> = ({
         />
         {isNative ? (
           <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
-            <Text size="small" type="secondary">
+            <Text size="small" type="secondary" fitContent>
               ~$
               {+token?.prices?.min && +amount
                 ? (+formatVal(amount, token.decimals).times(
@@ -303,11 +311,11 @@ const SupplyAssets: React.FC<IProps> = ({
                   )).toFixed(4)
                 : 0}
             </Text>
-            <Swap />
+            <Swap className="swap" />
           </TokenToDollar>
         ) : (
           <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
-            <Text size="small" type="secondary">
+            <Text size="small" type="secondary" fitContent>
               ~{token?.symbol}{" "}
               {+token?.prices?.min &&
                 +amount &&
@@ -316,11 +324,10 @@ const SupplyAssets: React.FC<IProps> = ({
                   token.decimals
                 )).toFixed(4)}
             </Text>
-            <Swap />
+            <Swap className="swap" />
           </TokenToDollar>
         )}
       </InputContainer>
-      {/* itemData.self_daily_income = supplyInterest * (itemData.self_supply / 10 ** itemData.precision); */}
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text

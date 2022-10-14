@@ -26,10 +26,11 @@ const TabsWrapper = styled(Row)`
 
 const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
   const vm = DashboardUseVM();
+  const { lendStore, accountStore } = vm.rootStore;
   const navigate = useNavigate();
   const [getModalTitles, setModalTitles] = useState<[string, string]>(["", ""]);
   const [isOpen, setOpen] = useState<boolean>(false);
-  const urlParams = useParams<any>();
+  const urlParams = useParams<{ tokenId: string; modalPoolId: string }>();
 
   useMemo(() => {
     const supplyTitles: [string, string] = ["Supply", "Withdraw"];
@@ -93,7 +94,15 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
           border
         />
       </TabsWrapper>
-      <DashboardModalBody urlParams={urlParams} operationName={operationName} />
+      {lendStore.initialized && (
+        <DashboardModalBody
+          urlParams={urlParams}
+          operationName={operationName}
+          step={vm.dashboardModalStep}
+          poolStats={lendStore.poolsStats}
+          userAssetsBalance={accountStore.balances}
+        />
+      )}
     </Dialog>
   );
 };
