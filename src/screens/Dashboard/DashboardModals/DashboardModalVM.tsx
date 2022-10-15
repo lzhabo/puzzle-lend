@@ -4,7 +4,6 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { EXPLORER_URL } from "@src/constants";
 import BN from "@src/utils/BN";
-import LendStore from "@src/stores/LendStore";
 
 const ctx = React.createContext<DashboardModalVM | null>(null);
 
