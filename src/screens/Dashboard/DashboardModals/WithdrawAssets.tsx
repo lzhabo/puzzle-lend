@@ -22,7 +22,7 @@ import {
 import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
 import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
 import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
-import { ReactComponent as Back } from "@src/assets/icons/arrowBackWithTail.svg";
+import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
 import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
@@ -334,14 +334,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           </Text>
           {lendStore.health.toDecimalPlaces(2).lt(100) ? (
             <>
-              <Back
-                style={{
-                  minWidth: "16px",
-                  maxWidth: "16px",
-                  height: "18px",
-                  transform: "rotate(180deg)"
-                }}
-              />
+              <BackIcon />
               <Text
                 type={
                   getDynamicAccountHealth < +lendStore.health.toDecimalPlaces(2)

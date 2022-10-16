@@ -46,8 +46,9 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
     )
       vm.setDashboardModalStep(1);
     else vm.setDashboardModalStep(0);
+    vm.setUrlParams(urlParams);
     setOpen(true);
-  }, [operationName, vm]);
+  }, [operationName, vm, urlParams]);
 
   const setActiveTab = (step: 0 | 1) => {
     if (
@@ -104,7 +105,6 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
         <DashboardModalBody
           urlParams={urlParams}
           operationName={operationName}
-          step={vm.dashboardModalStep}
           poolStats={lendStore.poolsStats}
           userAssetsBalance={accountStore.balances}
         />

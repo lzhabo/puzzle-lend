@@ -20,7 +20,6 @@ type UrlParamsTypes = {
 interface IProps {
   urlParams: UrlParamsTypes;
   operationName: OPERATIONS_TYPE;
-  step: 0 | 1;
   poolStats: TPoolStats[];
   userAssetsBalance: any[];
 }
@@ -35,8 +34,7 @@ const Root = styled(Column)`
   }
 `;
 
-const WalletModalBody: React.FC<IProps> = ({
-  step,
+const DashboardModalBody: React.FC<IProps> = ({
   operationName,
   poolStats,
   urlParams,
@@ -58,7 +56,7 @@ const WalletModalBody: React.FC<IProps> = ({
       (tokenData) => tokenData.assetId === urlParams.tokenId
     );
 
-    if (getAssetData) vm.setModalAmount(amount || getAssetData.balance!);
+    if (getAssetData) vm.setVMamount(amount || getAssetData.balance!);
   };
 
   useMemo(() => {
@@ -69,49 +67,48 @@ const WalletModalBody: React.FC<IProps> = ({
 
   return (
     <Root>
-      {step === 0 && operationName === OPERATIONS_TYPE.SUPPLY && (
+      {operationName === OPERATIONS_TYPE.SUPPLY && (
         <SupplyAssets
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userBalance={getTokenBalance()}
           modalAmount={vm.modalAmount}
-          modalSetAmount={vm.setModalAmount}
+          modalSetAmount={vm.setVMamount}
           onMaxClick={triggerMaxClickFunc}
           onSubmit={vm.submitSupply}
         />
       )}
-      {step === 1 && operationName === OPERATIONS_TYPE.WITHDRAW && (
+      {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
           poolStats={poolStats}
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userBalance={getTokenBalance()}
           modalAmount={vm.modalAmount}
-          modalSetAmount={vm.setModalAmount}
+          modalSetAmount={vm.setVMamount}
           onMaxClick={triggerMaxClickFunc}
           onSubmit={vm.submitWithdraw}
         />
       )}
-      {step === 0 && operationName === OPERATIONS_TYPE.BORROW && (
+      {operationName === OPERATIONS_TYPE.BORROW && (
         <BorrowAssets
-          poolStats={poolStats}
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userHealth={vm.userHealth}
-          userCollateral={vm.userCollateral}
           modalAmount={vm.modalAmount}
-          modalSetAmount={vm.setModalAmount}
+          error={vm.modalError}
+          modalSetAmount={vm.setVMamount}
           onMaxClick={triggerMaxClickFunc}
           onSubmit={vm.submitBorrow}
         />
       )}
-      {step === 1 && operationName === OPERATIONS_TYPE.REPAY && (
+      {operationName === OPERATIONS_TYPE.REPAY && (
         <RepayAssets
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
-          userBalance={getTokenBalance()}
           modalAmount={vm.modalAmount}
-          modalSetAmount={vm.setModalAmount}
+          modalSetAmount={vm.setVMamount}
+          error={vm.modalError}
           onMaxClick={triggerMaxClickFunc}
           onSubmit={vm.submitRepay}
         />
@@ -119,4 +116,4 @@ const WalletModalBody: React.FC<IProps> = ({
     </Root>
   );
 };
-export default observer(WalletModalBody);
+export default observer(DashboardModalBody);

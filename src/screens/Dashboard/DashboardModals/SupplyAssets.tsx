@@ -22,7 +22,7 @@ import {
 import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
 import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
 import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
-import { ReactComponent as Back } from "@src/assets/icons/arrowBackWithTail.svg";
+import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
 import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
@@ -165,13 +165,7 @@ const SupplyAssets: React.FC<IProps> = ({
               <>&nbsp;</>
               {isNative ? token?.symbol : "$"}
             </Text>
-            <Back
-              style={{
-                minWidth: "16px",
-                maxWidth: "16px",
-                transform: "rotate(180deg)"
-              }}
-            />
+            <BackIcon />
             <Text size="medium" type="secondary" fitContent>
               {(+formatVal(amount, token?.decimals) || 0).toFixed(4)}
             </Text>
