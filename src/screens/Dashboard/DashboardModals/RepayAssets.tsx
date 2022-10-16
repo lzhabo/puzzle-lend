@@ -45,8 +45,8 @@ const BorrowAssets: React.FC<IProps> = ({
   onMaxClick,
   onSubmit
 }) => {
-  const navigate = useNavigate();
   const vm = DashboardUseVM();
+  const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(modalAmount);
   const { accountStore } = useStores();
@@ -73,16 +73,16 @@ const BorrowAssets: React.FC<IProps> = ({
     handleDebounce(v);
   };
 
-  const submitForm = () => {
-    const amountVal = vm.getFormattedVal;
-    onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
-  };
-
   const getMax = () => {
-    const val = vm.getMaxRepay;
+    const val = vm.getMaxBtn;
     handleDebounce(val);
 
     return val;
+  };
+
+  const submitForm = () => {
+    const amountVal = vm.getFormattedVal;
+    onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {

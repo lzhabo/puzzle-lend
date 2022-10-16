@@ -12,6 +12,7 @@ import AmountInput from "@components/AmountInput";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import { TPoolStats } from "@src/stores/LendStore";
+import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
@@ -27,92 +28,30 @@ import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
   token: TPoolStats;
-  poolStats: TPoolStats[];
   modalAmount: BN;
-  userBalance: BN;
   poolId: string;
+  userHealth: BN;
+  error: string;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
-  onSubmit?: (amount: BN, assetId: string, contractAddress: string) => void;
+  onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
 }
 
 const WithdrawAssets: React.FC<IProps> = ({
   token,
-  poolStats,
   poolId,
   modalAmount,
-  userBalance,
+  userHealth,
+  error,
   modalSetAmount,
   onMaxClick,
   onSubmit
 }) => {
+  const vm = DashboardUseVM();
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const [getDynamicAccountHealth, setAccountHealth] = useState<number>(100);
-  const [isNative, setConvertToNative] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
-  const { lendStore, accountStore } = useStores();
-
-  const formatVal = (valArg: BN | number, decimal: number) => {
-    return BN.formatUnits(valArg, decimal);
-  };
-
-  const getUserBalance = () => {
-    if (!isNative)
-      return formatVal(userBalance, token?.decimals)
-        .times(token?.prices?.min)
-        .plus(formatVal(amount, token?.decimals))
-        .toFixed(4);
-
-    return userBalance
-      ? (+formatVal(userBalance, token?.decimals).plus(
-          formatVal(amount, token?.decimals)
-        )).toFixed(4)
-      : 0;
-  };
-
-  const countAccountHealth = (currentWithdraw: any) => {
-    let currentWithdrawAmount = currentWithdraw;
-
-    if (!isNative)
-      currentWithdrawAmount = currentWithdrawAmount.div(token?.prices?.min);
-
-    const bc = poolStats.reduce((acc: BN, stat: TPoolStats) => {
-      const deposit = formatVal(stat.selfSupply, stat.decimals);
-      if (deposit.eq(0)) return acc;
-      const cf = stat.cf;
-      let assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-
-      if (stat.assetId === token?.assetId) {
-        assetBc = formatVal(
-          stat.selfSupply.minus(currentWithdrawAmount),
-          stat.decimals
-        )
-          .times(stat.prices.min)
-          .times(cf);
-      }
-
-      return acc.plus(assetBc);
-    }, BN.ZERO);
-
-    let bcu = poolStats.reduce((acc: BN, stat: TPoolStats) => {
-      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-      const lt = stat.lt;
-      let assetBcu = borrow.times(stat.prices.max).div(lt);
-      return acc.plus(assetBcu);
-    }, BN.ZERO);
-
-    const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
-
-    if (bc.lt(0) || accountHealth.lt(0)) {
-      setAccountHealth(0);
-      return 0;
-    }
-
-    setAccountHealth(+accountHealth);
-    return +accountHealth;
-  };
+  const { accountStore } = useStores();
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
@@ -130,72 +69,27 @@ const WithdrawAssets: React.FC<IProps> = ({
     },
     [debounce]
   );
-  const getReserves = () => {
-    return (+formatVal(token?.totalSupply, token?.decimals).minus(
-      formatVal(token?.totalBorrow, token?.decimals)
-    )).toFixed(4);
-  };
 
   const handleChangeAmount = (v: BN) => {
-    let isError = false;
-    let selfSupply = token?.selfSupply;
-
-    if (!isNative) selfSupply = selfSupply.times(token?.prices?.min);
-
-    // will be fixed in new app, problem of BigNumber input
-    const formattedVal = v.minus(100);
-
-    if (
-      formattedVal &&
-      selfSupply &&
-      selfSupply.toDecimalPlaces(0, 2).lt(formattedVal)
-    ) {
-      setError(`Amount of withdraw bigger than you'r supply`);
-      isError = true;
-    }
-
-    if (countAccountHealth(v) < 1) {
-      setError(`Account health less than 1%, risk of liquidation`);
-      isError = true;
-    }
-
-    if (!isError) setError("");
+    vm.withdrawChangeAmount(v);
     handleDebounce(v);
   };
 
-  const maxWithdraw = (val: BN) => {
-    let isError = false;
-    let formattedVal: BN = val;
+  const maxWithdraw = () => {
+    const val = vm.getMaxBtn.toDecimalPlaces(0);
+    handleDebounce(val);
 
-    if (!isNative) formattedVal = val.times(token?.prices?.min);
-
-    if (countAccountHealth(val) < 1) {
-      setError(`Account health less than 1%, risk of liquidation`);
-      isError = true;
-    }
-
-    if (!isError) setError("");
-
-    return formattedVal.toDecimalPlaces(0);
+    return val;
   };
 
-  const setInputAmountMeasure = (isNativeToken: boolean) => {
-    let fixedValue = amount;
-
-    if (isNativeToken && !isNative)
-      fixedValue = fixedValue.div(token?.prices?.min).toDecimalPlaces(0);
-
-    handleDebounce(fixedValue);
-    setConvertToNative(isNativeToken);
+  const setInputAmountMeasure = (isCurrentNative: boolean) => {
+    handleDebounce(vm.getOnNativeChange.toDecimalPlaces(0));
+    vm.setVMisDollar(isCurrentNative);
   };
 
   const submitForm = () => {
-    let amountVal = modalAmount;
-
-    if (!isNative) amountVal = amountVal.div(token?.prices?.min);
-
-    // will be fixed in new app, problem of BigNumber input
-    onSubmit!(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
+    const amountVal = vm.getFormattedVal;
+    onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
   };
 
   return (
@@ -219,9 +113,9 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Row>
         <Column alignItems="flex-end">
           <Text size="medium" textAlign="right">
-            {+getUserBalance() || 0}
+            {vm.getUserBalance}
             <>&nbsp;</>
-            {isNative ? token?.symbol : "$"}
+            {vm.isDollar ? "$" : token?.symbol}
           </Text>
           <Text nowrap size="medium" type="secondary">
             Wallet Balance
@@ -230,12 +124,12 @@ const WithdrawAssets: React.FC<IProps> = ({
       </Row>
       <SizedBox height={16} />
       <ModalInputContainer focused={focused} readOnly={!modalAmount}>
-        {!isNative && <DollarSymbol>$</DollarSymbol>}
+        {!vm.isDollar && <DollarSymbol>$</DollarSymbol>}
         {onMaxClick && (
           <MaxButton
             onClick={() => {
               setFocused(true);
-              onMaxClick && onMaxClick(maxWithdraw(token?.selfSupply));
+              onMaxClick && onMaxClick(maxWithdraw());
             }}
           />
         )}
@@ -261,28 +155,28 @@ const WithdrawAssets: React.FC<IProps> = ({
           placeholder="0.00"
           readOnly={!modalAmount}
         />
-        {isNative ? (
+        {vm.isDollar ? (
           <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
             <Text size="small" type="secondary">
-              ~$
-              {+token?.prices?.min && +amount
-                ? (+formatVal(amount, token?.decimals).times(
-                    token?.prices?.min
-                  )).toFixed(4)
-                : 0}
+              ~{token?.symbol}{" "}
+              {+token?.prices?.min &&
+                +amount &&
+                (+vm.formatVal(
+                  amount.div(token?.prices?.min),
+                  token?.decimals
+                )).toFixed(4)}
             </Text>
             <Swap />
           </TokenToDollar>
         ) : (
           <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
             <Text size="small" type="secondary">
-              ~{token?.symbol}{" "}
-              {+token?.prices?.min &&
-                +amount &&
-                (+formatVal(
-                  amount.div(token?.prices?.min),
-                  token?.decimals
-                )).toFixed(4)}
+              ~$
+              {+token?.prices?.min && +amount
+                ? (+vm
+                    .formatVal(amount, token?.decimals)
+                    .times(token?.prices?.min)).toFixed(4)
+                : 0}
             </Text>
             <Swap />
           </TokenToDollar>
@@ -294,7 +188,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           {token?.name} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {getReserves()} {token?.symbol}
+          {vm.getReserves} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -316,11 +210,11 @@ const WithdrawAssets: React.FC<IProps> = ({
           fitContent
           onClick={() => {
             setFocused(true);
-            onMaxClick && onMaxClick(maxWithdraw(token?.selfSupply));
+            onMaxClick && onMaxClick(maxWithdraw());
           }}
           style={{ cursor: "pointer" }}
         >
-          {(+formatVal(token?.selfSupply, token?.decimals)).toFixed(4)}
+          {(+vm.formatVal(token?.selfSupply, token?.decimals)).toFixed(4)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -330,14 +224,14 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {+lendStore.health.toDecimalPlaces(2).toFixed(2) || 0} %
+            {+userHealth.toDecimalPlaces(2).toFixed(2) || 0} %
           </Text>
-          {lendStore.health.toDecimalPlaces(2).lt(100) ? (
+          {userHealth.toDecimalPlaces(2).lt(100) ? (
             <>
               <BackIcon />
               <Text
                 type={
-                  getDynamicAccountHealth < +lendStore.health.toDecimalPlaces(2)
+                  vm.accountHealth < +userHealth.toDecimalPlaces(2)
                     ? "error"
                     : "success"
                 }
@@ -345,10 +239,7 @@ const WithdrawAssets: React.FC<IProps> = ({
                 fitContent
               >
                 <>&nbsp;</>
-                {getDynamicAccountHealth && amount
-                  ? getDynamicAccountHealth.toFixed(2)
-                  : 0}
-                %
+                {vm.accountHealth && amount ? vm.accountHealth.toFixed(2) : 0}%
               </Text>
             </>
           ) : null}
@@ -366,18 +257,18 @@ const WithdrawAssets: React.FC<IProps> = ({
       <SizedBox height={16} />
       {/* if NO liquidity show ERROR, else withdraw or login */}
       <Footer>
-        {token?.totalSupply && token?.totalBorrow && +getReserves() === 0 ? (
+        {token?.totalSupply && token?.totalBorrow && +vm.getReserves === 0 ? (
           <Button fixed disabled size="large">
             Not Enough liquidity to Withdraw
           </Button>
         ) : accountStore && accountStore.address ? (
           <Button
-            disabled={+amount === 0 || error !== ""}
+            disabled={+amount === 0 || vm.modalError !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {error !== "" ? error : "Withdraw"}
+            {vm.modalError !== "" ? vm.modalError : "Withdraw"}
           </Button>
         ) : (
           <Button

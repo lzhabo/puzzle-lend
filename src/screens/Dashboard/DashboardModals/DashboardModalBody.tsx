@@ -71,6 +71,7 @@ const DashboardModalBody: React.FC<IProps> = ({
         <SupplyAssets
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
+          error={vm.modalError}
           userBalance={getTokenBalance()}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -80,10 +81,10 @@ const DashboardModalBody: React.FC<IProps> = ({
       )}
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
-          poolStats={poolStats}
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
-          userBalance={getTokenBalance()}
+          error={vm.modalError}
+          userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={triggerMaxClickFunc}

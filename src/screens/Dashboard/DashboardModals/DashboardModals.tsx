@@ -47,6 +47,7 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
       vm.setDashboardModalStep(1);
     else vm.setDashboardModalStep(0);
     vm.setUrlParams(urlParams);
+    vm.setOperationName(operationName);
     setOpen(true);
   }, [operationName, vm, urlParams]);
 

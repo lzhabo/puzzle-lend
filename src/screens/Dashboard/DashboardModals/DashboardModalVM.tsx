@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, action } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { EXPLORER_URL } from "@src/constants";
+import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 
@@ -32,12 +32,16 @@ class DashboardModalVM {
   dashboardModalStep: 0 | 1 = 0;
   dashboardModalTitles = [];
   modalAmount = BN.ZERO;
+  operationName: OPERATIONS_TYPE | undefined;
 
   urlParams: UrlParamsTypes = {};
   isDollar = false;
 
   modalError = "";
   accountHealth = 100;
+
+  setOperationName = (operation: OPERATIONS_TYPE) =>
+    (this.operationName = operation);
 
   @action.bound setError = (error: string) => (this.modalError = error);
   @action.bound setAccountHealth = (health: number) =>
@@ -92,8 +96,17 @@ class DashboardModalVM {
     return this.formatVal(val, this.getToken?.decimals).toFormat(2);
   }
 
-  get getMaxRepay() {
-    let countVal = this.getToken?.selfBorrow;
+  get getMaxBtn() {
+    let selfVal = BN.ZERO;
+
+    if (this.operationName === OPERATIONS_TYPE.WITHDRAW)
+      selfVal = this.getToken?.selfSupply;
+    if (this.operationName === OPERATIONS_TYPE.REPAY)
+      selfVal = this.getToken?.selfBorrow;
+    if (this.operationName === OPERATIONS_TYPE.SUPPLY)
+      selfVal = this.getTokenBalance;
+
+    let countVal = selfVal;
     if (this.isDollar) countVal = countVal.times(this.getToken?.prices?.min);
 
     return countVal.toDecimalPlaces(0, 2);
@@ -107,7 +120,7 @@ class DashboardModalVM {
     return countVal;
   }
 
-  get getOnNativeChange() {
+  get getOnNativeChange(): BN {
     let countVal = this.modalAmount;
 
     if (this.isDollar) countVal = countVal.div(this.getToken?.prices?.min);
@@ -154,6 +167,35 @@ class DashboardModalVM {
     return this.formatVal(reserves, this.getToken?.decimals).toFormat(2);
   }
 
+  get getUserBalance(): string {
+    let val = this.getTokenBalance;
+
+    if (this.isDollar) val = val.times(this.getToken?.prices?.min);
+    if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
+      val = this.formatVal(val.plus(this.modalAmount), this.getToken?.decimals);
+    }
+    if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
+      val = this.formatVal(
+        val.minus(this.modalAmount),
+        this.getToken?.decimals
+      );
+    }
+
+    return val.toFormat(4) || "0";
+  }
+
+  get getDailyIncome(): BN {
+    return (
+      this.getToken?.interest.times(
+        this.formatVal(this.modalAmount, this.getToken?.decimals)
+      ) || BN.ZERO
+    );
+  }
+
+  formatVal = (valArg: BN | number, decimal: number) => {
+    return BN.formatUnits(valArg, decimal);
+  };
+
   setVMamount = (amount: BN) => {
     this.modalAmount = amount;
   };
@@ -170,48 +212,7 @@ class DashboardModalVM {
     this.dashboardModalStep = step;
   };
 
-  formatVal = (valArg: BN | number, decimal: number) => {
-    return BN.formatUnits(valArg, decimal);
-  };
-
   // BORROW MODAL
-  borrowChangeAmount = (v: BN) => {
-    const formattedVal = this.formatVal(v, this.getToken?.decimals);
-    // if !isNative, show maximum in dollars, collateral in dollars by default
-    let maxCollateral = this.formatVal(this.userCollateral, 6);
-    // reserves in crypto amount by default
-    let totalReserves = this.getToken?.totalSupply.minus(
-      this.getToken?.totalBorrow
-    );
-    let isError = false;
-
-    if (!this.isDollar)
-      maxCollateral = this.formatVal(this.userCollateral, 6).div(
-        this.getToken?.prices?.min
-      );
-
-    if (this.isDollar)
-      totalReserves = totalReserves.times(this.getToken?.prices?.min);
-
-    if (maxCollateral.isLessThanOrEqualTo(formattedVal)) {
-      this.setError("Borrow amount less than your Collateral");
-      isError = true;
-    }
-
-    if (this.formatVal(totalReserves, 6).isLessThanOrEqualTo(formattedVal)) {
-      this.setError("Not enough Reserves in Pool");
-      isError = true;
-    }
-
-    if (this.countBorrowAccountHealth(v) < 1) {
-      this.setError(`Account health less than 1%, risk of liquidation`);
-      isError = true;
-    }
-
-    if (!isError) this.setError("");
-    return v;
-  };
-
   countBorrowAccountHealth = (currentBorrow: BN) => {
     const { lendStore } = this.rootStore;
 
@@ -302,6 +303,118 @@ class DashboardModalVM {
     return val;
   };
 
+  borrowChangeAmount = (v: BN) => {
+    const formattedVal = this.formatVal(v, this.getToken?.decimals);
+    // if !isNative, show maximum in dollars, collateral in dollars by default
+    let maxCollateral = this.formatVal(this.userCollateral, 6);
+    // reserves in crypto amount by default
+    let totalReserves = this.getToken?.totalSupply.minus(
+      this.getToken?.totalBorrow
+    );
+    let isError = false;
+
+    if (!this.isDollar)
+      maxCollateral = this.formatVal(this.userCollateral, 6).div(
+        this.getToken?.prices?.min
+      );
+
+    if (this.isDollar)
+      totalReserves = totalReserves.times(this.getToken?.prices?.min);
+
+    if (maxCollateral.isLessThanOrEqualTo(formattedVal)) {
+      this.setError("Borrow amount less than your Collateral");
+      isError = true;
+    }
+
+    if (this.formatVal(totalReserves, 6).isLessThanOrEqualTo(formattedVal)) {
+      this.setError("Not enough Reserves in Pool");
+      isError = true;
+    }
+
+    if (this.countBorrowAccountHealth(v) < 1) {
+      this.setError(`Account health less than 1%, risk of liquidation`);
+      isError = true;
+    }
+
+    if (!isError) this.setError("");
+    return v;
+  };
+
+  // WITHDRAW MODAL
+  countWithdrawAccountHealth = (currentWithdraw: any) => {
+    const { lendStore } = this.rootStore;
+    let currentWithdrawAmount = currentWithdraw;
+
+    if (this.isDollar)
+      currentWithdrawAmount = currentWithdrawAmount.div(
+        this.getToken?.prices?.min
+      );
+
+    const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+      const deposit = this.formatVal(stat.selfSupply, stat.decimals);
+      if (deposit.eq(0)) return acc;
+      const cf = stat.cf;
+      let assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+
+      if (stat.assetId === this.getToken?.assetId) {
+        assetBc = this.formatVal(
+          stat.selfSupply.minus(currentWithdrawAmount),
+          stat.decimals
+        )
+          .times(stat.prices.min)
+          .times(cf);
+      }
+
+      return acc.plus(assetBc);
+    }, BN.ZERO);
+
+    let bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+      const lt = stat.lt;
+      let assetBcu = borrow.times(stat.prices.max).div(lt);
+      return acc.plus(assetBcu);
+    }, BN.ZERO);
+
+    const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
+
+    if (bc.lt(0) || accountHealth.lt(0)) {
+      this.setAccountHealth(0);
+      return 0;
+    }
+
+    this.setAccountHealth(+accountHealth);
+    return +accountHealth;
+  };
+
+  withdrawChangeAmount = (v: BN) => {
+    let isError = false;
+    let selfSupply = this.getToken?.selfSupply;
+
+    if (this.isDollar)
+      selfSupply = selfSupply.times(this.getToken?.prices?.min);
+
+    // need more review here
+    const formattedVal = v.minus(100);
+
+    if (
+      formattedVal &&
+      selfSupply &&
+      selfSupply.toDecimalPlaces(0, 2).lt(formattedVal)
+    ) {
+      this.setError(`Amount of withdraw bigger than you'r supply`);
+      isError = true;
+    }
+
+    if (this.countWithdrawAccountHealth(v) < 1) {
+      this.setError(`Account health less than 1%, risk of liquidation`);
+      isError = true;
+    }
+
+    if (!isError) this.setError("");
+    this.setVMamount(v);
+  };
+
+  // REPAY MODAL
   repayChangeAmount = (v: BN) => {
     let isError = false;
     let walletBalance = this.getTokenBalance;
@@ -319,6 +432,26 @@ class DashboardModalVM {
 
     if (walletBalance && walletBalance.isLessThanOrEqualTo(v)) {
       this.setError(`Amount of repay bigger than wallet balance`);
+      isError = true;
+    }
+
+    if (!isError) this.setError("");
+    this.setVMamount(v);
+  };
+
+  // SUPPLY MODAL
+  supplyChangeAmount = (v: BN) => {
+    const formattedVal = this.formatVal(v, this.getToken?.decimals);
+    let walletBal = this.formatVal(
+      this.getTokenBalance,
+      this.getToken?.decimals
+    );
+    let isError = false;
+
+    if (!this.isDollar) walletBal = walletBal.times(this.getToken?.prices?.min);
+
+    if (walletBal.lt(formattedVal)) {
+      this.setError("Wallet Balance too low");
       isError = true;
     }
 
