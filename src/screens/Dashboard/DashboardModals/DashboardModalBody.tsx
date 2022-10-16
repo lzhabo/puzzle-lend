@@ -72,7 +72,6 @@ const DashboardModalBody: React.FC<IProps> = ({
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           error={vm.modalError}
-          userBalance={getTokenBalance()}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={triggerMaxClickFunc}

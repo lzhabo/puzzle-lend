@@ -30,7 +30,6 @@ interface IProps {
   token: TPoolStats;
   poolId: string;
   modalAmount: BN;
-  userBalance: BN;
   error: string;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
@@ -40,7 +39,6 @@ interface IProps {
 const SupplyAssets: React.FC<IProps> = ({
   token,
   modalAmount,
-  userBalance,
   poolId,
   error,
   modalSetAmount,
