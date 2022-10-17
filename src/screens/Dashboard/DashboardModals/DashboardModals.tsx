@@ -107,7 +107,6 @@ const DashboardModalContent: React.FC<IProps> = ({ operationName }) => {
           urlParams={urlParams}
           operationName={operationName}
           poolStats={lendStore.poolsStats}
-          userAssetsBalance={accountStore.balances}
         />
       )}
     </Dialog>

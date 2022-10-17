@@ -5,9 +5,6 @@ import { observer } from "mobx-react-lite";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Button from "@components/Button";
-import MaxButton from "@components/MaxButton";
-import BigNumberInput from "@components/BigNumberInput";
-import AmountInput from "@components/AmountInput";
 import { Column, Row } from "@components/Flex";
 import { TPoolStats } from "@src/stores/LendStore";
 import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
@@ -21,17 +18,13 @@ import {
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
-import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
-import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
-import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
-import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
+import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 
 interface IProps {
   token: TPoolStats;
   poolId: string;
   modalAmount: BN;
   userHealth: BN;
-  error: string;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
   onSubmit?: (amount: BN, assetId: string, contractAddress: string) => void;
@@ -42,7 +35,6 @@ const BorrowAssets: React.FC<IProps> = ({
   modalAmount,
   userHealth,
   poolId,
-  error,
   modalSetAmount,
   onMaxClick,
   onSubmit
@@ -84,7 +76,7 @@ const BorrowAssets: React.FC<IProps> = ({
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {
-    handleDebounce(vm.getOnNativeChange);
+    handleDebounce(vm.onNativeChange);
     vm.setVMisDollar(isCurrentNative);
   };
 
@@ -110,7 +102,7 @@ const BorrowAssets: React.FC<IProps> = ({
         <Column alignItems="flex-end">
           <Row alignItems="center" justifyContent="flex-end">
             <Text size="medium" type="secondary" fitContent>
-              {+vm.formatVal(amount, token?.decimals).toFixed(4) || 0}
+              {+BN.formatUnits(amount, token?.decimals).toFixed(4) || 0}
             </Text>
             <BackIcon />
             <Text
@@ -135,72 +127,23 @@ const BorrowAssets: React.FC<IProps> = ({
         </Column>
       </Row>
       <SizedBox height={16} />
-      <ModalInputContainer focused={focused} readOnly={!modalSetAmount}>
-        {vm.isDollar && <DollarSymbol>$</DollarSymbol>}
-        {onMaxClick && (
-          <MaxButton
-            onClick={() => {
-              setFocused(true);
-              onMaxClick && onMaxClick(vm.userMaximumToBorrowBN());
-            }}
-          />
-        )}
-        <BigNumberInput
-          renderInput={(inputProps, ref) => (
-            <AmountInput
-              {...inputProps}
-              onFocus={(e) => {
-                inputProps.onFocus && inputProps.onFocus(e);
-                !inputProps.readOnly && setFocused(true);
-              }}
-              onBlur={(e) => {
-                inputProps.onBlur && inputProps.onBlur(e);
-                setFocused(false);
-              }}
-              ref={ref}
-            />
-          )}
-          autofocus={focused}
-          decimals={token?.decimals}
-          value={amount}
-          onChange={handleChangeAmount}
-          placeholder="0.00"
-          readOnly={!modalAmount}
-        />
-        {vm.isDollar ? (
-          <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
-            <Text size="small" type="secondary">
-              ~{token?.symbol}{" "}
-              {token?.prices?.min &&
-                amount &&
-                (+vm.formatVal(
-                  amount.div(token?.prices?.min),
-                  token?.decimals
-                )).toFixed(4)}
-            </Text>
-            <Swap />
-          </TokenToDollar>
-        ) : (
-          <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
-            <Text size="small" type="secondary">
-              ~$
-              {token?.prices?.min && amount
-                ? (+vm
-                    .formatVal(amount, token?.decimals)
-                    .times(token?.prices?.min)).toFixed(4)
-                : 0}
-            </Text>
-            <Swap />
-          </TokenToDollar>
-        )}
-      </ModalInputContainer>
+      <ModalTokenInput
+        token={token}
+        isDollar={vm.isDollar}
+        focused={focused}
+        amount={amount}
+        setFocused={() => setFocused(true)}
+        onMaxClick={() => onMaxClick(vm.userMaximumToBorrowBN())}
+        handleChangeAmount={handleChangeAmount}
+        setInputAmountMeasure={setInputAmountMeasure}
+      />
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
           {token?.symbol} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {vm.getReserves} {token?.symbol}
+          {vm.tokenReserves} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -219,7 +162,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Text size="medium" fitContent>
           {+token?.selfBorrow
-            ? (+vm.formatVal(token?.selfBorrow, token?.decimals)).toFixed(4)
+            ? (+BN.formatUnits(token?.selfBorrow, token?.decimals)).toFixed(4)
             : 0}{" "}
           {token?.symbol}
         </Text>
@@ -274,12 +217,12 @@ const BorrowAssets: React.FC<IProps> = ({
           accountStore &&
           accountStore.address && (
             <Button
-              disabled={+amount === 0 || error !== ""}
+              disabled={+amount === 0 || vm.modalErrorText !== ""}
               fixed
               onClick={() => submitForm()}
               size="large"
             >
-              {error !== "" ? error : "Borrow"}
+              {vm.modalErrorText !== "" ? vm.modalErrorText : "Borrow"}
             </Button>
           )
         )}

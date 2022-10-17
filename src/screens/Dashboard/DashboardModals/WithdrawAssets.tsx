@@ -6,9 +6,6 @@ import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Button from "@components/Button";
-import MaxButton from "@components/MaxButton";
-import BigNumberInput from "@components/BigNumberInput";
-import AmountInput from "@components/AmountInput";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import { TPoolStats } from "@src/stores/LendStore";
@@ -20,18 +17,14 @@ import {
   Footer,
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
-import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
-import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
-import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
+import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
-import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
   token: TPoolStats;
   modalAmount: BN;
   poolId: string;
   userHealth: BN;
-  error: string;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
   onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
@@ -42,7 +35,6 @@ const WithdrawAssets: React.FC<IProps> = ({
   poolId,
   modalAmount,
   userHealth,
-  error,
   modalSetAmount,
   onMaxClick,
   onSubmit
@@ -76,19 +68,20 @@ const WithdrawAssets: React.FC<IProps> = ({
   };
 
   const maxWithdraw = () => {
-    const val = vm.getMaxBtn.toDecimalPlaces(0);
+    const val = vm.countMaxBtn.toDecimalPlaces(0);
+    vm.withdrawChangeAmount(val);
     handleDebounce(val);
 
     return val;
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {
-    handleDebounce(vm.getOnNativeChange.toDecimalPlaces(0));
+    handleDebounce(vm.onNativeChange.toDecimalPlaces(0));
     vm.setVMisDollar(isCurrentNative);
   };
 
   const submitForm = () => {
-    const amountVal = vm.getFormattedVal;
+    const amountVal = vm.modalFormattedVal;
     onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
   };
 
@@ -113,7 +106,7 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Row>
         <Column alignItems="flex-end">
           <Text size="medium" textAlign="right">
-            {vm.getUserBalance}
+            {vm.countUserBalance}
             <>&nbsp;</>
             {vm.isDollar ? "$" : token?.symbol}
           </Text>
@@ -123,77 +116,23 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Column>
       </Row>
       <SizedBox height={16} />
-      {/*//fixme  вынести в отлеьный компонент что будет называться  ModalTokenInput*/}
-      <ModalInputContainer focused={focused} readOnly={!modalAmount}>
-        {!vm.isDollar && <DollarSymbol>$</DollarSymbol>}
-        {onMaxClick && (
-          <MaxButton
-            onClick={() => {
-              setFocused(true);
-              onMaxClick && onMaxClick(maxWithdraw());
-            }}
-          />
-        )}
-        <BigNumberInput
-          renderInput={(inputProps, ref) => (
-            <AmountInput
-              {...inputProps}
-              onFocus={(e) => {
-                inputProps.onFocus && inputProps.onFocus(e);
-                !inputProps.readOnly && setFocused(true);
-              }}
-              onBlur={(e) => {
-                inputProps.onBlur && inputProps.onBlur(e);
-                setFocused(false);
-              }}
-              ref={ref}
-            />
-          )}
-          autofocus={focused}
-          decimals={token?.decimals}
-          value={amount}
-          onChange={handleChangeAmount}
-          placeholder="0.00"
-          readOnly={!modalAmount}
-        />
-        {vm.isDollar ? (
-          <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
-            <Text size="small" type="secondary">
-              ~{token?.symbol} {/*fixme тоже самое*/}
-              {+token?.prices?.min &&
-                +amount &&
-                (+vm.formatVal(
-                  amount.div(token?.prices?.min),
-                  token?.decimals
-                )).toFixed(4)}
-            </Text>
-            <Swap />
-          </TokenToDollar>
-        ) : (
-          <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
-            <Text size="small" type="secondary">
-              ~$
-              {/*  fixme не надо допускать чтобы переменная могла быть не строкой или числом
-              имею ввиду нельзя делать +
-              если нужно для рассчетов, то у BN есть метод toNumber
-              */}
-              {+token?.prices?.min && +amount
-                ? (+vm
-                    .formatVal(amount, token?.decimals)
-                    .times(token?.prices?.min)).toFixed(4)
-                : 0}
-            </Text>
-            <Swap />
-          </TokenToDollar>
-        )}
-      </ModalInputContainer>
+      <ModalTokenInput
+        token={token}
+        isDollar={vm.isDollar}
+        focused={focused}
+        amount={amount}
+        setFocused={() => setFocused(true)}
+        onMaxClick={() => onMaxClick(maxWithdraw())}
+        handleChangeAmount={handleChangeAmount}
+        setInputAmountMeasure={setInputAmountMeasure}
+      />
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
           {token?.name} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {vm.getReserves} {token?.symbol}
+          {vm.tokenReserves} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -219,7 +158,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           }}
           style={{ cursor: "pointer" }}
         >
-          {(+vm.formatVal(token?.selfSupply, token?.decimals)).toFixed(4)}
+          {(+BN.formatUnits(token?.selfSupply, token?.decimals)).toFixed(4)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -262,18 +201,18 @@ const WithdrawAssets: React.FC<IProps> = ({
       <SizedBox height={16} />
       {/* if NO liquidity show ERROR, else withdraw or login */}
       <Footer>
-        {token?.totalSupply && token?.totalBorrow && +vm.getReserves === 0 ? (
+        {token?.totalSupply && token?.totalBorrow && +vm.tokenReserves === 0 ? (
           <Button fixed disabled size="large">
             Not Enough liquidity to Withdraw
           </Button>
         ) : accountStore && accountStore.address ? (
           <Button
-            disabled={+amount === 0 || vm.modalError !== ""}
+            disabled={+amount === 0 || vm.modalErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {vm.modalError !== "" ? vm.modalError : "Withdraw"}
+            {vm.modalErrorText !== "" ? vm.modalErrorText : "Withdraw"}
           </Button>
         ) : (
           <Button

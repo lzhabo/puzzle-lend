@@ -5,7 +5,6 @@ import { Column } from "@src/components/Flex";
 import { TPoolStats } from "@src/stores/LendStore";
 import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
 import { OPERATIONS_TYPE } from "@src/constants";
-import BN from "@src/utils/BN";
 
 import RepayAssets from "@screens/Dashboard/DashboardModals/RepayAssets";
 import SupplyAssets from "@screens/Dashboard/DashboardModals/SupplyAssets";
@@ -21,7 +20,6 @@ interface IProps {
   urlParams: UrlParamsTypes;
   operationName: OPERATIONS_TYPE;
   poolStats: TPoolStats[];
-  userAssetsBalance: any[];
 }
 
 const Root = styled(Column)`
@@ -37,27 +35,10 @@ const Root = styled(Column)`
 const DashboardModalBody: React.FC<IProps> = ({
   operationName,
   poolStats,
-  urlParams,
-  userAssetsBalance
+  urlParams
 }) => {
   const vm = DashboardUseVM();
   const [choosenToken, setChoosenToken] = useState<TPoolStats>();
-
-  // const getTokenBalance: any = () => {
-  //   const getAssetData = userAssetsBalance.find(
-  //     (tokenData) => tokenData.assetId === urlParams.tokenId
-  //   );
-  //
-  //   return getAssetData?.balance;
-  // };
-
-  const triggerMaxClickFunc = (amount: BN) => {
-    const getAssetData = userAssetsBalance.find(
-      (tokenData) => tokenData.assetId === urlParams.tokenId
-    );
-
-    if (getAssetData) vm.setVMamount(amount || getAssetData.balance!);
-  };
 
   useMemo(() => {
     const token = poolStats.find((_) => _.assetId === urlParams.tokenId);
@@ -71,10 +52,9 @@ const DashboardModalBody: React.FC<IProps> = ({
         <SupplyAssets
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
-          error={vm.modalError}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
-          onMaxClick={triggerMaxClickFunc}
+          onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitSupply}
         />
       )}
@@ -82,11 +62,10 @@ const DashboardModalBody: React.FC<IProps> = ({
         <WithdrawAssets
           token={choosenToken!}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
-          error={vm.modalError}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
-          onMaxClick={triggerMaxClickFunc}
+          onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitWithdraw}
         />
       )}
@@ -96,9 +75,8 @@ const DashboardModalBody: React.FC<IProps> = ({
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
-          error={vm.modalError}
           modalSetAmount={vm.setVMamount}
-          onMaxClick={triggerMaxClickFunc}
+          onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitBorrow}
         />
       )}
@@ -108,8 +86,7 @@ const DashboardModalBody: React.FC<IProps> = ({
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
-          error={vm.modalError}
-          onMaxClick={triggerMaxClickFunc}
+          onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitRepay}
         />
       )}

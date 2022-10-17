@@ -4,9 +4,6 @@ import { useNavigate } from "react-router-dom";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Button from "@components/Button";
-import MaxButton from "@components/MaxButton";
-import BigNumberInput from "@components/BigNumberInput";
-import AmountInput from "@components/AmountInput";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import { observer } from "mobx-react-lite";
@@ -20,17 +17,13 @@ import {
   Footer,
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
-import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
-import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar.";
-import ModalInputContainer from "@src/screens/Dashboard/DashboardModals/components/ModalInputContainer";
+import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
-import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
 
 interface IProps {
   token: TPoolStats;
   poolId: string;
   modalAmount: BN;
-  error: string;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
   onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
@@ -40,7 +33,6 @@ const SupplyAssets: React.FC<IProps> = ({
   token,
   modalAmount,
   poolId,
-  error,
   modalSetAmount,
   onMaxClick,
   onSubmit
@@ -74,19 +66,19 @@ const SupplyAssets: React.FC<IProps> = ({
   };
 
   const getMaxSupply = () => {
-    const val = vm.getMaxBtn.toDecimalPlaces(0);
+    const val = vm.countMaxBtn.toDecimalPlaces(0);
     handleDebounce(val);
 
     return val;
   };
 
   const submitForm = () => {
-    const amountVal = vm.getFormattedVal;
+    const amountVal = vm.modalFormattedVal;
     onSubmit(amountVal.toSignificant(0), token?.assetId, poolId);
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {
-    handleDebounce(vm.getOnNativeChange.toDecimalPlaces(0));
+    handleDebounce(vm.onNativeChange.toDecimalPlaces(0));
     vm.setVMisDollar(isCurrentNative);
   };
 
@@ -120,13 +112,13 @@ const SupplyAssets: React.FC<IProps> = ({
               }}
               style={{ cursor: "pointer" }}
             >
-              {vm.getUserBalance || 0}
+              {vm.countUserBalance || 0}
               <>&nbsp;</>
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
-              {(+vm.formatVal(amount, token?.decimals) || 0).toFixed(4)}
+              {(+BN.formatUnits(amount, token?.decimals) || 0).toFixed(4)}
             </Text>
           </Row>
           <Text size="medium" type="secondary" nowrap>
@@ -135,80 +127,31 @@ const SupplyAssets: React.FC<IProps> = ({
         </Column>
       </Row>
       <SizedBox height={16} />
-      <ModalInputContainer focused={focused} readOnly={!modalSetAmount}>
-        {vm.isDollar && <DollarSymbol>$</DollarSymbol>}
-        {onMaxClick && (
-          <MaxButton
-            onClick={() => {
-              setFocused(true);
-              onMaxClick && onMaxClick(getMaxSupply());
-            }}
-          />
-        )}
-        <BigNumberInput
-          renderInput={(inputProps, ref) => (
-            <AmountInput
-              {...inputProps}
-              onFocus={(e) => {
-                inputProps.onFocus && inputProps.onFocus(e);
-                !inputProps.readOnly && setFocused(true);
-              }}
-              onBlur={(e) => {
-                inputProps.onBlur && inputProps.onBlur(e);
-                setFocused(false);
-              }}
-              ref={ref}
-            />
-          )}
-          autofocus={focused}
-          decimals={token?.decimals}
-          value={amount}
-          onChange={handleChangeAmount}
-          placeholder="0.00"
-          readOnly={!modalSetAmount}
-        />
-        {vm.isDollar ? (
-          <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
-            <Text size="small" type="secondary" fitContent>
-              ~{token?.symbol}{" "}
-              {token?.prices?.min &&
-                amount &&
-                vm
-                  .formatVal(amount.div(token?.prices?.min), token?.decimals)
-                  .toFormat(4)}
-            </Text>
-            <Swap className="swap" />
-          </TokenToDollar>
-        ) : (
-          <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
-            <Text size="small" type="secondary" fitContent>
-              ~$
-              {token?.prices?.min && amount
-                ? vm
-                    .formatVal(amount, token?.decimals)
-                    .times(token?.prices?.min)
-                    .toFormat(4)
-                : 0}
-            </Text>
-            <Swap className="swap" />
-          </TokenToDollar>
-        )}
-      </ModalInputContainer>
+      <ModalTokenInput
+        token={token}
+        isDollar={vm.isDollar}
+        focused={focused}
+        amount={amount}
+        setFocused={() => setFocused(true)}
+        onMaxClick={() => onMaxClick(getMaxSupply())}
+        handleChangeAmount={handleChangeAmount}
+        setInputAmountMeasure={setInputAmountMeasure}
+      />
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text
           size="medium"
-          type={vm.getDailyIncome.gt(0) ? "success" : "secondary"}
+          type={vm.userDailyIncome.gt(0) ? "success" : "secondary"}
           fitContent
         >
           Daily Income
         </Text>
         <Text
           size="medium"
-          type={vm.getDailyIncome.gt(0) ? "success" : "primary"}
+          type={vm.userDailyIncome.gt(0) ? "success" : "primary"}
           fitContent
         >
-          $ {token?.interest ? vm.getDailyIncome.toFormat(6) : 0}
+          $ {token?.interest ? vm.userDailyIncome.toFormat(6) : 0}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -226,7 +169,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {+vm.formatVal(token?.selfBorrow, token?.decimals) || 0}
+          {+BN.formatUnits(token?.selfBorrow, token?.decimals) || 0}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -242,12 +185,12 @@ const SupplyAssets: React.FC<IProps> = ({
       <Footer>
         {accountStore && accountStore.address ? (
           <Button
-            disabled={+amount === 0 || error !== ""}
+            disabled={+amount === 0 || vm.modalErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {error !== "" ? error : "Supply"}
+            {vm.modalErrorText !== "" ? vm.modalErrorText : "Supply"}
           </Button>
         ) : (
           <Button

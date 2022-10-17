@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
-import { makeAutoObservable, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
@@ -43,55 +43,36 @@ class DashboardModalVM {
   urlParams: UrlParamsTypes = {};
   isDollar = false;
 
-  // fixme
-  //  Тут лучше сделать undefined или ""
-  //  переименуй в modalErrorText, это ведь не Error класс
-  modalError?: string;
+  modalErrorText = "";
   accountHealth = 100;
 
   setOperationName = (operation: OPERATIONS_TYPE) =>
     (this.operationName = operation);
 
-  //fixme
-  // Убрать @action.bound
-  // На будущее: если ты не знаешь для чего используется что-то, то лучше это не использовать
-  @action.bound setError = (error: string) => (this.modalError = error);
-  @action.bound setAccountHealth = (health: number) =>
-    (this.accountHealth = health);
+  setError = (error: string) => (this.modalErrorText = error);
+  setAccountHealth = (health: number) => (this.accountHealth = health);
 
-  //fixme старайся писать код так, чтоб он занимал минимум строк и при этом не терял читсемость
-  // переделай геттеры по образцу currentPoolId
   get currentPoolId() {
     return this.rootStore.lendStore.poolId;
   }
 
   get userHealth() {
-    const { lendStore } = this.rootStore;
-    return lendStore.health;
+    return this.rootStore.lendStore.health;
   }
 
   get userCollateral() {
-    const { lendStore } = this.rootStore;
-    return lendStore.userCollateral;
+    return this.rootStore.lendStore.userCollateral;
   }
 
-  get getTokenBalance(): BN {
-    const { accountStore } = this.rootStore;
-
-    // fixme нельзя использовать any, убери
-    //  сделай геттер в одну строчку
-    const getAssetData = accountStore.balances.find(
-      (tokenData) => tokenData.assetId === this.urlParams?.tokenId
+  get tokenBalance(): BN {
+    return (
+      this.rootStore.accountStore.balances.find(
+        (tokenData) => tokenData.assetId === this.urlParams?.tokenId
+      )?.balance || BN.ZERO
     );
-
-    return getAssetData?.balance || BN.ZERO;
   }
 
-  // fixme
-  //  getToken - это функция
-  //  переименуй в token
-  //  сделай так во всех геттерах
-  get getToken(): TPoolStats {
+  get token(): TPoolStats {
     const { lendStore } = this.rootStore;
 
     // not sure
@@ -101,50 +82,52 @@ class DashboardModalVM {
   }
 
   // REPAY MODAL
-  get getUserRepay(): string {
-    let val = this.getToken?.selfBorrow.minus(this.getFormattedVal);
+  get userRepayAmount(): string {
+    let val = this.token?.selfBorrow.minus(this.modalFormattedVal);
 
-    if (this.getToken?.selfBorrow.eq(0)) return "0";
+    if (this.token?.selfBorrow.eq(0)) return "0";
 
     if (this.isDollar)
-      return this.formatVal(
-        val.times(this.getToken?.prices?.min),
-        this.getToken?.decimals
+      return BN.formatUnits(
+        val.times(this.token?.prices?.min),
+        this.token?.decimals
       ).toFormat(2);
 
-    return this.formatVal(val, this.getToken?.decimals).toFormat(2);
+    return BN.formatUnits(val, this.token?.decimals).toFormat(2);
   }
 
-  get getMaxBtn() {
+  get countMaxBtn() {
     let selfVal = BN.ZERO;
-    //fixme оборачивай тело в ковыычки если if не помещается на одну строку
-    if (this.operationName === OPERATIONS_TYPE.WITHDRAW)
-      selfVal = this.getToken?.selfSupply;
-    if (this.operationName === OPERATIONS_TYPE.REPAY)
-      selfVal = this.getToken?.selfBorrow;
-    if (this.operationName === OPERATIONS_TYPE.SUPPLY)
-      selfVal = this.getTokenBalance;
 
-    //
+    if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
+      selfVal = this.token?.selfSupply;
+    }
+    if (this.operationName === OPERATIONS_TYPE.REPAY) {
+      selfVal = this.token?.selfBorrow;
+    }
+    if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
+      selfVal = this.tokenBalance;
+    }
+
     let countVal = selfVal;
-    if (this.isDollar) countVal = countVal.times(this.getToken?.prices?.min);
+    if (this.isDollar) countVal = countVal.times(this.token?.prices?.min);
 
     return countVal.toDecimalPlaces(0, 2);
   }
 
-  get getFormattedVal() {
+  get modalFormattedVal() {
     let countVal = this.modalAmount;
 
-    if (this.isDollar) countVal = countVal.div(this.getToken?.prices?.min);
+    if (this.isDollar) countVal = countVal.div(this.token?.prices?.min);
 
     return countVal;
   }
 
-  get getOnNativeChange(): BN {
+  get onNativeChange(): BN {
     let countVal = this.modalAmount;
 
-    if (this.isDollar) countVal = countVal.div(this.getToken?.prices?.min);
-    else countVal = countVal.times(this.getToken?.prices?.min);
+    if (this.isDollar) countVal = countVal.div(this.token?.prices?.min);
+    else countVal = countVal.times(this.token?.prices?.min);
 
     return countVal;
   }
@@ -152,70 +135,58 @@ class DashboardModalVM {
   // BORROW MODAL
   // counting maximum after USER INPUT
   get userMaximumToBorrow(): BN {
-    let maximum = this.formatVal(this.userCollateral, 6);
+    let maximum = BN.formatUnits(this.userCollateral, 6);
 
     if (!this.isDollar)
-      maximum = this.formatVal(this.userCollateral, 6).div(
-        this.getToken?.prices.min
+      maximum = BN.formatUnits(this.userCollateral, 6).div(
+        this.token?.prices.min
       );
 
-    maximum = maximum.times(this.getToken?.lt);
+    maximum = maximum.times(this.token?.lt);
 
-    const totalReserves = this.formatVal(
-      this.getToken?.totalSupply,
-      this.getToken?.decimals
-    ).minus(
-      this.formatVal(this.getToken?.totalBorrow, this.getToken?.decimals)
-    );
+    const totalReserves = BN.formatUnits(
+      this.token?.totalSupply,
+      this.token?.decimals
+    ).minus(BN.formatUnits(this.token?.totalBorrow, this.token?.decimals));
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
     if (totalReserves.lt(maximum)) {
       return totalReserves.minus(
-        this.formatVal(this.modalAmount, this.getToken?.decimals)
+        BN.formatUnits(this.modalAmount, this.token?.decimals)
       );
     }
 
     return maximum.minus(
-      this.formatVal(this.modalAmount, this.getToken?.decimals)
+      BN.formatUnits(this.modalAmount, this.token?.decimals)
     );
   }
 
-  get getReserves(): string {
-    const reserves = this.getToken?.totalSupply.minus(
-      this.getToken?.totalBorrow
-    );
-    return this.formatVal(reserves, this.getToken?.decimals).toFormat(2);
+  get tokenReserves(): string {
+    const reserves = this.token?.totalSupply.minus(this.token?.totalBorrow);
+    return BN.formatUnits(reserves, this.token?.decimals).toFormat(2);
   }
 
-  //fixme  не нужно писать в названии геттера get
-  get getUserBalance(): string {
-    let val = this.getTokenBalance;
+  get countUserBalance(): string {
+    let val = this.tokenBalance;
 
-    if (this.isDollar) val = val.times(this.getToken?.prices?.min);
+    if (this.isDollar) val = val.times(this.token?.prices?.min);
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
-      val = this.formatVal(val.plus(this.modalAmount), this.getToken?.decimals);
+      val = BN.formatUnits(val.plus(this.modalAmount), this.token?.decimals);
     }
     if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
-      val = this.formatVal(
-        val.minus(this.modalAmount),
-        this.getToken?.decimals
-      );
+      val = BN.formatUnits(val.minus(this.modalAmount), this.token?.decimals);
     }
 
     return val.toFormat(4) || "0";
   }
 
-  get getDailyIncome(): BN {
+  get userDailyIncome(): BN {
     return (
-      this.getToken?.interest.times(
-        this.formatVal(this.modalAmount, this.getToken?.decimals)
+      this.token?.interest.times(
+        BN.formatUnits(this.modalAmount, this.token?.decimals)
       ) || BN.ZERO
     );
   }
-
-  formatVal = (valArg: BN | number, decimal: number) => {
-    return BN.formatUnits(valArg, decimal);
-  };
 
   setVMamount = (amount: BN) => {
     this.modalAmount = amount;
@@ -229,6 +200,19 @@ class DashboardModalVM {
     this.urlParams = params;
   };
 
+  triggerMaxClickFunc = (amount: BN) => {
+    const { accountStore } = this.rootStore;
+    console.log(+amount, "AMOUNT");
+
+    const getAssetData = accountStore.balances.find(
+      (tokenData) => tokenData.assetId === this.urlParams.tokenId
+    );
+
+    if (this.operationName === OPERATIONS_TYPE.SUPPLY && !getAssetData) return;
+
+    this.setVMamount(amount);
+  };
+
   // BORROW MODAL
   countBorrowAccountHealth = (currentBorrow: BN) => {
     const { lendStore } = this.rootStore;
@@ -238,13 +222,13 @@ class DashboardModalVM {
       return 100;
     }
 
-    let currentBorrowAmount = this.formatVal(
+    let currentBorrowAmount = BN.formatUnits(
       currentBorrow,
-      this.getToken?.decimals
+      this.token?.decimals
     );
 
     if (this.isDollar)
-      currentBorrowAmount = currentBorrowAmount.div(this.getToken?.prices?.min);
+      currentBorrowAmount = currentBorrowAmount.div(this.token?.prices?.min);
     //fixme вынести расчет здоровья в функцию
     // все что занимает больше 5 строк и повторяется больше 1 раза стоит выносить
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
@@ -261,8 +245,8 @@ class DashboardModalVM {
       let assetBcu = borrow.times(stat.prices.max).div(lt);
 
       // if same asset, adding to it INPUT value
-      if (stat.assetId === this.getToken?.assetId) {
-        assetBcu = this.formatVal(stat.selfBorrow, stat.decimals)
+      if (stat.assetId === this.token?.assetId) {
+        assetBcu = BN.formatUnits(stat.selfBorrow, stat.decimals)
           .plus(currentBorrowAmount)
           .times(stat.prices.max)
           .div(lt);
@@ -274,8 +258,8 @@ class DashboardModalVM {
     // case when user did'nt borrow anything
     if (bcu.eq(0))
       bcu = currentBorrowAmount
-        .times(this.getToken?.prices.max)
-        .div(this.getToken?.lt)
+        .times(this.token?.prices.max)
+        .div(this.token?.lt)
         .plus(bcu);
 
     const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
@@ -292,26 +276,23 @@ class DashboardModalVM {
   // counting maximum amount for MAX btn
   userMaximumToBorrowBN = () => {
     // fixme не делай let и 1000 переопределений, это невозможно читать
-    let maximum = BN.ZERO;
+    let maximum = BN.formatUnits(this.userCollateral, 6).times(this.token?.lt);
     let isError = false;
 
-    maximum = this.formatVal(this.userCollateral, 6);
-    maximum = maximum.times(this.getToken?.lt);
-
-    if (!this.isDollar) maximum = maximum.div(this.getToken?.prices.max);
-    const totalReserves = this.getToken?.totalSupply.minus(
-      this.getToken?.totalBorrow
+    if (!this.isDollar) maximum = maximum.div(this.token?.prices.max);
+    const totalReserves = this.token?.totalSupply.minus(
+      this.token?.totalBorrow
     );
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
-    if (this.formatVal(totalReserves, 6).lt(maximum)) {
+    if (BN.formatUnits(totalReserves, 6).lt(maximum)) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
       return totalReserves.times(0.8);
     }
 
     // current recommended maximum borrow, no more than 80% of health
-    const val = maximum.times(10 ** this.getToken.decimals).times(0.8);
+    const val = maximum.times(10 ** this.token.decimals).times(0.8);
 
     if (this.countBorrowAccountHealth(val) < 1) {
       this.setError(`Account health less than 1%, risk of liquidation`);
@@ -323,29 +304,27 @@ class DashboardModalVM {
   };
 
   borrowChangeAmount = (v: BN) => {
-    const formattedVal = this.formatVal(v, this.getToken?.decimals);
+    const formattedVal = BN.formatUnits(v, this.token?.decimals);
     // if !isNative, show maximum in dollars, collateral in dollars by default
-    let maxCollateral = this.formatVal(this.userCollateral, 6);
+    let maxCollateral = BN.formatUnits(this.userCollateral, 6);
     // reserves in crypto amount by default
-    let totalReserves = this.getToken?.totalSupply.minus(
-      this.getToken?.totalBorrow
-    );
+    let totalReserves = this.token?.totalSupply.minus(this.token?.totalBorrow);
     let isError = false;
 
     if (!this.isDollar)
-      maxCollateral = this.formatVal(this.userCollateral, 6).div(
-        this.getToken?.prices?.min
+      maxCollateral = BN.formatUnits(this.userCollateral, 6).div(
+        this.token?.prices?.min
       );
 
     if (this.isDollar)
-      totalReserves = totalReserves.times(this.getToken?.prices?.min);
+      totalReserves = totalReserves.times(this.token?.prices?.min);
 
     if (maxCollateral.isLessThanOrEqualTo(formattedVal)) {
       this.setError("Borrow amount less than your Collateral");
       isError = true;
     }
 
-    if (this.formatVal(totalReserves, 6).isLessThanOrEqualTo(formattedVal)) {
+    if (BN.formatUnits(totalReserves, 6).isLessThanOrEqualTo(formattedVal)) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
     }
@@ -366,17 +345,17 @@ class DashboardModalVM {
 
     if (this.isDollar)
       currentWithdrawAmount = currentWithdrawAmount.div(
-        this.getToken?.prices?.min
+        this.token?.prices?.min
       );
 
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
-      const deposit = this.formatVal(stat.selfSupply, stat.decimals);
+      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
       const cf = stat.cf;
       let assetBc = cf.times(1).times(deposit).times(stat.prices.min);
 
-      if (stat.assetId === this.getToken?.assetId) {
-        assetBc = this.formatVal(
+      if (stat.assetId === this.token?.assetId) {
+        assetBc = BN.formatUnits(
           stat.selfSupply.minus(currentWithdrawAmount),
           stat.decimals
         )
@@ -387,7 +366,6 @@ class DashboardModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    //fixme to const
     const bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = stat.lt;
@@ -408,10 +386,11 @@ class DashboardModalVM {
 
   withdrawChangeAmount = (v: BN) => {
     let isError = false;
-    let selfSupply = this.getToken?.selfSupply;
+    let selfSupply = this.token?.selfSupply;
 
-    if (this.isDollar)
-      selfSupply = selfSupply.times(this.getToken?.prices?.min);
+    if (this.isDollar) {
+      selfSupply = selfSupply.times(this.token?.prices?.min);
+    }
 
     // need more review here
     const formattedVal = v.minus(100);
@@ -437,12 +416,12 @@ class DashboardModalVM {
   // REPAY MODAL
   repayChangeAmount = (v: BN) => {
     let isError = false;
-    let walletBalance = this.getTokenBalance;
-    let forRepay = this.getToken?.selfBorrow;
+    let walletBalance = this.tokenBalance;
+    let forRepay = this.token?.selfBorrow;
 
     if (this.isDollar && walletBalance && forRepay) {
-      walletBalance = walletBalance.times(this.getToken?.prices?.min);
-      forRepay = forRepay.times(this.getToken?.prices?.min);
+      walletBalance = walletBalance.times(this.token?.prices?.min);
+      forRepay = forRepay.times(this.token?.prices?.min);
     }
 
     if (forRepay && forRepay.times(1.05).isLessThanOrEqualTo(v)) {
@@ -461,15 +440,14 @@ class DashboardModalVM {
 
   // SUPPLY MODAL
   supplyChangeAmount = (v: BN) => {
-    const formattedVal = this.formatVal(v, this.getToken?.decimals);
-    let walletBal = this.formatVal(
-      this.getTokenBalance,
-      this.getToken?.decimals
-    );
-    //todo  зачем юзать столько много let если можно обойтись const
-    let isError = false;
+    const formattedVal = BN.formatUnits(v, this.token?.decimals);
+    const walletBal = this.isDollar
+      ? BN.formatUnits(this.tokenBalance, this.token?.decimals)
+      : BN.formatUnits(this.tokenBalance, this.token?.decimals).times(
+          this.token?.prices?.min
+        );
 
-    if (!this.isDollar) walletBal = walletBal.times(this.getToken?.prices?.min);
+    let isError = false;
 
     if (walletBal.lt(formattedVal)) {
       this.setError("Wallet Balance too low");
@@ -480,10 +458,13 @@ class DashboardModalVM {
     this.setVMamount(v);
   };
 
-  submitBorrow = async (amount: any, assetId: any, contractAddress: string) => {
+  submitBorrow = async (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => {
     const { accountStore, notificationStore, lendStore } = this.rootStore;
     if (lendStore.poolId == null) return;
-    // fixme слишком много строк на вызовах, надо придумать как оптимизировать, сложно читать такой код
     await accountStore
       .invoke({
         dApp: contractAddress,
@@ -514,15 +495,17 @@ class DashboardModalVM {
           title: "Oops, transaction is not completed"
         });
       })
-      //fixme либо делай finally, либо в первый then перенеси
-      // в таком случае await не нужен, сделай так
-      // .finally(() => accountStore.updateAccountAssets(true));
-      .finally(async () => {
-        await accountStore.updateAccountAssets(true);
+      .finally(() => {
+        accountStore.updateAccountAssets(true);
+        lendStore.syncPoolsStats();
       });
   };
 
-  submitSupply = async (amount: any, assetId: any, contractAddress: string) => {
+  submitSupply = async (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => {
     const { accountStore, notificationStore, lendStore } = this.rootStore;
     if (lendStore.poolId == null) return;
 
@@ -551,14 +534,15 @@ class DashboardModalVM {
           title: "Oops, transaction is not completed"
         });
       })
-      .then(async () => {
-        await accountStore.updateAccountAssets(true);
+      .then(() => {
+        accountStore.updateAccountAssets(true);
+        lendStore.syncPoolsStats();
       });
   };
 
   submitWithdraw = async (
-    amount: any,
-    assetId: any,
+    amount: BN,
+    assetId: string,
     contractAddress: string
   ) => {
     const { accountStore, notificationStore, lendStore } = this.rootStore;
@@ -594,12 +578,17 @@ class DashboardModalVM {
           title: "Oops, transaction is not completed"
         });
       })
-      .then(async () => {
-        await accountStore.updateAccountAssets(true);
+      .then(() => {
+        accountStore.updateAccountAssets(true);
+        lendStore.syncPoolsStats();
       });
   };
 
-  submitRepay = async (amount: any, assetId: any, contractAddress: string) => {
+  submitRepay = async (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => {
     const { accountStore, notificationStore, lendStore } = this.rootStore;
     if (lendStore.poolId == null) return;
 
@@ -627,8 +616,9 @@ class DashboardModalVM {
           title: "Oops, transaction is not completed"
         });
       })
-      .then(async () => {
-        await accountStore.updateAccountAssets(true);
+      .then(() => {
+        accountStore.updateAccountAssets(true);
+        lendStore.syncPoolsStats();
       });
   };
 }

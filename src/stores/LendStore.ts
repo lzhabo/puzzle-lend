@@ -67,7 +67,7 @@ class LendStore {
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 
-  private syncPoolsStats = async () => {
+  syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
