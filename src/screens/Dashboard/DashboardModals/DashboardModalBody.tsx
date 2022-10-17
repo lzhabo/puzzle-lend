@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import styled from "@emotion/styled";
 import { Column } from "@src/components/Flex";
@@ -19,7 +19,7 @@ type UrlParamsTypes = {
 interface IProps {
   urlParams: UrlParamsTypes;
   operationName: OPERATIONS_TYPE;
-  poolStats: TPoolStats[];
+  tokenStats: TPoolStats;
 }
 
 const Root = styled(Column)`
@@ -34,23 +34,16 @@ const Root = styled(Column)`
 
 const DashboardModalBody: React.FC<IProps> = ({
   operationName,
-  poolStats,
+  tokenStats,
   urlParams
 }) => {
   const vm = DashboardUseVM();
-  const [choosenToken, setChoosenToken] = useState<TPoolStats>();
-
-  useMemo(() => {
-    const token = poolStats.find((_) => _.assetId === urlParams.tokenId);
-
-    setChoosenToken(token!);
-  }, [poolStats, urlParams]);
 
   return (
     <Root>
       {operationName === OPERATIONS_TYPE.SUPPLY && (
         <SupplyAssets
-          token={choosenToken!}
+          token={tokenStats}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -60,7 +53,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       )}
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
-          token={choosenToken!}
+          token={tokenStats}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
@@ -71,7 +64,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       )}
       {operationName === OPERATIONS_TYPE.BORROW && (
         <BorrowAssets
-          token={choosenToken!}
+          token={tokenStats}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
@@ -82,7 +75,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       )}
       {operationName === OPERATIONS_TYPE.REPAY && (
         <RepayAssets
-          token={choosenToken!}
+          token={tokenStats}
           poolId={urlParams?.modalPoolId || vm.currentPoolId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}

@@ -6,50 +6,69 @@ import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 
-const ctx = React.createContext<DashboardModalVM | null>(null);
-
-export const DashboardUseVM = () => useVM(ctx);
-
-export const DashboardVMProvider: React.FC = ({ children }) => {
-  const rootStore = useStores();
-  const store = useMemo(() => new DashboardModalVM(rootStore), [rootStore]);
-  return <ctx.Provider value={store}>{children}</ctx.Provider>;
-};
-
 type UrlParamsTypes = {
   tokenId?: string;
   modalPoolId?: string;
 };
 
+const ctx = React.createContext<DashboardModalVM | null>(null);
+
+export const DashboardUseVM = () => useVM(ctx);
+
+export const DashboardVMProvider: React.FC<{
+  operationName: OPERATIONS_TYPE;
+  urlParams: UrlParamsTypes;
+}> = ({ operationName, urlParams, children }) => {
+  const rootStore = useStores();
+  const store = useMemo(
+    () => new DashboardModalVM(rootStore, operationName, urlParams),
+    [operationName, urlParams, rootStore]
+  );
+  return <ctx.Provider value={store}>{children}</ctx.Provider>;
+};
+
 class DashboardModalVM {
   rootStore: RootStore;
 
-  constructor(rootStore: RootStore) {
+  constructor(
+    rootStore: RootStore,
+    operationName: OPERATIONS_TYPE,
+    urlParams: UrlParamsTypes
+  ) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    this.setUrlParams(urlParams);
+    this.setOperationName(operationName);
   }
 
-  // fixme
-  //  Если метод не ридонли делаем его изменение только через сеттер
-  //  Сеттеры делаем на следующей строке после поля класса
+  urlParams: UrlParamsTypes = {};
+  setUrlParams = (params: UrlParamsTypes) => {
+    this.urlParams = params;
+  };
+
+  modalAmount = BN.ZERO;
+  setVMamount = (amount: BN) => {
+    this.modalAmount = amount;
+  };
+
+  isDollar = false;
+  setVMisDollar = (isDollar: boolean) => {
+    this.isDollar = isDollar;
+  };
+
   dashboardModalStep: 0 | 1 = 0;
   setDashboardModalStep = (step: 0 | 1) => {
     this.dashboardModalStep = step;
   };
-  dashboardModalTitles = [];
-  modalAmount = BN.ZERO;
-  operationName: OPERATIONS_TYPE | undefined;
-
-  urlParams: UrlParamsTypes = {};
-  isDollar = false;
 
   modalErrorText = "";
-  accountHealth = 100;
+  setError = (error: string) => (this.modalErrorText = error);
 
+  operationName: OPERATIONS_TYPE = OPERATIONS_TYPE.SUPPLY;
   setOperationName = (operation: OPERATIONS_TYPE) =>
     (this.operationName = operation);
 
-  setError = (error: string) => (this.modalErrorText = error);
+  accountHealth = 100;
   setAccountHealth = (health: number) => (this.accountHealth = health);
 
   get currentPoolId() {
@@ -73,10 +92,7 @@ class DashboardModalVM {
   }
 
   get token(): TPoolStats {
-    const { lendStore } = this.rootStore;
-
-    // not sure
-    return lendStore.poolsStats.find(
+    return this.rootStore.lendStore.poolsStats.find(
       (_) => _.assetId === this.urlParams.tokenId
     )!;
   }
@@ -109,40 +125,35 @@ class DashboardModalVM {
       selfVal = this.tokenBalance;
     }
 
-    let countVal = selfVal;
-    if (this.isDollar) countVal = countVal.times(this.token?.prices?.min);
+    const countVal = !this.isDollar
+      ? selfVal
+      : selfVal.times(this.token?.prices?.min);
 
     return countVal.toDecimalPlaces(0, 2);
   }
 
   get modalFormattedVal() {
-    let countVal = this.modalAmount;
-
-    if (this.isDollar) countVal = countVal.div(this.token?.prices?.min);
+    const countVal = !this.isDollar
+      ? this.modalAmount
+      : this.modalAmount.div(this.token?.prices?.min);
 
     return countVal;
   }
 
   get onNativeChange(): BN {
-    let countVal = this.modalAmount;
-
-    if (this.isDollar) countVal = countVal.div(this.token?.prices?.min);
-    else countVal = countVal.times(this.token?.prices?.min);
-
-    return countVal;
+    return this.isDollar
+      ? this.modalAmount.div(this.token?.prices?.min)
+      : this.modalAmount.times(this.token?.prices?.min);
   }
 
   // BORROW MODAL
   // counting maximum after USER INPUT
   get userMaximumToBorrow(): BN {
-    let maximum = BN.formatUnits(this.userCollateral, 6);
-
-    if (!this.isDollar)
-      maximum = BN.formatUnits(this.userCollateral, 6).div(
-        this.token?.prices.min
-      );
-
-    maximum = maximum.times(this.token?.lt);
+    const maximum = this.isDollar
+      ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
+      : BN.formatUnits(this.userCollateral, 6)
+          .div(this.token?.prices.min)
+          .times(this.token?.lt);
 
     const totalReserves = BN.formatUnits(
       this.token?.totalSupply,
@@ -167,9 +178,10 @@ class DashboardModalVM {
   }
 
   get countUserBalance(): string {
-    let val = this.tokenBalance;
+    let val = !this.isDollar
+      ? this.tokenBalance
+      : this.tokenBalance.times(this.token?.prices?.min);
 
-    if (this.isDollar) val = val.times(this.token?.prices?.min);
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
       val = BN.formatUnits(val.plus(this.modalAmount), this.token?.decimals);
     }
@@ -187,18 +199,6 @@ class DashboardModalVM {
       ) || BN.ZERO
     );
   }
-
-  setVMamount = (amount: BN) => {
-    this.modalAmount = amount;
-  };
-
-  setVMisDollar = (isDollar: boolean) => {
-    this.isDollar = isDollar;
-  };
-
-  setUrlParams = (params: UrlParamsTypes) => {
-    this.urlParams = params;
-  };
 
   triggerMaxClickFunc = (amount: BN) => {
     const { accountStore } = this.rootStore;
@@ -222,13 +222,12 @@ class DashboardModalVM {
       return 100;
     }
 
-    let currentBorrowAmount = BN.formatUnits(
-      currentBorrow,
-      this.token?.decimals
-    );
+    const currentBorrowAmount = !this.isDollar
+      ? BN.formatUnits(currentBorrow, this.token?.decimals)
+      : BN.formatUnits(currentBorrow, this.token?.decimals).div(
+          this.token?.prices?.min
+        );
 
-    if (this.isDollar)
-      currentBorrowAmount = currentBorrowAmount.div(this.token?.prices?.min);
     //fixme вынести расчет здоровья в функцию
     // все что занимает больше 5 строк и повторяется больше 1 раза стоит выносить
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
@@ -275,14 +274,15 @@ class DashboardModalVM {
 
   // counting maximum amount for MAX btn
   userMaximumToBorrowBN = () => {
-    // fixme не делай let и 1000 переопределений, это невозможно читать
-    let maximum = BN.formatUnits(this.userCollateral, 6).times(this.token?.lt);
-    let isError = false;
-
-    if (!this.isDollar) maximum = maximum.div(this.token?.prices.max);
     const totalReserves = this.token?.totalSupply.minus(
       this.token?.totalBorrow
     );
+    const maximum = this.isDollar
+      ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
+      : BN.formatUnits(this.userCollateral, 6)
+          .times(this.token?.lt)
+          .div(this.token?.prices.max);
+    let isError = false;
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
     if (BN.formatUnits(totalReserves, 6).lt(maximum)) {
@@ -305,19 +305,20 @@ class DashboardModalVM {
 
   borrowChangeAmount = (v: BN) => {
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
+
     // if !isNative, show maximum in dollars, collateral in dollars by default
-    let maxCollateral = BN.formatUnits(this.userCollateral, 6);
+    const maxCollateral = this.isDollar
+      ? BN.formatUnits(this.userCollateral, 6)
+      : BN.formatUnits(this.userCollateral, 6).div(this.token?.prices?.min);
+
     // reserves in crypto amount by default
-    let totalReserves = this.token?.totalSupply.minus(this.token?.totalBorrow);
+    const totalReserves = this.isDollar
+      ? this.token?.totalSupply.minus(this.token?.totalBorrow)
+      : this.token?.totalSupply
+          .minus(this.token?.totalBorrow)
+          .times(this.token?.prices?.min);
+
     let isError = false;
-
-    if (!this.isDollar)
-      maxCollateral = BN.formatUnits(this.userCollateral, 6).div(
-        this.token?.prices?.min
-      );
-
-    if (this.isDollar)
-      totalReserves = totalReserves.times(this.token?.prices?.min);
 
     if (maxCollateral.isLessThanOrEqualTo(formattedVal)) {
       this.setError("Borrow amount less than your Collateral");
@@ -339,14 +340,11 @@ class DashboardModalVM {
   };
 
   // WITHDRAW MODAL
-  countWithdrawAccountHealth = (currentWithdraw: any) => {
+  countWithdrawAccountHealth = (currentWithdraw: BN) => {
     const { lendStore } = this.rootStore;
-    let currentWithdrawAmount = currentWithdraw;
-
-    if (this.isDollar)
-      currentWithdrawAmount = currentWithdrawAmount.div(
-        this.token?.prices?.min
-      );
+    const currentWithdrawAmount = !this.isDollar
+      ? currentWithdraw
+      : currentWithdraw.div(this.token?.prices?.min);
 
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
@@ -385,15 +383,13 @@ class DashboardModalVM {
   };
 
   withdrawChangeAmount = (v: BN) => {
-    let isError = false;
-    let selfSupply = this.token?.selfSupply;
-
-    if (this.isDollar) {
-      selfSupply = selfSupply.times(this.token?.prices?.min);
-    }
+    const selfSupply = !this.isDollar
+      ? this.token?.selfSupply
+      : this.token?.selfSupply.times(this.token?.prices?.min);
 
     // need more review here
     const formattedVal = v.minus(100);
+    let isError = false;
 
     if (
       formattedVal &&
@@ -415,14 +411,15 @@ class DashboardModalVM {
 
   // REPAY MODAL
   repayChangeAmount = (v: BN) => {
-    let isError = false;
-    let walletBalance = this.tokenBalance;
-    let forRepay = this.token?.selfBorrow;
+    const walletBalance = !this.isDollar
+      ? this.tokenBalance
+      : this.tokenBalance.times(this.token?.prices?.min);
 
-    if (this.isDollar && walletBalance && forRepay) {
-      walletBalance = walletBalance.times(this.token?.prices?.min);
-      forRepay = forRepay.times(this.token?.prices?.min);
-    }
+    const forRepay = !this.isDollar
+      ? this.token?.selfBorrow
+      : this.token?.selfBorrow.times(this.token?.prices?.min);
+
+    let isError = false;
 
     if (forRepay && forRepay.times(1.05).isLessThanOrEqualTo(v)) {
       this.setError(`Too big value for repaying`);
@@ -513,7 +510,6 @@ class DashboardModalVM {
       .invoke({
         dApp: contractAddress,
         payment: [{ assetId, amount: amount.toString() }],
-        //todo обрати внимание как можно было короче вместить json чтобы было меньше строк
         call: { function: "supply", args: [] }
       })
       .then((txId) => {
