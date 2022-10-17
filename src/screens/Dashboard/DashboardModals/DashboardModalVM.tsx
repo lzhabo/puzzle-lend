@@ -29,7 +29,13 @@ class DashboardModalVM {
     makeAutoObservable(this);
   }
 
+  // fixme
+  //  Если метод не ридонли делаем его изменение только через сеттер
+  //  Сеттеры делаем на следующей строке после поля класса
   dashboardModalStep: 0 | 1 = 0;
+  setDashboardModalStep = (step: 0 | 1) => {
+    this.dashboardModalStep = step;
+  };
   dashboardModalTitles = [];
   modalAmount = BN.ZERO;
   operationName: OPERATIONS_TYPE | undefined;
@@ -37,19 +43,26 @@ class DashboardModalVM {
   urlParams: UrlParamsTypes = {};
   isDollar = false;
 
-  modalError = "";
+  // fixme
+  //  Тут лучше сделать undefined или ""
+  //  переименуй в modalErrorText, это ведь не Error класс
+  modalError?: string;
   accountHealth = 100;
 
   setOperationName = (operation: OPERATIONS_TYPE) =>
     (this.operationName = operation);
 
+  //fixme
+  // Убрать @action.bound
+  // На будущее: если ты не знаешь для чего используется что-то, то лучше это не использовать
   @action.bound setError = (error: string) => (this.modalError = error);
   @action.bound setAccountHealth = (health: number) =>
     (this.accountHealth = health);
 
+  //fixme старайся писать код так, чтоб он занимал минимум строк и при этом не терял читсемость
+  // переделай геттеры по образцу currentPoolId
   get currentPoolId() {
-    const { lendStore } = this.rootStore;
-    return lendStore.poolId;
+    return this.rootStore.lendStore.poolId;
   }
 
   get userHealth() {
@@ -65,13 +78,19 @@ class DashboardModalVM {
   get getTokenBalance(): BN {
     const { accountStore } = this.rootStore;
 
+    // fixme нельзя использовать any, убери
+    //  сделай геттер в одну строчку
     const getAssetData = accountStore.balances.find(
-      (tokenData: any) => tokenData.assetId === this.urlParams?.tokenId
+      (tokenData) => tokenData.assetId === this.urlParams?.tokenId
     );
 
     return getAssetData?.balance || BN.ZERO;
   }
 
+  // fixme
+  //  getToken - это функция
+  //  переименуй в token
+  //  сделай так во всех геттерах
   get getToken(): TPoolStats {
     const { lendStore } = this.rootStore;
 
@@ -98,7 +117,7 @@ class DashboardModalVM {
 
   get getMaxBtn() {
     let selfVal = BN.ZERO;
-
+    //fixme оборачивай тело в ковыычки если if не помещается на одну строку
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW)
       selfVal = this.getToken?.selfSupply;
     if (this.operationName === OPERATIONS_TYPE.REPAY)
@@ -106,6 +125,7 @@ class DashboardModalVM {
     if (this.operationName === OPERATIONS_TYPE.SUPPLY)
       selfVal = this.getTokenBalance;
 
+    //
     let countVal = selfVal;
     if (this.isDollar) countVal = countVal.times(this.getToken?.prices?.min);
 
@@ -167,6 +187,7 @@ class DashboardModalVM {
     return this.formatVal(reserves, this.getToken?.decimals).toFormat(2);
   }
 
+  //fixme  не нужно писать в названии геттера get
   get getUserBalance(): string {
     let val = this.getTokenBalance;
 
@@ -208,10 +229,6 @@ class DashboardModalVM {
     this.urlParams = params;
   };
 
-  setDashboardModalStep = (step: 0 | 1) => {
-    this.dashboardModalStep = step;
-  };
-
   // BORROW MODAL
   countBorrowAccountHealth = (currentBorrow: BN) => {
     const { lendStore } = this.rootStore;
@@ -228,7 +245,8 @@ class DashboardModalVM {
 
     if (this.isDollar)
       currentBorrowAmount = currentBorrowAmount.div(this.getToken?.prices?.min);
-
+    //fixme вынести расчет здоровья в функцию
+    // все что занимает больше 5 строк и повторяется больше 1 раза стоит выносить
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
@@ -273,6 +291,7 @@ class DashboardModalVM {
 
   // counting maximum amount for MAX btn
   userMaximumToBorrowBN = () => {
+    // fixme не делай let и 1000 переопределений, это невозможно читать
     let maximum = BN.ZERO;
     let isError = false;
 
@@ -368,7 +387,8 @@ class DashboardModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    let bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    //fixme to const
+    const bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = stat.lt;
       let assetBcu = borrow.times(stat.prices.max).div(lt);
@@ -401,7 +421,7 @@ class DashboardModalVM {
       selfSupply &&
       selfSupply.toDecimalPlaces(0, 2).lt(formattedVal)
     ) {
-      this.setError(`Amount of withdraw bigger than you'r supply`);
+      this.setError(`Amount of withdraw bigger than your supply`);
       isError = true;
     }
 
@@ -446,6 +466,7 @@ class DashboardModalVM {
       this.getTokenBalance,
       this.getToken?.decimals
     );
+    //todo  зачем юзать столько много let если можно обойтись const
     let isError = false;
 
     if (!this.isDollar) walletBal = walletBal.times(this.getToken?.prices?.min);
@@ -462,7 +483,7 @@ class DashboardModalVM {
   submitBorrow = async (amount: any, assetId: any, contractAddress: string) => {
     const { accountStore, notificationStore, lendStore } = this.rootStore;
     if (lendStore.poolId == null) return;
-
+    // fixme слишком много строк на вызовах, надо придумать как оптимизировать, сложно читать такой код
     await accountStore
       .invoke({
         dApp: contractAddress,
@@ -493,7 +514,10 @@ class DashboardModalVM {
           title: "Oops, transaction is not completed"
         });
       })
-      .then(async () => {
+      //fixme либо делай finally, либо в первый then перенеси
+      // в таком случае await не нужен, сделай так
+      // .finally(() => accountStore.updateAccountAssets(true));
+      .finally(async () => {
         await accountStore.updateAccountAssets(true);
       });
   };
@@ -505,16 +529,9 @@ class DashboardModalVM {
     await accountStore
       .invoke({
         dApp: contractAddress,
-        payment: [
-          {
-            assetId,
-            amount: amount.toString()
-          }
-        ],
-        call: {
-          function: "supply",
-          args: []
-        }
+        payment: [{ assetId, amount: amount.toString() }],
+        //todo обрати внимание как можно было короче вместить json чтобы было меньше строк
+        call: { function: "supply", args: [] }
       })
       .then((txId) => {
         txId &&
@@ -589,16 +606,8 @@ class DashboardModalVM {
     await accountStore
       .invoke({
         dApp: contractAddress,
-        payment: [
-          {
-            assetId,
-            amount: amount.toString()
-          }
-        ],
-        call: {
-          function: "repay",
-          args: []
-        }
+        payment: [{ assetId, amount: amount.toString() }],
+        call: { function: "repay", args: [] }
       })
       .then((txId) => {
         txId &&
