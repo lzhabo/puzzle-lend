@@ -99,15 +99,16 @@ class DashboardModalVM {
 
   // REPAY MODAL
   get userRepayAmount(): string {
-    let val = this.token?.selfBorrow.minus(this.modalFormattedVal);
+    const val = !this.isDollar
+      ? this.token?.selfBorrow.minus(this.modalFormattedVal)
+      : BN.formatUnits(
+          this.token?.selfBorrow
+            .minus(this.modalFormattedVal)
+            .times(this.token?.prices?.min),
+          this.token?.decimals
+        ).toFormat(2);
 
     if (this.token?.selfBorrow.eq(0)) return "0";
-
-    if (this.isDollar)
-      return BN.formatUnits(
-        val.times(this.token?.prices?.min),
-        this.token?.decimals
-      ).toFormat(2);
 
     return BN.formatUnits(val, this.token?.decimals).toFormat(2);
   }
@@ -202,7 +203,6 @@ class DashboardModalVM {
 
   triggerMaxClickFunc = (amount: BN) => {
     const { accountStore } = this.rootStore;
-    console.log(+amount, "AMOUNT");
 
     const getAssetData = accountStore.balances.find(
       (tokenData) => tokenData.assetId === this.urlParams.tokenId
