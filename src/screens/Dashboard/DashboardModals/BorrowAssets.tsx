@@ -95,14 +95,15 @@ const BorrowAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token?.name ? token?.name : ""}
+              {token?.name || ""}
             </Text>
           </Column>
         </Row>
         <Column alignItems="flex-end">
           <Row alignItems="center" justifyContent="flex-end">
             <Text size="medium" type="secondary" fitContent>
-              {+BN.formatUnits(amount, token?.decimals).toFixed(4) || 0}
+              {BN.formatUnits(amount, token?.decimals).toNumber().toFixed(4) ||
+                0}
             </Text>
             <BackIcon />
             <Text
@@ -152,7 +153,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrow APY
         </Text>
         <Text size="medium" fitContent>
-          {+token?.borrowAPY ? (+token?.borrowAPY).toFixed(2) : 0} %
+          {token?.borrowAPY ? token?.borrowAPY.toNumber().toFixed(2) : 0} %
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -161,8 +162,10 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {+token?.selfBorrow
-            ? (+BN.formatUnits(token?.selfBorrow, token?.decimals)).toFixed(4)
+          {token?.selfBorrow
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals)
+                .toNumber()
+                .toFixed(4)
             : 0}{" "}
           {token?.symbol}
         </Text>
@@ -174,7 +177,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {+userHealth.toFixed(2) || 0} %
+            {userHealth.toNumber().toFixed(2) || 0} %
           </Text>
           {vm.accountHealth !== 100 ? (
             <>

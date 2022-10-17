@@ -158,7 +158,9 @@ const WithdrawAssets: React.FC<IProps> = ({
           }}
           style={{ cursor: "pointer" }}
         >
-          {(+BN.formatUnits(token?.selfSupply, token?.decimals)).toFixed(4)}
+          {BN.formatUnits(token?.selfSupply, token?.decimals)
+            .toNumber()
+            .toFixed(4)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -168,7 +170,7 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {+userHealth.toDecimalPlaces(2).toFixed(2) || 0} %
+            {userHealth.toNumber().toFixed(2) || 0} %
           </Text>
           {userHealth.toDecimalPlaces(2).lt(100) ? (
             <>

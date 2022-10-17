@@ -118,7 +118,9 @@ const SupplyAssets: React.FC<IProps> = ({
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
-              {(+BN.formatUnits(amount, token?.decimals) || 0).toFixed(4)}
+              {(
+                BN.formatUnits(amount, token?.decimals).toNumber() || 0
+              ).toFixed(4)}
             </Text>
           </Row>
           <Text size="medium" type="secondary" nowrap>
@@ -169,7 +171,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {+BN.formatUnits(token?.selfBorrow, token?.decimals) || 0}
+          {BN.formatUnits(token?.selfBorrow, token?.decimals).toNumber() || 0}
         </Text>
       </Row>
       <SizedBox height={14} />

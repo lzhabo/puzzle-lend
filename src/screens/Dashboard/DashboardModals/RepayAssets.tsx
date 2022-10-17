@@ -153,7 +153,9 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Text size="medium" fitContent>
           {token?.selfBorrow
-            ? +BN.formatUnits(token?.selfBorrow, token?.decimals).toFixed(4)
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals)
+                .toNumber()
+                .toFixed(4)
             : 0}
         </Text>
       </Row>
@@ -185,9 +187,9 @@ const BorrowAssets: React.FC<IProps> = ({
         {accountStore && accountStore.address ? (
           <Button
             disabled={
-              +amount === 0 ||
+              amount.eq(0) ||
               vm.modalErrorText !== "" ||
-              +token?.selfBorrow === 0
+              token?.selfBorrow.eq(0)
             }
             fixed
             onClick={() => submitForm()}
