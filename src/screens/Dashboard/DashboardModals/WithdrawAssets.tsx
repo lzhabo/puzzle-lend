@@ -123,7 +123,7 @@ const WithdrawAssets: React.FC<IProps> = ({
         </Column>
       </Row>
       <SizedBox height={16} />
-        {/*//fixme  вынести в отлеьный компонент что будет называться  ModalTokenInput*/}
+      {/*//fixme  вынести в отлеьный компонент что будет называться  ModalTokenInput*/}
       <ModalInputContainer focused={focused} readOnly={!modalAmount}>
         {!vm.isDollar && <DollarSymbol>$</DollarSymbol>}
         {onMaxClick && (
@@ -159,8 +159,7 @@ const WithdrawAssets: React.FC<IProps> = ({
         {vm.isDollar ? (
           <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
             <Text size="small" type="secondary">
-              ~{token?.symbol}{" "}
-                {/*fixme тоже самое*/}
+              ~{token?.symbol} {/*fixme тоже самое*/}
               {+token?.prices?.min &&
                 +amount &&
                 (+vm.formatVal(
@@ -178,7 +177,6 @@ const WithdrawAssets: React.FC<IProps> = ({
               имею ввиду нельзя делать +
               если нужно для рассчетов, то у BN есть метод toNumber
               */}
-
               {+token?.prices?.min && +amount
                 ? (+vm
                     .formatVal(amount, token?.decimals)
