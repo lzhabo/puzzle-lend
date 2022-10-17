@@ -43,13 +43,13 @@ const DashboardModalBody: React.FC<IProps> = ({
   const vm = DashboardUseVM();
   const [choosenToken, setChoosenToken] = useState<TPoolStats>();
 
-  const getTokenBalance: any = () => {
-    const getAssetData = userAssetsBalance.find(
-      (tokenData) => tokenData.assetId === urlParams.tokenId
-    );
-
-    return getAssetData?.balance;
-  };
+  // const getTokenBalance: any = () => {
+  //   const getAssetData = userAssetsBalance.find(
+  //     (tokenData) => tokenData.assetId === urlParams.tokenId
+  //   );
+  //
+  //   return getAssetData?.balance;
+  // };
 
   const triggerMaxClickFunc = (amount: BN) => {
     const getAssetData = userAssetsBalance.find(

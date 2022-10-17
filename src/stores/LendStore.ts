@@ -29,8 +29,8 @@ class LendStore {
   get fetchService() {
     return this._fetchService!;
   }
+
   setFetchService = async (pool: string) => {
-    console.log(pool);
     this._fetchService = new PoolStateFetchService(pool);
     return await this._fetchService
       .fetchSetups()
@@ -58,6 +58,7 @@ class LendStore {
   get poolId() {
     return this.pool.address;
   }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -123,19 +124,6 @@ class LendStore {
     });
     this.setPoolsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
-    console.log(
-      stats.map((t) => ({
-        ...t,
-        totalSupply: t.totalSupply.toString(),
-        supplyAPY: t.supplyAPY.toString(),
-        borrowAPY: t.borrowAPY.toString(),
-        totalBorrow: t.totalBorrow.toString(),
-        selfSupply: t.selfSupply.toString(),
-        selfBorrow: t.selfBorrow.toString(),
-        dailyIncome: t.dailyIncome.toString(),
-        dailyLoan: t.dailyLoan.toString()
-      }))
-    );
   };
 
   get health() {

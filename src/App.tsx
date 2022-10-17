@@ -38,6 +38,7 @@ const App: React.FC = () => {
           {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (
             <Route
               path={path}
+              key={path}
               element={
                 <DashboardModal operationName={type as OPERATIONS_TYPE} />
               }
@@ -49,7 +50,6 @@ const App: React.FC = () => {
           path={ROUTES.DASHBOARD_TOKEN_DETAILS}
           element={<ExploreToken />}
         />
-        {/*<Route path="*" element={<Navigate to={ROUTES.DASHBOARD} />} />*/}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <WalletModal

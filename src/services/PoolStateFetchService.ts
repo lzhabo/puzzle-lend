@@ -12,9 +12,11 @@ export type TPoolToken = {
 
 class PoolStateFetchService {
   private readonly pool: string;
+
   constructor(pool: string) {
     this.pool = pool;
   }
+
   fetchSetups = async (): Promise<TPoolToken[]> => {
     const settingKeys = [
       "setup_tokens",
@@ -37,15 +39,6 @@ class PoolStateFetchService {
     const interest = splitRecord(getStateByKey(settings, "setup_interest"));
     const active = getStateByKey(settings, "setup_active");
     if (tokens == null || !active) throw new Error("pool not active");
-    // console.log(
-    //   poolTokens.map((t) => ({
-    //     t: t.assetId,
-    //     cf: t.cf.toString(),
-    //     lt: t.lt.toString(),
-    //     penalty: t.penalty.toString(),
-    //     interest: t.interest.toString(),
-    //   }))
-    // );
     return tokens.map((assetId, index) => {
       const asset = TOKENS_BY_ASSET_ID[assetId];
       return {
