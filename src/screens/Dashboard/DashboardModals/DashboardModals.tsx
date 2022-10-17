@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
@@ -7,7 +7,6 @@ import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
 import { OPERATIONS_TYPE } from "@src/constants";
 import { sleep } from "@src/utils/sleep";
-import { TPoolStats } from "@src/stores/LendStore";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
 import DashboardModalBody from "@screens/Dashboard/DashboardModals/DashboardModalBody";
