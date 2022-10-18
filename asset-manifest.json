@@ -1,17 +1,18 @@
 {
   "files": {
-    "main.css": "/puzzle-lend/static/css/main.c61bd160.chunk.css",
-    "main.js": "/puzzle-lend/static/js/main.829d045e.chunk.js",
-    "main.js.map": "/puzzle-lend/static/js/main.829d045e.chunk.js.map",
+    "main.css": "/puzzle-lend/static/css/main.025227e5.chunk.css",
+    "main.js": "/puzzle-lend/static/js/main.bb732f9b.chunk.js",
+    "main.js.map": "/puzzle-lend/static/js/main.bb732f9b.chunk.js.map",
     "runtime-main.js": "/puzzle-lend/static/js/runtime-main.e60e3224.js",
     "runtime-main.js.map": "/puzzle-lend/static/js/runtime-main.e60e3224.js.map",
     "static/css/2.cfc5016f.chunk.css": "/puzzle-lend/static/css/2.cfc5016f.chunk.css",
-    "static/js/2.5360c9f1.chunk.js": "/puzzle-lend/static/js/2.5360c9f1.chunk.js",
-    "static/js/2.5360c9f1.chunk.js.map": "/puzzle-lend/static/js/2.5360c9f1.chunk.js.map",
+    "static/js/2.ac46220d.chunk.js": "/puzzle-lend/static/js/2.ac46220d.chunk.js",
+    "static/js/2.ac46220d.chunk.js.map": "/puzzle-lend/static/js/2.ac46220d.chunk.js.map",
     "index.html": "/puzzle-lend/index.html",
     "static/css/2.cfc5016f.chunk.css.map": "/puzzle-lend/static/css/2.cfc5016f.chunk.css.map",
-    "static/css/main.c61bd160.chunk.css.map": "/puzzle-lend/static/css/main.c61bd160.chunk.css.map",
-    "static/js/2.5360c9f1.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.5360c9f1.chunk.js.LICENSE.txt",
+    "static/css/main.025227e5.chunk.css.map": "/puzzle-lend/static/css/main.025227e5.chunk.css.map",
+    "static/js/2.ac46220d.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.ac46220d.chunk.js.LICENSE.txt",
+    "static/media/404.971bc32f.svg": "/puzzle-lend/static/media/404.971bc32f.svg",
     "static/media/BNB.b8f5fc3b.svg": "/puzzle-lend/static/media/BNB.b8f5fc3b.svg",
     "static/media/BUSD.8bdb43fc.svg": "/puzzle-lend/static/media/BUSD.8bdb43fc.svg",
     "static/media/DAI.a7d5ac1a.svg": "/puzzle-lend/static/media/DAI.a7d5ac1a.svg",
@@ -43,6 +44,7 @@
     "static/media/WXB.9dc7f9c3.png": "/puzzle-lend/static/media/WXB.9dc7f9c3.png",
     "static/media/WXUSDNWXLP.160e7c46.svg": "/puzzle-lend/static/media/WXUSDNWXLP.160e7c46.svg",
     "static/media/YFI.9c4c4393.svg": "/puzzle-lend/static/media/YFI.9c4c4393.svg",
+    "static/media/arrowBackWithTail.7be263fd.svg": "/puzzle-lend/static/media/arrowBackWithTail.7be263fd.svg",
     "static/media/arrowDown.svg": "/puzzle-lend/static/media/arrowDown.bfdb6b2f.svg",
     "static/media/arrowRightBorderless.44108c32.svg": "/puzzle-lend/static/media/arrowRightBorderless.44108c32.svg",
     "static/media/backArrow.b46ac92f.svg": "/puzzle-lend/static/media/backArrow.b46ac92f.svg",
@@ -50,6 +52,7 @@
     "static/media/blackRightArrow.svg": "/puzzle-lend/static/media/blackRightArrow.ac8cd101.svg",
     "static/media/cartel-logo.90920e62.png": "/puzzle-lend/static/media/cartel-logo.90920e62.png",
     "static/media/cgu-logo.178ff621.png": "/puzzle-lend/static/media/cgu-logo.178ff621.png",
+    "static/media/checkMark.a457ed86.svg": "/puzzle-lend/static/media/checkMark.a457ed86.svg",
     "static/media/close.10f92d06.svg": "/puzzle-lend/static/media/close.10f92d06.svg",
     "static/media/copy.b77317d4.svg": "/puzzle-lend/static/media/copy.b77317d4.svg",
     "static/media/darkAdd.svg": "/puzzle-lend/static/media/darkAdd.70d663d1.svg",
@@ -104,7 +107,7 @@
     "static/media/street-logo.a0358bba.svg": "/puzzle-lend/static/media/street-logo.a0358bba.svg",
     "static/media/success.5f8f4b92.svg": "/puzzle-lend/static/media/success.5f8f4b92.svg",
     "static/media/surf.ddd3b29f.svg": "/puzzle-lend/static/media/surf.ddd3b29f.svg",
-    "static/media/swap.svg": "/puzzle-lend/static/media/swap.dfdf8c05.svg",
+    "static/media/swap.svg": "/puzzle-lend/static/media/swap.cb72bf6d.svg",
     "static/media/swapTransaction.61a9e5fa.svg": "/puzzle-lend/static/media/swapTransaction.61a9e5fa.svg",
     "static/media/turtle-logo.696619ec.png": "/puzzle-lend/static/media/turtle-logo.696619ec.png",
     "static/media/unknown-logo.88c5be28.svg": "/puzzle-lend/static/media/unknown-logo.88c5be28.svg",
@@ -129,8 +132,8 @@
   "entrypoints": [
     "static/js/runtime-main.e60e3224.js",
     "static/css/2.cfc5016f.chunk.css",
-    "static/js/2.5360c9f1.chunk.js",
-    "static/css/main.c61bd160.chunk.css",
-    "static/js/main.829d045e.chunk.js"
+    "static/js/2.ac46220d.chunk.js",
+    "static/css/main.025227e5.chunk.css",
+    "static/js/main.bb732f9b.chunk.js"
   ]
 }
