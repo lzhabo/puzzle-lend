@@ -73,7 +73,7 @@ const TotalLiquidity = styled.div`
   background-position: right;
   background-size: contain;
 `;
-const DashboardImpl: React.FC<IProps> = () => {
+const DashboardImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
   const { accountStore, lendStore } = useStores();
   const theme = useTheme();
@@ -121,7 +121,7 @@ const DashboardImpl: React.FC<IProps> = () => {
       </Root>
     </Layout>
   );
-};
+});
 
 const Dashboard: React.FC<IProps & RouteProps> = () => {
   const params = useParams<{ poolId: string }>();
