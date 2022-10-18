@@ -43,7 +43,12 @@ const MobileAssetsTable: React.FC<IProps> = () => {
   const navigate = useNavigate();
 
   const openModal = useCallback(
-    (e: any, poolId: string, operationName: string, assetId: string) => {
+    (
+      e: React.MouseEvent,
+      poolId: string,
+      operationName: string,
+      assetId: string
+    ) => {
       e.stopPropagation();
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
