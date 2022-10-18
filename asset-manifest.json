@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/puzzle-lend/static/css/main.025227e5.chunk.css",
-    "main.js": "/puzzle-lend/static/js/main.bb732f9b.chunk.js",
-    "main.js.map": "/puzzle-lend/static/js/main.bb732f9b.chunk.js.map",
+    "main.js": "/puzzle-lend/static/js/main.a1e39b2c.chunk.js",
+    "main.js.map": "/puzzle-lend/static/js/main.a1e39b2c.chunk.js.map",
     "runtime-main.js": "/puzzle-lend/static/js/runtime-main.e60e3224.js",
     "runtime-main.js.map": "/puzzle-lend/static/js/runtime-main.e60e3224.js.map",
     "static/css/2.cfc5016f.chunk.css": "/puzzle-lend/static/css/2.cfc5016f.chunk.css",
@@ -134,6 +134,6 @@
     "static/css/2.cfc5016f.chunk.css",
     "static/js/2.ac46220d.chunk.js",
     "static/css/main.025227e5.chunk.css",
-    "static/js/main.bb732f9b.chunk.js"
+    "static/js/main.a1e39b2c.chunk.js"
   ]
 }
