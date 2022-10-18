@@ -1,18 +1,17 @@
 import styled from "@emotion/styled";
 import React from "react";
 import { AnalyticsScreenVMProvider } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
-import { Link, Navigate, useParams } from "react-router-dom";
-import { POOLS, ROUTES } from "@src/constants";
+import { Link } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 import Layout from "@components/Layout";
 import ExploreLayout from "@screens/ExploreToken/ExploreLayout";
-import { Column, Row } from "@components/Flex";
+import { Row } from "@components/Flex";
 import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import AnalyticsScreenTable from "@screens/AnalyticsScreen/AnalyticsScreenTable";
-import AnalyticsScreenBaseInfo from "@screens/AnalyticsScreen/AnalyticsScreenBaseInfo";
 
 interface IProps {}
 
