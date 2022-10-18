@@ -115,7 +115,7 @@ const Table: React.FC<IProps> = ({
                 {...row.getRowProps()}
                 key={i + "tr"}
                 onClick={() =>
-                  row.original.disabled &&
+                  !row.original.disabled &&
                   row.original.onClick &&
                   row.original.onClick()
                 }
