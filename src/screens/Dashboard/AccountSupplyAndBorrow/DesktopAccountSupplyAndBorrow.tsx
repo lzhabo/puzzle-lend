@@ -39,7 +39,12 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
 
   const openModal = useCallback(
-    (e: any, poolId: string, operationName: string, assetId: string) => {
+    (
+      e: React.MouseEvent,
+      poolId: string,
+      operationName: string,
+      assetId: string
+    ) => {
       e.stopPropagation();
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },

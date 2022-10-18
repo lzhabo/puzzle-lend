@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback } from "react";
 import Text from "@src/components/Text";
 import { Column, Row } from "@src/components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
@@ -42,13 +42,18 @@ const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
 
-  const assetBtnClick = (
-    poolId: string,
-    operationName: string,
-    tokenId: string
-  ) => {
-    return navigate(`/${poolId}/${operationName}/${tokenId}`);
-  };
+  const openModal = useCallback(
+    (
+      e: React.MouseEvent,
+      poolId: string,
+      operationName: string,
+      assetId: string
+    ) => {
+      e.stopPropagation();
+      return navigate(`/${poolId}/${operationName}/${assetId}`);
+    },
+    [navigate]
+  );
 
   return (
     <Root>
@@ -119,8 +124,8 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                     kind="secondary"
                     size="medium"
                     fixed
-                    onClick={() =>
-                      assetBtnClick(lendStore.poolId, "supply", s.assetId)
+                    onClick={(e) =>
+                      openModal(e, lendStore.poolId, "supply", s.assetId)
                     }
                   >
                     Supply
@@ -130,8 +135,8 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                     kind="secondary"
                     size="medium"
                     fixed
-                    onClick={() =>
-                      assetBtnClick(lendStore.poolId, "borrow", s.assetId)
+                    onClick={(e) =>
+                      openModal(e, lendStore.poolId, "borrow", s.assetId)
                     }
                   >
                     Borrow

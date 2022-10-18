@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useCallback } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
@@ -45,6 +45,20 @@ const Data = styled(Column)`
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+
+  const openModal = useCallback(
+    (
+      e: React.MouseEvent,
+      poolId: string,
+      operationName: string,
+      assetId: string
+    ) => {
+      e.stopPropagation();
+      return navigate(`/${poolId}/${operationName}/${assetId}`);
+    },
+    [navigate]
+  );
+
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (
@@ -107,11 +121,25 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   </Data>
                   <SizedBox height={16} />
                   <Row>
-                    <Button size="medium" kind="secondary" fixed>
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, lendStore.poolId, "supply", s.assetId)
+                      }
+                    >
                       Supply
                     </Button>
                     <SizedBox width={8} />
-                    <Button size="medium" kind="secondary" fixed>
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, lendStore.poolId, "withdraw", s.assetId)
+                      }
+                    >
                       Withdraw
                     </Button>
                   </Row>
@@ -184,12 +212,26 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   </Data>
                   <SizedBox height={16} />
                   <Row>
-                    <Button size="medium" kind="secondary" fixed>
-                      Supply
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, lendStore.poolId, "borrow", s.assetId)
+                      }
+                    >
+                      Borrow
                     </Button>
                     <SizedBox width={8} />
-                    <Button size="medium" kind="secondary" fixed>
-                      Withdraw
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, lendStore.poolId, "repay", s.assetId)
+                      }
+                    >
+                      Repay
                     </Button>
                   </Row>
                 </Asset>
