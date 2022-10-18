@@ -143,9 +143,6 @@ const ExploreToken: React.FC<IProps> = () => {
   if (assetId == null || !POOLS.some((p) => p.address === poolId)) {
     return <Navigate to={ROUTES.ROOT} />;
   }
-  // if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
-  //   return <Navigate to={ROUTES.ROOT} />;
-  // }
   return (
     <ExploreTokenVMProvider assetId={assetId} poolId={poolId}>
       <ExploreTokenImpl />
