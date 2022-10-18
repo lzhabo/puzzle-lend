@@ -58,19 +58,18 @@ const WalletModalHeader: React.FC<IProps> = () => {
     {
       icon: <Copy className="img" />,
       text: "Copy address",
-      onClick: vm.handleCopyAddress,
+      onClick: vm.handleCopyAddress
     },
     {
       icon: <Link className="img" />,
       text: "View on Explorer",
-      onClick: () =>
-        window.open(`${EXPLORER_URL}/address/${address}`, "_blank"),
+      onClick: () => window.open(`${EXPLORER_URL}/address/${address}`, "_blank")
     },
     {
       icon: <Disconnect className="img" />,
       text: "Disconnect",
-      onClick: vm.handleLogOut,
-    },
+      onClick: vm.handleLogOut
+    }
   ];
   const whiteText = { color: themes.lightTheme.colors.white };
   return (

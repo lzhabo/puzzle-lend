@@ -12,6 +12,6 @@ export default {
     arrowDownWithBorder: require("@src/assets/icons/darkArrowWithBorder.svg")
       .default,
     done: require("@src/assets/icons/darkDone.svg").default,
-    add: require("@src/assets/icons/darkAdd.svg").default,
-  },
+    add: require("@src/assets/icons/darkAdd.svg").default
+  }
 };

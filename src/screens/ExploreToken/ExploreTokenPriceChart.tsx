@@ -8,7 +8,7 @@ import {
   LineChart,
   Tooltip as RechartsTooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from "recharts";
 import useWindowSize from "@src/hooks/useWindowSize";
 import dayjs from "dayjs";
@@ -139,7 +139,7 @@ const ExploreTokenPriceChart: React.FC<IProps> = () => {
               )}
               contentStyle={{
                 border: "none",
-                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))",
+                filter: "drop-shadow(0px 8px 24px rgba(54, 56, 112, 0.16))"
               }}
             />
             <Line

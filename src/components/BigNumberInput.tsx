@@ -114,7 +114,7 @@ const BigNumberInput: React.FC<IBigNumberInputProps> = ({
     type: "text",
     value: inputValue,
     readOnly,
-    disabled,
+    disabled
   };
 
   return renderInput ? (

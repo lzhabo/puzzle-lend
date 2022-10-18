@@ -59,7 +59,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
               const data = [
                 {
                   title: "Supplied",
-                  value: `${supplied.toFormat(4)} ${s.symbol}`,
+                  value: `${supplied.toFormat(4)} ${s.symbol}`
                 },
                 { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
                 {
@@ -67,8 +67,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   value:
                     `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(
                       6
-                    )} ` + s.symbol,
-                },
+                    )} ` + s.symbol
+                }
               ];
               return (
                 <Asset key={`token-${s.assetId}`}>
@@ -134,18 +134,18 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
               const data = [
                 {
                   title: "Borrow APR",
-                  value: `${s.borrowAPY.toFormat(2)} %`,
+                  value: `${s.borrowAPY.toFormat(2)} %`
                 },
                 {
                   title: "To be repaid",
-                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                  value: `${borrowed.toFormat(2)} ${s.symbol}`
                 },
                 {
                   title: "Daily loan interest",
                   value:
                     BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
-                    ` ${s.symbol}`,
-                },
+                    ` ${s.symbol}`
+                }
               ];
               return (
                 <Asset key={`token-${s.assetId}`}>

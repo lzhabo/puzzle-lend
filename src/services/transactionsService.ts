@@ -12,7 +12,7 @@ const transactionsService = {
       `${process.env.REACT_APP_API_BASE}/api/v1/transactions` + search;
     const { data } = await axios.get(url);
     return data;
-  },
+  }
 };
 
 export default transactionsService;

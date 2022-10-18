@@ -11,6 +11,6 @@ export default {
     arrowDownWithBorder: require("@src/assets/icons/lightArrowWithBorder.svg")
       .default,
     done: require("@src/assets/icons/done.svg").default,
-    add: require("@src/assets/icons/whiteAdd.svg").default,
-  },
+    add: require("@src/assets/icons/whiteAdd.svg").default
+  }
 };

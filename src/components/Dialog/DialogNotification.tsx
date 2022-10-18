@@ -99,7 +99,7 @@ type TBuildSuccessLiquidityDialogParamsProps = {
 export const buildSuccessLiquidityDialogParams = ({
   accountStore,
   txId,
-  poolDomain,
+  poolDomain
 }: TBuildSuccessLiquidityDialogParamsProps): IDialogNotificationProps => {
   const txLink = `${EXPLORER_URL}/tx/${txId}`;
   const poolLink = `/pools/${poolDomain}/invest`;
@@ -121,8 +121,8 @@ export const buildSuccessLiquidityDialogParams = ({
             View on Waves Explorer
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -135,7 +135,7 @@ type TbuildErrorDialogParamsProps = {
 export const buildErrorDialogParams = ({
   title,
   description,
-  onTryAgain,
+  onTryAgain
 }: TbuildErrorDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
@@ -146,8 +146,8 @@ export const buildErrorDialogParams = ({
         <Button size="medium" fixed onClick={onTryAgain}>
           Try again
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 type TBuildWarningLiquidityDialogParamsProps = {
@@ -163,7 +163,7 @@ export const buildWarningLiquidityDialogParams = ({
   description,
   onContinue,
   continueText,
-  onCancel,
+  onCancel
 }: TBuildWarningLiquidityDialogParamsProps): IDialogNotificationProps => {
   return {
     title,
@@ -180,8 +180,8 @@ export const buildWarningLiquidityDialogParams = ({
         <Button size="medium" fixed onClick={onContinue}>
           {continueText}
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -195,14 +195,14 @@ export const buildDialogParams = ({
   title,
   description,
   buttons,
-  type,
+  type
 }: TBuildParamsProps): IDialogNotificationProps => {
   return {
     title,
     description,
     type,
     buttonsDirection: "row",
-    buttons,
+    buttons
   };
 };
 
@@ -217,7 +217,7 @@ type TBuildSuccessNFTSaleDialogParamsProps = {
 export const buildSuccessNFTSaleDialogParams = ({
   name,
   picture,
-  onContinue,
+  onContinue
 }: TBuildSuccessNFTSaleDialogParamsProps): IDialogNotificationProps => {
   return {
     title: `You’ve got “${name}” NFT!`,
@@ -228,8 +228,8 @@ export const buildSuccessNFTSaleDialogParams = ({
         <Button size="medium" fixed onClick={onContinue}>
           Use it to create the pool
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 
@@ -242,7 +242,7 @@ type TBuildSuccessBoostProps = {
 
 export const buildSuccessBoostParams = ({
   description,
-  domain,
+  domain
 }: TBuildSuccessBoostProps): IDialogNotificationProps => {
   return {
     title: `Successfully boosted!`,
@@ -254,8 +254,8 @@ export const buildSuccessBoostParams = ({
             Back to Pool page
           </Button>
         </Anchor>
-      ),
-    ],
+      )
+    ]
   };
 };
 //CancelOrder
@@ -269,7 +269,7 @@ type TBuildCancelOrderProps = {
 export const buildCancelOrderParams = ({
   onOrderCancel,
   onCancel,
-  many,
+  many
 }: TBuildCancelOrderProps): IDialogNotificationProps => {
   return {
     icon: <></>,
@@ -301,8 +301,8 @@ export const buildCancelOrderParams = ({
         >
           Back to trade
         </Button>
-      ),
-    ],
+      )
+    ]
   };
 };
 export default DialogNotification;

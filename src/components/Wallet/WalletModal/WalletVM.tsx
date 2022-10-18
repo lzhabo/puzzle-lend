@@ -22,7 +22,7 @@ export const useWalletVM = () => useVM(ctx);
 class WalletVM {
   rootStore: RootStore;
 
-  headerExpanded: boolean = true;
+  headerExpanded = true;
   setHeaderExpanded = (state: boolean) => (this.headerExpanded = state);
 
   constructor(rootStore: RootStore) {
@@ -36,7 +36,7 @@ class WalletVM {
       copy(accountStore.address ?? "");
       notificationStore.notify("Your address was copied", {
         type: "success",
-        title: "Congratulations!",
+        title: "Congratulations!"
       });
     } else {
       notificationStore.notify("There is no address", { type: "error" });
@@ -48,7 +48,7 @@ class WalletVM {
       this.rootStore.accountStore.setWalletModalOpened(false),
       this.rootStore.accountStore.setAssetBalances(null),
       this.rootStore.accountStore.setAddress(null),
-      this.rootStore.accountStore.setLoginType(null),
+      this.rootStore.accountStore.setLoginType(null)
     ]);
 
   get signInInfo() {

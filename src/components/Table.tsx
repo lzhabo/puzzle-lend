@@ -110,12 +110,12 @@ const Table: React.FC<IProps> = ({
               <tr
                 style={{
                   opacity: row.original.disabled ? 0.5 : 1,
-                  cursor: row.original.disabled ? "not-allowed" : "pointer",
+                  cursor: row.original.disabled ? "not-allowed" : "pointer"
                 }}
                 {...row.getRowProps()}
                 key={i + "tr"}
                 onClick={() =>
-                  !row.original.disabled &&
+                  row.original.disabled &&
                   row.original.onClick &&
                   row.original.onClick()
                 }

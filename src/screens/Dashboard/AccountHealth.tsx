@@ -47,20 +47,20 @@ const AccountHealth: React.FC<IProps> = () => {
     {
       title: "Supply balance",
       value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
-      description: "USD value of your deposits in total",
+      description: "USD value of your deposits in total"
     },
     {
       title: "Borrow balance",
       value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
-      description: "USD value of your borrows in total",
+      description: "USD value of your borrows in total"
     },
     {
       title: "NET APY",
       value: `${lendStore.netApy.toFormat(2)} %`,
       border: true,
       description:
-        "Your annual net profit(expenses) relative to your deposits(loans) USD value.",
-    },
+        "Your annual net profit(expenses) relative to your deposits(loans) USD value."
+    }
   ];
   return (
     <Root>
@@ -72,7 +72,7 @@ const AccountHealth: React.FC<IProps> = () => {
           style={{
             position: "absolute",
             top: -75,
-            right: "calc(50% - 55px)",
+            right: "calc(50% - 55px)"
           }}
           text="Account Health"
           percent={lendStore.health.toDecimalPlaces(2).toNumber()}
@@ -87,7 +87,7 @@ const AccountHealth: React.FC<IProps> = () => {
             style={{
               marginBottom: 14,
               borderTop: border ? `1px solid ${theme.colors.primary100}` : "",
-              paddingTop: border ? `14px` : "",
+              paddingTop: border ? `14px` : ""
             }}
           >
             <Tooltip content={<Text>{description}</Text>}>

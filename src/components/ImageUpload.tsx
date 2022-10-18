@@ -80,7 +80,7 @@ const ImageUpload: React.FC<IProps> = ({
   fileName,
   onFileNameChange,
   fileSize,
-  onFileSizeChange,
+  onFileSizeChange
 }) => {
   const { notificationStore } = useStores();
   const handleChange = async (v: React.ChangeEvent<HTMLInputElement>) => {

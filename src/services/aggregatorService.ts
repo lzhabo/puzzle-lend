@@ -33,10 +33,10 @@ const aggregatorService = {
     // const url = `https://stage.puzzle-aggr-api.com/aggregator/calc?token0=${assetId0}&token1=${assetId1}&amountIn=${amount.toString()}`;
     const { data } = await axios.get(url, {
       headers: {
-        Authorization: `Bearer ${process.env.REACT_APP_AGGREGATOR_KEY}`,
-      },
+        Authorization: `Bearer ${process.env.REACT_APP_AGGREGATOR_KEY}`
+      }
     });
     return data;
-  },
+  }
 };
 export default aggregatorService;

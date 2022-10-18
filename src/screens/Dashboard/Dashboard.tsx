@@ -4,7 +4,7 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
-import { Observer } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import WhatIsLend from "@screens/Dashboard/WhatIsLend";
 import FAQ from "@screens/Dashboard/FAQ";
 import { useStores } from "@stores";
@@ -16,6 +16,7 @@ import { useTheme } from "@emotion/react";
 import bg from "@src/assets/dashboard/puzzleBg.svg";
 import { Navigate, RouteProps, useParams } from "react-router-dom";
 import { POOLS, ROUTES } from "@src/constants";
+import { Outlet } from "react-router-dom";
 
 interface IProps {}
 
@@ -72,58 +73,55 @@ const TotalLiquidity = styled.div`
   background-position: right;
   background-size: contain;
 `;
-const DashboardImpl: React.FC<IProps> = () => {
+const DashboardImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
   const { accountStore, lendStore } = useStores();
   const theme = useTheme();
   return (
     <Layout>
-      <Observer>
-        {() => (
-          <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
-            <Text weight={500} size="large">
-              Lending protocol built on the
-              <a
-                style={{ color: "#7075E9", paddingLeft: 4 }}
-                href="https://waves.tech/"
-              >
-                Waves blockchain
-              </a>
-            </Text>
-            <SizedBox height={4} />
-            <Subtitle fitContent>
-              Supply and borrow tokens using different pools
-            </Subtitle>
-            <SizedBox height={40} />
-            {accountStore != null && (
-              <AccountDataWrapper>
-                <div>
-                  <AccountHealth />
-                </div>
-                <Column crossAxisSize="max">
-                  <SizedBox height={24} />
-                  {/*todo поправитть на маленьком экране*/}
-                  <TotalLiquidity>
-                    <Text style={{ color: theme.colors.white }}>
-                      Total liquidity :{" "}
-                      <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
-                    </Text>
-                  </TotalLiquidity>
-                  <SizedBox height={24} />
-                  <AccountSupplyAndBorrow />
-                  <SizedBox height={40} />
-                  <AssetsTable />
-                </Column>
-              </AccountDataWrapper>
-            )}
-            <WhatIsLend />
-            <FAQ />
-          </Root>
+      <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
+        <Text weight={500} size="large">
+          Lending protocol built on the
+          <a
+            style={{ color: "#7075E9", paddingLeft: 4 }}
+            href="https://waves.tech/"
+          >
+            Waves blockchain
+          </a>
+        </Text>
+        <SizedBox height={4} />
+        <Subtitle fitContent>
+          Supply and borrow tokens using different pools
+        </Subtitle>
+        <SizedBox height={40} />
+        {accountStore != null && (
+          <AccountDataWrapper>
+            <div>
+              <AccountHealth />
+            </div>
+            <Column crossAxisSize="max">
+              <SizedBox height={24} />
+              {/*todo поправитть на маленьком экране*/}
+              <TotalLiquidity>
+                <Text style={{ color: theme.colors.white }}>
+                  Total liquidity :{" "}
+                  <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
+                </Text>
+              </TotalLiquidity>
+              <SizedBox height={24} />
+              <AccountSupplyAndBorrow />
+              <SizedBox height={40} />
+              <AssetsTable />
+            </Column>
+          </AccountDataWrapper>
         )}
-      </Observer>
+        <WhatIsLend />
+        <FAQ />
+        <Outlet />
+      </Root>
     </Layout>
   );
-};
+});
 
 const Dashboard: React.FC<IProps & RouteProps> = () => {
   const params = useParams<{ poolId: string }>();
@@ -137,4 +135,4 @@ const Dashboard: React.FC<IProps & RouteProps> = () => {
   );
 };
 
-export default Dashboard;
+export default observer(Dashboard);

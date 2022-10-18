@@ -37,6 +37,6 @@ const wavesCapService = {
     return res.data && res.data["lastPrice_usd-n"]
       ? new BN(res.data["lastPrice_usd-n"])
       : null;
-  },
+  }
 };
 export default wavesCapService;

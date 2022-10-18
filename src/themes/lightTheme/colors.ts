@@ -16,20 +16,20 @@ const colors = {
   error100: "#FCF0EF",
   attention550: "#D9916E",
   attention500: "#EDAA8A",
-  attention100: "#FCF4F1",
+  attention100: "#FCF4F1"
 };
 // eslint-disable-next-line
 export default {
   ...colors,
   card: {
-    background: colors.white,
+    background: colors.white
   },
   icon: {
-    borderColor: colors.primary100,
+    borderColor: colors.primary100
   },
   gradient: "rgba(255, 255, 255, 0.5)",
   tokenDescGradient:
     "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%)",
   noNftGradient:
-    "-webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(241, 242, 254, 1) 57.65%);",
+    "-webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(241, 242, 254, 1) 57.65%);"
 };

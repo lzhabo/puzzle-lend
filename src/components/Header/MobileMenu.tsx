@@ -44,12 +44,12 @@ const WalletWrapper = styled.div`
 
 const toolsMenu = [
   { name: "Notifications bot", link: "https://t.me/puzzle_swap", outer: true },
-  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
+  { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true }
 ];
 const communityMenu = [
   { name: "Telegram", link: "https://t.me/puzzleswap", outer: true },
   { name: "Twitter", link: "https://twitter.com/puzzle_swap", outer: true },
-  { name: "Medium", link: "https://medium.com/@puzzleswap", outer: true },
+  { name: "Medium", link: "https://medium.com/@puzzleswap", outer: true }
 ];
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
@@ -58,8 +58,8 @@ const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
     {
       name: "Guidebook",
       link: "https://puzzle-lend.gitbook.io/guidebook/",
-      outer: true,
-    },
+      outer: true
+    }
   ];
   return (
     <Root {...{ bannerClosed, opened }}>

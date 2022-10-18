@@ -32,7 +32,7 @@ const Tooltip: React.FC<IProps> = ({
   containerStyles,
   children,
   content,
-  config,
+  config
 }) => {
   const { getTooltipProps, setTooltipRef, setTriggerRef, visible } =
     usePopperTooltip({ ...config });

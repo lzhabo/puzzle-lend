@@ -16,7 +16,13 @@ const Root = styled.button`
   padding: 0 8px;
   box-shadow: none;
   background: transparent;
-  margin-right: 10px;
+  margin-right: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primary50};
+  }
 `;
 
 const MaxButton: React.FC<IProps> = ({ ...rest }) => {

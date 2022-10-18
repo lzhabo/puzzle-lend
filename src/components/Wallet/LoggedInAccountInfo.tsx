@@ -77,7 +77,7 @@ const LoggedInAccountInfo: React.FC<IProps> = () => {
         config={{
           placement: "bottom-end",
           trigger: "click",
-          onVisibleChange: setAccountOpened,
+          onVisibleChange: setAccountOpened
         }}
         content={<WalletActionsTooltip address={address!} />}
       >

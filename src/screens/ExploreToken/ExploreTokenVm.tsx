@@ -75,7 +75,7 @@ class ExploreTokenVM {
     ).toFixed(0);
     return data.map(([volume], i) => ({
       volume,
-      date: start.add(step * i, "milliseconds").toISOString(),
+      date: start.add(step * i, "milliseconds").toISOString()
     }));
   }
 
@@ -91,7 +91,7 @@ class ExploreTokenVM {
     this.setChartData(this.selectedChartPeriod, {
       ...data,
       start: dayjs(data.start),
-      end: dayjs(),
+      end: dayjs()
     });
     this.setChartLoading(false);
   };
@@ -112,11 +112,11 @@ class ExploreTokenVM {
         data.reduce(
           (acc, v) => ({
             supply: acc.supply.plus(v.key.includes("_supplied_") ? 1 : 0),
-            borrow: acc.borrow.plus(v.key.includes("_borrowed_") ? 1 : 0),
+            borrow: acc.borrow.plus(v.key.includes("_borrowed_") ? 1 : 0)
           }),
           {
             supply: BN.ZERO,
-            borrow: BN.ZERO,
+            borrow: BN.ZERO
           }
         )
       )
@@ -131,7 +131,7 @@ class ExploreTokenVM {
 
     const params = [
       ["assetId", this.assetId],
-      ["after", this.operationsSkip],
+      ["after", this.operationsSkip]
     ] as Array<[string, string | number | boolean]>;
     const txs = await transactionsService.getTransactions(params);
     // console.log(txs);
@@ -154,7 +154,7 @@ class ExploreTokenVM {
     Promise.all([
       this.syncChart(),
       this.loadOperations(),
-      this.syncUsers(),
+      this.syncUsers()
     ]).then(() => this.setLoading(false));
     reaction(() => this.selectedChartPeriod, this.syncChart);
   }

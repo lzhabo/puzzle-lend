@@ -53,7 +53,7 @@ const DepositToPool: React.FC<IProps> = ({
   poolName,
   poolLogo,
   apy,
-  onChangePool,
+  onChangePool
 }) => {
   return (
     <Root>

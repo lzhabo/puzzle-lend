@@ -12,9 +12,11 @@ export type TPoolToken = {
 
 class PoolStateFetchService {
   private readonly pool: string;
+
   constructor(pool: string) {
     this.pool = pool;
   }
+
   fetchSetups = async (): Promise<TPoolToken[]> => {
     const settingKeys = [
       "setup_tokens",
@@ -22,7 +24,7 @@ class PoolStateFetchService {
       "setup_lts",
       "setup_penalties",
       "setup_interest",
-      "setup_active",
+      "setup_active"
     ];
 
     const settings = await nodeService.nodeKeysRequest(this.pool, settingKeys);
@@ -37,15 +39,6 @@ class PoolStateFetchService {
     const interest = splitRecord(getStateByKey(settings, "setup_interest"));
     const active = getStateByKey(settings, "setup_active");
     if (tokens == null || !active) throw new Error("pool not active");
-    // console.log(
-    //   poolTokens.map((t) => ({
-    //     t: t.assetId,
-    //     cf: t.cf.toString(),
-    //     lt: t.lt.toString(),
-    //     penalty: t.penalty.toString(),
-    //     interest: t.interest.toString(),
-    //   }))
-    // );
     return tokens.map((assetId, index) => {
       const asset = TOKENS_BY_ASSET_ID[assetId];
       return {
@@ -59,7 +52,7 @@ class PoolStateFetchService {
         interest:
           interest && interest[index]
             ? new BN(interest![index]).div(1e8)
-            : BN.ZERO,
+            : BN.ZERO
       };
     });
   };
@@ -76,6 +69,16 @@ class PoolStateFetchService {
         return { min: BN.formatUnits(min, 6), max: BN.formatUnits(max, 6) };
       });
   };
+  getUserCollateral = async (userId?: string): Promise<any> => {
+    const response = await nodeService.evaluate(
+      this.pool,
+      `getUserCollateral(false, "${userId}", true, "")`
+    );
+
+    const userCollateral = response?.result?.value?._2?.value;
+
+    return userCollateral || 0;
+  };
   calculateTokenRates = async () => {
     const response = await nodeService.evaluate(
       this.pool,
@@ -90,7 +93,7 @@ class PoolStateFetchService {
         const [borrowRate, supplyRate] = v.split("|");
         return {
           borrowRate: BN.formatUnits(borrowRate, 16),
-          supplyRate: BN.formatUnits(supplyRate, 16),
+          supplyRate: BN.formatUnits(supplyRate, 16)
         };
       });
   };

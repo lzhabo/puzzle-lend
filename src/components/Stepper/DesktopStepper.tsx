@@ -41,7 +41,7 @@ const Stepper: React.FC<IProps> = ({
   activeStep,
   onStepClick,
   minStep,
-  onReset,
+  onReset
 }) => {
   return (
     <Root>

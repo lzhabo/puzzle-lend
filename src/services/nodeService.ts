@@ -73,7 +73,7 @@ const nodeService = {
   ): Promise<IEvaluateScript> => {
     const url = `/utils/script/evaluate/${address}`;
     const { data } = await makeNodeRequest(url, {
-      postData: { expr: expression },
+      postData: { expr: expression }
     });
     return data;
   },
@@ -90,8 +90,8 @@ const nodeService = {
       await Promise.all([
         makeNodeRequest(assetsUrl).then(({ data }) => data),
         makeNodeRequest(wavesUrl).then(({ data }) => ({
-          balances: [{ balance: data.regular, assetId: "WAVES" }],
-        })),
+          balances: [{ balance: data.regular, assetId: "WAVES" }]
+        }))
       ])
     ).reduce<{ assetId: string; balance: number }[]>(
       (acc, { balances }) => [...acc, ...balances],
@@ -162,7 +162,7 @@ const nodeService = {
     } else {
       return null;
     }
-  },
+  }
 };
 
 export default nodeService;

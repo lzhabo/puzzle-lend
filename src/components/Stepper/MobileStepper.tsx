@@ -89,7 +89,7 @@ const MobileStepper: React.FC<IProps> = ({
   steps,
   activeStep,
   onStepClick,
-  minStep,
+  minStep
 }) => {
   return (
     <Root>

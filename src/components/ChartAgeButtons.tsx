@@ -21,7 +21,7 @@ const ageButtons = [
   { title: "1M", value: "1m" },
   { title: "3M", value: "3m" },
   { title: "1Y", value: "1y" },
-  { title: "All", value: "all" },
+  { title: "All", value: "all" }
 ];
 
 const ChartAgeButton = styled.div<{ selected?: boolean }>`

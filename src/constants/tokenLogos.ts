@@ -141,7 +141,7 @@ const tokenLogos: Record<string, string> = {
   WW: WW,
   MINI: MINI,
   SURF: SURF,
-  UNKNOWN: unknownLogo,
+  UNKNOWN: unknownLogo
 };
 
 export default tokenLogos;

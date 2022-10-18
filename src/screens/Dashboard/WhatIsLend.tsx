@@ -60,23 +60,23 @@ const WhatIsLend: React.FC<IProps> = () => {
     {
       title: "Deposit assets",
       bg: one,
-      text: "You can pick any tokens from the Waves Ecosystem to put them into markets and start earning Supply rewards. ",
+      text: "You can pick any tokens from the Waves Ecosystem to put them into markets and start earning Supply rewards. "
     },
     {
       title: "Borrow funds",
       bg: two,
-      text: "You can borrow assets from the market to use for extending your DeFi experience. Take into account that you will pay Borrow interest for it. ",
+      text: "You can borrow assets from the market to use for extending your DeFi experience. Take into account that you will pay Borrow interest for it. "
     },
     {
       title: "Leverage position",
       bg: three,
-      text: "You can use lending protocol to take long or short positions with an upto 3x leverage. ",
+      text: "You can use lending protocol to take long or short positions with an upto 3x leverage. "
     },
     {
       title: "Avoid liquidations",
       bg: four,
-      text: "Use an advanced Oracle system based on the TWAP model, which guarantees that the market cannot be manipulated to liquidate safe positions. ",
-    },
+      text: "Use an advanced Oracle system based on the TWAP model, which guarantees that the market cannot be manipulated to liquidate safe positions. "
+    }
   ];
   return (
     <Root>

@@ -41,6 +41,15 @@ const Data = styled(Column)`
 const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+
+  const assetBtnClick = (
+    poolId: string,
+    operationName: string,
+    tokenId: string
+  ) => {
+    return navigate(`/${poolId}/${operationName}/${tokenId}`);
+  };
+
   return (
     <Root>
       {lendStore.initialized
@@ -48,18 +57,24 @@ const MobileAssetsTable: React.FC<IProps> = () => {
             const data = [
               {
                 title: "Total supply",
-                value:
-                  BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) +
-                  ` ${s.symbol}`,
+                value: `${BN.formatUnits(s.totalSupply, s.decimals).toFormat(
+                  2
+                )} ${s.symbol}`
               },
-              { title: "Supply APY", value: s.supplyAPY.toFormat(2) + " %" },
+              {
+                title: "Supply APY",
+                value: `${s.supplyAPY.toFormat(2)} %`
+              },
               {
                 title: "Total borrow",
-                value:
-                  BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) +
-                  ` ${s.symbol}`,
+                value: `${BN.formatUnits(s.totalBorrow, s.decimals).toFormat(
+                  2
+                )} ${s.symbol}`
               },
-              { title: "Borrow APY", value: s.borrowAPY.toFormat(2) + " %" },
+              {
+                title: "Borrow APY",
+                value: `${s.borrowAPY.toFormat(2)} %`
+              }
             ];
             return (
               <Asset key={`token-${s.assetId}`}>
@@ -79,7 +94,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                     <Row
                       key={`asset-${index}`}
                       justifyContent="space-between"
-                      style={{ cursor: "pointer" }}
+                      style={{
+                        cursor: "pointer"
+                      }}
                       onClick={() =>
                         navigate(
                           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
@@ -98,19 +115,35 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 </Data>
                 <SizedBox height={16} />
                 <Row>
-                  <Button size="medium" kind="secondary" fixed>
+                  <Button
+                    kind="secondary"
+                    size="medium"
+                    fixed
+                    onClick={() =>
+                      assetBtnClick(lendStore.poolId, "supply", s.assetId)
+                    }
+                  >
                     Supply
                   </Button>
                   <SizedBox width={8} />
-                  <Button size="medium" kind="secondary" fixed>
+                  <Button
+                    kind="secondary"
+                    size="medium"
+                    fixed
+                    onClick={() =>
+                      assetBtnClick(lendStore.poolId, "borrow", s.assetId)
+                    }
+                  >
                     Borrow
                   </Button>
                 </Row>
               </Asset>
             );
           })
-        : Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton height={356} key={index + "skeleton-row"} />
+        : Array.from({
+            length: 4
+          }).map((_, index) => (
+            <Skeleton height={356} key={`${index}skeleton-row`} />
           ))}
     </Root>
   );

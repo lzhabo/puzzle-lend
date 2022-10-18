@@ -1,7 +1,7 @@
 import BN from "@src/utils/BN";
 
 export function toFile(b64: string) {
-  var arr = b64.split(","),
+  let arr = b64.split(","),
     mime = arr[0].match(/:(.*?);/)![1],
     bstr = atob(arr[1]),
     n = bstr.length,

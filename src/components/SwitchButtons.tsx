@@ -48,7 +48,7 @@ const SwitchButtons: React.FC<IProps> = ({
   values,
   active,
   onActivate,
-  border,
+  border
 }) => {
   return (
     <Root border={border}>

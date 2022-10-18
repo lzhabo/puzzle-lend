@@ -1,0 +1,61 @@
+{
+    "extends": [
+        "react-app",
+        "plugin:@typescript-eslint/recommended",
+        "prettier",
+        "prettier/react",
+        "prettier/@typescript-eslint",
+        "plugin:prettier/recommended"
+    ],
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+        "prettier"
+    ],
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "rules": {
+        "react/prop-types": "off",
+        "no-plusplus": "off",
+        "no-console": "off",
+        "react/jsx-props-no-spreading": "off",
+        "react/no-array-index-key": "off",
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "react/state-in-constructor": [2, "never"],
+        "@typescript-eslint/ban-ts-comment": "off",
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off"
+    },
+    "overrides": [
+        {
+          "files": ["*.ts", "*.tsx"],
+          "rules": {
+            "@typescript-eslint/explicit-module-boundary-types": "off",
+            "@typescript-eslint/explicit-function-return-type": "off",
+            "@typescript-eslint/no-non-null-assertion": "off",
+            "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/triple-slash-reference": "off",
+            "prefer-const": "off",
+            "import/no-anonymous-default-export": "off"
+          }
+        }
+    ]
+}

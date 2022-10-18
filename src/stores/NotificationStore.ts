@@ -22,22 +22,22 @@ export type TNotifyOptions = Partial<{
 const style = {
   boxShadow: "0px 8px 24px rgba(54, 56, 112, 0.16)",
   borderRadius: 12,
-  padding: 16,
+  padding: 16
 };
 
 const styles = {
   error: {
-    ...style,
+    ...style
   },
   warning: {
-    ...style,
+    ...style
   },
   info: {
-    ...style,
+    ...style
   },
   success: {
-    ...style,
-  },
+    ...style
+  }
 };
 
 class NotificationStore {
@@ -50,19 +50,19 @@ class NotificationStore {
       top: 80,
       right: 16,
       left: 16,
-      zIndex: "1000000000000000000",
+      zIndex: "1000000000000000000"
     };
     const desktopStyle = {
       top: 96,
       right: 16,
       left: width - 320 - 16,
-      zIndex: "1000000000000000000",
+      zIndex: "1000000000000000000"
     };
     this.rootStore = rootStore;
     notification.newInstance(
       {
         closeIcon: closeAlertIcon,
-        style: width >= 880 ? desktopStyle : mobileStyle,
+        style: width >= 880 ? desktopStyle : mobileStyle
       },
       (notification: any) => (this._instance = notification)
     );
@@ -83,7 +83,7 @@ class NotificationStore {
           content: getAlert(content, {
             ...opts,
             type,
-            theme: this.rootStore.accountStore.selectedTheme,
+            theme: this.rootStore.accountStore.selectedTheme
           }),
           style: {
             ...styles[type],
@@ -93,13 +93,13 @@ class NotificationStore {
                 ? "#F1F2FE"
                 : "#363970"
             }`,
-            ...opts.style,
+            ...opts.style
           },
           className: "custom-notification",
           duration: opts.duration ?? 5,
           key: opts.key,
           closable: true,
-          closeIcon: closeAlertIcon,
+          closeIcon: closeAlertIcon
         });
     } catch (e) {
       console.error(content);

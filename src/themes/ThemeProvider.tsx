@@ -8,12 +8,12 @@ import { useStores } from "@stores";
 
 export enum THEME_TYPE {
   LIGHT_THEME = "lightTheme",
-  DARK_THEME = "darkTheme",
+  DARK_THEME = "darkTheme"
 }
 
 export const themes = {
   darkTheme,
-  lightTheme,
+  lightTheme
 };
 
 const ThemeWrapper: React.FC = ({ children }) => {

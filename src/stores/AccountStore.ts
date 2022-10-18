@@ -15,7 +15,7 @@ import { THEME_TYPE } from "@src/themes/ThemeProvider";
 export enum LOGIN_TYPE {
   SIGNER_SEED = "SIGNER_SEED",
   SIGNER_EMAIL = "SIGNER_EMAIL",
-  KEEPER = "KEEPER",
+  KEEPER = "KEEPER"
 }
 
 export interface IInvokeTxParams {
@@ -91,15 +91,15 @@ class AccountStore {
   @action.bound setAssetsBalancesLoading = (state: boolean) =>
     (this.assetsBalancesLoading = state);
 
-  loginModalOpened: boolean = false;
+  loginModalOpened = false;
   @action.bound setLoginModalOpened = (state: boolean) =>
     (this.loginModalOpened = state);
 
-  walletModalOpened: boolean = false;
+  walletModalOpened = false;
   @action.bound setWalletModalOpened = (state: boolean) =>
     (this.walletModalOpened = state);
 
-  sendAssetModalOpened: boolean = false;
+  sendAssetModalOpened = false;
   @action.bound setSendAssetModalOpened = (state: boolean) =>
     (this.sendAssetModalOpened = state);
 
@@ -107,7 +107,7 @@ class AccountStore {
   @action.bound setAssetToSend = (state: Balance | null) =>
     (this.assetToSend = state);
 
-  changePoolModalOpened: boolean = false;
+  changePoolModalOpened = false;
   @action.bound setChangePoolModalOpened = (state: boolean) =>
     (this.changePoolModalOpened = state);
 
@@ -224,7 +224,7 @@ class AccountStore {
   serialize = (): ISerializedAccountStore => ({
     selectedTheme: this.selectedTheme,
     address: this.address,
-    loginType: this.loginType,
+    loginType: this.loginType
   });
 
   updateAccountAssets = async (force = false) => {
@@ -265,25 +265,25 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error",
+        type: "error"
       });
       return null;
     }
     try {
       const ttx = this.signer.transfer({
         ...data,
-        fee: this.isAccScripted ? 500000 : 100000,
+        fee: this.isAccScripted ? 500000 : 100000
       });
       const txId = await ttx.broadcast().then((tx: any) => tx.id);
       await waitForTx(txId, {
-        apiBase: NODE_URL,
+        apiBase: NODE_URL
       });
       return txId;
     } catch (e: any) {
       console.warn(e);
       this.rootStore.notificationStore.notify(e.toString(), {
         type: "error",
-        title: "Transaction is not completed",
+        title: "Transaction is not completed"
       });
       return null;
     }
@@ -302,15 +302,15 @@ class AccountStore {
         amount: { tokens: tokenAmount, assetId: data.assetId },
         fee: {
           tokens: this.isAccScripted ? "0.005" : "0.001",
-          assetId: "WAVES",
+          assetId: "WAVES"
         },
-        recipient: data.recipient,
-      },
+        recipient: data.recipient
+      }
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
@@ -331,7 +331,7 @@ class AccountStore {
     if (this.signer == null) {
       this.rootStore.notificationStore.notify("You need to login firstly", {
         title: "Error",
-        type: "error",
+        type: "error"
       });
       return null;
     }
@@ -344,12 +344,12 @@ class AccountStore {
           ? 900000
           : 500000,
       payment: txParams.payment,
-      call: txParams.call,
+      call: txParams.call
     });
 
     const txId = await ttx.broadcast().then((tx: any) => tx.id);
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };
@@ -365,20 +365,20 @@ class AccountStore {
             ? txParams.fee
             : this.isAccScripted
             ? 900000
-            : 500000,
+            : 500000
       },
       dApp: txParams.dApp,
       call: txParams.call,
-      payment: txParams.payment,
+      payment: txParams.payment
     };
     const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
       type: 16,
-      data,
+      data
     } as any);
 
     const txId = JSON.parse(tx).id;
     await waitForTx(txId, {
-      apiBase: NODE_URL,
+      apiBase: NODE_URL
     });
     return txId;
   };

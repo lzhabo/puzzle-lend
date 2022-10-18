@@ -18,18 +18,18 @@ const loginTypes = [
   {
     title: "Waves Exchange Email",
     icon: email,
-    type: LOGIN_TYPE.SIGNER_EMAIL,
+    type: LOGIN_TYPE.SIGNER_EMAIL
   },
   {
     title: "Waves Exchange Seed",
     icon: seed,
-    type: LOGIN_TYPE.SIGNER_SEED,
+    type: LOGIN_TYPE.SIGNER_SEED
   },
   {
     title: "Keeper Wallet",
     icon: keeper,
-    type: LOGIN_TYPE.KEEPER,
-  },
+    type: LOGIN_TYPE.KEEPER
+  }
 ];
 const LoginModal: React.FC<IProps> = ({ onLogin, ...rest }) => {
   const handleLogin = (loginType: LOGIN_TYPE) => () => {

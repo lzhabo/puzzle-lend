@@ -43,7 +43,7 @@ const Tabs: React.FC<IProps> = ({
   activeTab,
   setActive,
   style,
-  tabStyle,
+  tabStyle
 }) => {
   return (
     <Root style={style}>

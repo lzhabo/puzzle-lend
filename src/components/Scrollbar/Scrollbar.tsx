@@ -25,7 +25,7 @@ const Scrollbar: React.FC<IScrollbarProps> = ({
       options={{
         suppressScrollX,
         suppressScrollY,
-        useBothWheelAxes: true,
+        useBothWheelAxes: true
       }}
       onScrollX={onScrollX}
       {...rest}

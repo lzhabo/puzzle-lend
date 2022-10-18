@@ -5,7 +5,7 @@ import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import {
   ExploreTokenVMProvider,
-  useExploreTokenVM,
+  useExploreTokenVM
 } from "@screens/ExploreToken/ExploreTokenVm";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { POOLS, ROUTES } from "@src/constants";
@@ -62,7 +62,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         BN.formatUnits(
           vm.statistics.totalSupply,
           vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`,
+        ).toFormat(2) + ` ${vm.statistics.symbol}`
     },
     {
       title: "Total borrow",
@@ -70,7 +70,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         BN.formatUnits(
           vm.statistics.totalBorrow,
           vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`,
+        ).toFormat(2) + ` ${vm.statistics.symbol}`
     },
     {
       title: "Utilization ratio",
@@ -78,7 +78,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         vm.statistics.totalBorrow
           .div(vm.statistics.totalSupply)
           .times(100)
-          .toFixed(2) + " %",
+          .toFixed(2) + " %"
     },
     {
       title: "Reserves",
@@ -86,10 +86,10 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
         BN.formatUnits(
           vm.statistics.totalSupply.minus(vm.statistics.totalBorrow),
           vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`,
+        ).toFormat(2) + ` ${vm.statistics.symbol}`
     },
     { title: "Supply APY", value: vm.statistics.supplyAPY.toFormat(2) + " %" },
-    { title: "Borrow APY", value: vm.statistics.borrowAPY.toFormat(2) + " %" },
+    { title: "Borrow APY", value: vm.statistics.borrowAPY.toFormat(2) + " %" }
   ];
   return (
     <Layout>
@@ -143,9 +143,6 @@ const ExploreToken: React.FC<IProps> = () => {
   if (assetId == null || !POOLS.some((p) => p.address === poolId)) {
     return <Navigate to={ROUTES.ROOT} />;
   }
-  // if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
-  //   return <Navigate to={ROUTES.ROOT} />;
-  // }
   return (
     <ExploreTokenVMProvider assetId={assetId} poolId={poolId}>
       <ExploreTokenImpl />

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
@@ -33,10 +33,19 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "Supply APY", accessor: "supplyApy" },
       { Header: "Daily income", accessor: "dailyIncome" },
       { Header: "", accessor: "supplyBtn" },
-      { Header: "", accessor: "withdrawBtn" },
+      { Header: "", accessor: "withdrawBtn" }
     ],
     []
   );
+
+  const openModal = useCallback(
+    (e: any, poolId: string, operationName: string, assetId: string) => {
+      e.stopPropagation();
+      return navigate(`/${poolId}/${operationName}/${assetId}`);
+    },
+    [navigate]
+  );
+
   useMemo(() => {
     const data = lendStore.accountSupply.map((s) => ({
       onClick: () =>
@@ -66,18 +75,34 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       dailyIncome:
         `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
       supplyBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+          kind="secondary"
+          size="medium"
+          fixed
+        >
           Supply
         </Button>
       ),
       withdrawBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
+        >
           Withdraw
         </Button>
-      ),
+      )
     }));
     setFilteredSupplies(data);
-  }, [lendStore.accountSupply, lendStore.pool.address, navigate]);
+  }, [
+    lendStore.pool.address,
+    lendStore.accountSupply,
+    lendStore.poolId,
+    openModal,
+    navigate
+  ]);
 
   //-------------
   const borrowColumns = useMemo(
@@ -87,7 +112,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "Borrow APR", accessor: "borrowApr" },
       { Header: "Daily loan interest", accessor: "dailyLoan" },
       { Header: "", accessor: "borrowBtn" },
-      { Header: "", accessor: "repayBtn" },
+      { Header: "", accessor: "repayBtn" }
     ],
     []
   );
@@ -120,18 +145,34 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       dailyLoan:
         BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
       borrowBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+        >
           Borrow
         </Button>
       ),
       repayBtn: (
-        <Button kind="secondary" size="medium" fixed>
+        <Button
+          kind="secondary"
+          size="medium"
+          fixed
+          onClick={(e) => openModal(e, lendStore.poolId, "repay", s.assetId)}
+        >
           Repay
         </Button>
-      ),
+      )
     }));
     setFilteredBorrows(data);
-  }, [lendStore.accountBorrow, lendStore.pool.address, navigate]);
+  }, [
+    lendStore.pool.address,
+    lendStore.poolId,
+    lendStore.accountBorrow,
+    openModal,
+    navigate
+  ]);
   return (
     <Root>
       {lendStore.accountSupply.length > 0 && (

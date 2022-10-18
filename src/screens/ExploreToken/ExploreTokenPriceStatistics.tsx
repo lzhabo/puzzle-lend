@@ -19,22 +19,22 @@ const ExploreTokenPriceStatistics = () => {
         data={[
           {
             title: "Price",
-            value: `$ ${vm.statistics?.prices.min.toFormat(2)}`,
+            value: `$ ${vm.statistics?.prices.min.toFormat(2)}`
           },
           { title: "Number of suppliers", value: vm.users.supply.toFormat(0) },
           { title: "Number of borrowers", value: vm.users.borrow.toFormat(0) },
           {
             title: "Collateral Factor",
-            value: vm.statistics?.cf.times(100).toFormat(2) + " %",
+            value: vm.statistics?.cf.times(100).toFormat(2) + " %"
           },
           {
             title: "Liquidation threshold",
-            value: vm.statistics?.lt.times(100).toFormat(2) + " %",
+            value: vm.statistics?.lt.times(100).toFormat(2) + " %"
           },
           {
             title: "Liquidation penalty",
-            value: vm.statistics?.penalty.times(100).toFormat(2) + " %",
-          },
+            value: vm.statistics?.penalty.times(100).toFormat(2) + " %"
+          }
         ]}
       />
     </Card>

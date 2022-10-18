@@ -40,7 +40,7 @@ const WalletActionsTooltip: React.FC<IProps> = ({ address }) => {
     address && copy(address);
     notificationStore.notify("Your address was copied", {
       type: "success",
-      title: "Congratulations!",
+      title: "Congratulations!"
     });
   };
   const handleLogout = () => accountStore.logout();

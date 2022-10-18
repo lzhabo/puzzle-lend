@@ -52,7 +52,7 @@ const MobileNavBar: React.FC<IProps> = () => {
       icon: (
         <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
+      big: false
     },
     {
       name: "Home",
@@ -60,7 +60,7 @@ const MobileNavBar: React.FC<IProps> = () => {
       icon: (
         <Home active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
+      big: false
     },
     {
       name: "My borrow",
@@ -68,8 +68,8 @@ const MobileNavBar: React.FC<IProps> = () => {
       icon: (
         <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      big: false,
-    },
+      big: false
+    }
   ];
   return (
     <Root>

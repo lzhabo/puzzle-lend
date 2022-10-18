@@ -112,7 +112,7 @@ const Header: React.FC<IProps> = () => {
 
   const menuItems = [
     { name: "Dashboard", link: ROUTES.DASHBOARD },
-    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" },
+    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" }
   ];
 
   const communityMenu = [
@@ -120,9 +120,9 @@ const Header: React.FC<IProps> = () => {
     {
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
-      outer: true,
+      outer: true
     },
-    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true },
+    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true }
   ];
   return (
     <Root>
@@ -168,7 +168,7 @@ const Header: React.FC<IProps> = () => {
           <Tooltip
             config={{
               placement: "bottom-start",
-              trigger: "click",
+              trigger: "click"
             }}
             content={
               <Column crossAxisSize="max">

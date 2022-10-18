@@ -25,7 +25,7 @@ const tokenCategories = [
   "Global",
   "Stablecoins",
   "Waves DeFi",
-  "Waves Ducks",
+  "Waves Ducks"
 ];
 
 export enum tokenCategoriesEnum {
@@ -33,7 +33,7 @@ export enum tokenCategoriesEnum {
   global = 1,
   stable = 2,
   defi = 3,
-  ducks = 4,
+  ducks = 4
 }
 
 const Scroll = styled.div`
@@ -55,7 +55,7 @@ const TokenSelectModal: React.FC<IProps> = ({
   balances,
   onSelect,
   visible,
-  selectedTokenId,
+  selectedTokenId
 }) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [activeFilter, setActiveFilter] = useState<number>(0);

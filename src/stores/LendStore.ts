@@ -1,6 +1,6 @@
 import RootStore from "@stores/RootStore";
 import PoolStateFetchService, {
-  TPoolToken,
+  TPoolToken
 } from "@src/services/PoolStateFetchService";
 import BN from "@src/utils/BN";
 import nodeService from "@src/services/nodeService";
@@ -8,7 +8,7 @@ import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
 import { POOLS } from "@src/constants";
 
-type TPoolStats = {
+export type TPoolStats = {
   totalSupply: BN;
   totalBorrow: BN;
   supplyAPY: BN;
@@ -29,15 +29,15 @@ class LendStore {
   get fetchService() {
     return this._fetchService!;
   }
+
   setFetchService = async (pool: string) => {
-    console.log(pool);
     this._fetchService = new PoolStateFetchService(pool);
     return await this._fetchService
       .fetchSetups()
       .then(this.setTokensSetups)
       .then(() => this.syncPoolsStats());
   };
-  initialized: boolean = false;
+  initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
   tokensSetups: Array<TPoolToken> = [];
@@ -45,13 +45,20 @@ class LendStore {
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+
+  userCollateral: BN = BN.ZERO;
+  private setUserCollateral = (v: BN) => (this.userCollateral = v);
+
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
+
   pool = POOLS[0];
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+
   get poolId() {
     return this.pool.address;
   }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -60,7 +67,7 @@ class LendStore {
     setInterval(this.syncPoolsStats, 60 * 1000);
   }
 
-  private syncPoolsStats = async () => {
+  syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
@@ -69,16 +76,19 @@ class LendStore {
         `total_borrowed_${assetId}`,
         ...(address
           ? [`${address}_supplied_${assetId}`, `${address}_borrowed_${assetId}`]
-          : []),
+          : [])
       ],
       [] as string[]
     );
-    const [state, rates, prices, interests] = await Promise.all([
-      nodeService.nodeKeysRequest(this.poolId, keys),
-      this.fetchService.calculateTokenRates(),
-      this.fetchService.getPrices(),
-      this.fetchService.calculateTokensInterest(),
-    ]);
+    const [state, rates, prices, interests, userCollateral] = await Promise.all(
+      [
+        nodeService.nodeKeysRequest(this.poolId, keys),
+        this.fetchService.calculateTokenRates(),
+        this.fetchService.getPrices(),
+        this.fetchService.calculateTokensInterest(),
+        this.fetchService.getUserCollateral(address || "")
+      ]
+    );
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
@@ -109,23 +119,11 @@ class LendStore {
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         selfBorrow: selfBorrow.toDecimalPlaces(0),
         supplyAPY: calcApy(supplyInterest),
-        borrowAPY: calcApy(interests[index]),
+        borrowAPY: calcApy(interests[index])
       };
     });
     this.setPoolsStats(stats);
-    console.log(
-      stats.map((t) => ({
-        ...t,
-        totalSupply: t.totalSupply.toString(),
-        supplyAPY: t.supplyAPY.toString(),
-        borrowAPY: t.borrowAPY.toString(),
-        totalBorrow: t.totalBorrow.toString(),
-        selfSupply: t.selfSupply.toString(),
-        selfBorrow: t.selfBorrow.toString(),
-        dailyIncome: t.dailyIncome.toString(),
-        dailyLoan: t.dailyLoan.toString(),
-      }))
-    );
+    this.setUserCollateral(new BN(userCollateral));
   };
 
   get health() {
