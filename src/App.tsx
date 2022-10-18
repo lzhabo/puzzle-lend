@@ -12,6 +12,7 @@ import Dashboard from "@screens/Dashboard";
 import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
 import DashboardModal from "@screens/Dashboard/DashboardModals";
+import AnalyticsScreen from "@screens/AnalyticsScreen";
 
 const Root = styled(Column)`
   width: 100%;
@@ -33,6 +34,8 @@ const App: React.FC = () => {
     <Root>
       <Header />
       <Routes>
+        {/*Account*/}
+        <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
           {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (

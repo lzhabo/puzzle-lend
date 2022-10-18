@@ -13,8 +13,8 @@ interface IOption {
 
 interface IProps extends Omit<HTMLAttributes<HTMLDivElement>, "onSelect"> {
   options: IOption[];
-  selected?: IOption;
-  onSelect: (key: IOption) => void;
+  selected?: string;
+  onSelect: (key: string) => void;
 }
 
 const Root = styled.div<{ focused?: boolean }>`
@@ -41,7 +41,7 @@ const Root = styled.div<{ focused?: boolean }>`
   }
 `;
 const Option = styled.div<{ active?: boolean }>`
-  width: 100%;
+  width: calc(100% - 2px);
   display: flex;
   cursor: pointer;
   position: relative;
@@ -69,6 +69,7 @@ const Option = styled.div<{ active?: boolean }>`
 `;
 
 const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
+  const selectedOption = options.find(({ key }) => key === selected);
   const [focused, setFocused] = useState(false);
   return (
     <Tooltip
@@ -80,14 +81,12 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
       content={
         <Column crossAxisSize="max">
           {options.map((v) => {
-            const active = selected?.key === v.key;
+            const active = selectedOption?.key === v.key;
             return (
               <Option
                 active={active}
                 key={v.key + "_option"}
-                onClick={() => {
-                  onSelect(v);
-                }}
+                onClick={() => onSelect(v.key)}
               >
                 {v.title}
               </Option>
@@ -102,7 +101,7 @@ const Select: React.FC<IProps> = ({ options, selected, onSelect, ...rest }) => {
         onBlur={() => setFocused(false)}
         {...rest}
       >
-        {selected?.title ?? options[0].title}
+        {selectedOption?.title ?? options[0].title}
         <SizedBox width={10} />
         <img src={arrowIcon} className="menu-arrow" alt="arrow" />
       </Root>
