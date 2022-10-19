@@ -37,6 +37,26 @@ const Asset = styled.div`
   }
 `;
 
+const StatsRow = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: ${({ theme }) => `1px solid ${theme.colors.primary100}`};
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  cursor: pointer;
+
+  &:first-child {
+    margin-top: 16px;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+`;
+
 const Data = styled(Column)`
   & > * {
     margin-bottom: 16px;
@@ -70,18 +90,18 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
           <Wrapper>
             {lendStore.accountSupply.map((s) => {
               const supplied = BN.formatUnits(s.selfSupply, s.decimals);
+              const dIncome = BN.formatUnits(s.dailyIncome, s.decimals);
               const data = [
                 {
                   title: "Supplied",
-                  value: `${supplied.toFormat(4)} ${s.symbol}`
+                  value: `${supplied.toFormat(4)} ${s.symbol}`,
+                  dollarValue: "$ " + supplied.times(s.prices.min).toFormat(2)
                 },
                 { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
                 {
                   title: "Daily income",
-                  value:
-                    `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(
-                      6
-                    )} ` + s.symbol
+                  value: `${dIncome.toFormat(6)} ` + s.symbol,
+                  dollarValue: "$ " + dIncome.times(s.prices.min).toFormat(6)
                 }
               ];
               return (
@@ -98,8 +118,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   </Row>
                   <SizedBox height={16} />
                   <Data crossAxisSize="max">
-                    {data.map(({ title, value }, index) => (
-                      <Row
+                    {data.map(({ title, value, dollarValue }, index) => (
+                      <StatsRow
                         style={{ cursor: "pointer" }}
                         onClick={() =>
                           navigate(
@@ -110,13 +130,21 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                           )
                         }
                         key={`asset-${index}`}
-                        justifyContent="space-between"
                       >
-                        <Text fitContent>{title}</Text>
-                        <Text fitContent type="secondary">
-                          {value}
+                        <Text fitContent nowrap>
+                          {title}
                         </Text>
-                      </Row>
+                        <Column crossAxisSize="max">
+                          <Text weight={500} textAlign="right" size="medium">
+                            {value}
+                          </Text>
+                          {dollarValue && (
+                            <Text size="medium" textAlign="right">
+                              {dollarValue}
+                            </Text>
+                          )}
+                        </Column>
+                      </StatsRow>
                     ))}
                   </Data>
                   <SizedBox height={16} />
@@ -166,13 +194,19 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 },
                 {
                   title: "To be repaid",
-                  value: `${borrowed.toFormat(2)} ${s.symbol}`
+                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                  dollarValue: "$ " + borrowed.times(s.prices.min).toFormat(6)
                 },
                 {
                   title: "Daily loan interest",
                   value:
                     BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
-                    ` ${s.symbol}`
+                    ` ${s.symbol}`,
+                  dollarValue:
+                    "$ " +
+                    BN.formatUnits(s.dailyLoan, s.decimals)
+                      .times(s.prices.min)
+                      .toFormat(6)
                 }
               ];
               return (
@@ -189,8 +223,8 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                   </Row>
                   <SizedBox height={16} />
                   <Data crossAxisSize="max">
-                    {data.map(({ title, value }, index) => (
-                      <Row
+                    {data.map(({ title, value, dollarValue }, index) => (
+                      <StatsRow
                         style={{ cursor: "pointer" }}
                         onClick={() =>
                           navigate(
@@ -201,13 +235,21 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                           )
                         }
                         key={`asset-${index}`}
-                        justifyContent="space-between"
                       >
-                        <Text fitContent>{title}</Text>
-                        <Text fitContent type="secondary">
-                          {value}
+                        <Text fitContent nowrap>
+                          {title}
                         </Text>
-                      </Row>
+                        <Column crossAxisSize="max">
+                          <Text weight={500} textAlign="right" size="medium">
+                            {value}
+                          </Text>
+                          {dollarValue && (
+                            <Text size="medium" textAlign="right">
+                              {dollarValue}
+                            </Text>
+                          )}
+                        </Column>
+                      </StatsRow>
                     ))}
                   </Data>
                   <SizedBox height={16} />

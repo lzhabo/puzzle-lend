@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 export default {
   icons: {
-    logo: require("@src/assets/icons/darkLogo.svg").default,
+    logo: require("@src/assets/darkLogo.svg").default,
     rightArrow: require("@src/assets/icons/whiteRightArrow.svg").default,
     orderRightArrow: require("@src/assets/icons/orderArrow.svg").default,
     swap: require("@src/assets/icons/darkSwap.svg").default,

@@ -7,6 +7,7 @@ import Balance from "@src/entities/Balance";
 import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
+import { TPoolStats } from "@src/stores/LendStore";
 import { TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
@@ -58,12 +59,15 @@ class WalletVM {
     }: ${centerEllipsis(address ?? "", 6)}`;
   }
 
-  get balances() {
-    const { accountStore } = this.rootStore;
+  get userAssets() {
+    const { accountStore, lendStore } = this.rootStore;
     return TOKENS_LIST.map((t) => {
       const balance = accountStore.findBalanceByAssetId(t.assetId);
       return balance ?? new Balance(t);
     })
+      .filter((balance) =>
+        lendStore.poolsStats.find((item) => item.assetId === balance.assetId)
+      )
       .filter(({ balance }) => balance && !balance.eq(0))
       .sort((a, b) => {
         if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
@@ -74,11 +78,22 @@ class WalletVM {
   }
 
   get totalInvestmentAmount() {
-    const { balances } = this.rootStore.accountStore;
-    const balancesAmount = balances.reduce(
-      (acc, b) => acc.plus(b.usdnEquivalent ?? 0),
-      BN.ZERO
-    );
+    const { userAssets } = this;
+    const balancesAmount = userAssets.reduce((acc, b) => {
+      const rate = this.tokenStats(b.assetId)?.prices.min || BN.ZERO;
+      const balance = BN.formatUnits(b?.balance || BN.ZERO, b?.decimals);
+      return acc.plus(balance.times(rate));
+    }, BN.ZERO);
     return balancesAmount.plus(BN.ZERO).toFormat(2);
   }
+
+  tokenStats = (tokenAssetId: string): TPoolStats | null => {
+    const tokenIndex = this.rootStore.lendStore.poolsStats
+      .map((item: TPoolStats) => item.assetId)
+      .indexOf(tokenAssetId);
+
+    return tokenIndex !== -1
+      ? this.rootStore.lendStore.poolsStats[tokenIndex]
+      : null;
+  };
 }

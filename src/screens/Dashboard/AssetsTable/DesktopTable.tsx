@@ -70,16 +70,40 @@ const DesktopTable: React.FC<IProps> = () => {
               {s.symbol}
             </Text>
             <Text type="secondary" size="small" fitContent>
-              $ {s.prices.max.toFormat(2)}
+              $ {s.prices.min.toFormat(2)}
             </Text>
           </Column>
         </Row>
       ),
-      supply:
-        BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) + ` ${s.symbol}`,
+      supply: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.totalSupply, s.decimals).toFormat(2) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.totalSupply, s.decimals)
+              .times(s.prices.min)
+              .toFormat(2)}
+          </Text>
+        </Column>
+      ),
       supplyApy: s.supplyAPY.toFormat(2) + " %",
-      borrow:
-        BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
+      borrow: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.totalBorrow, s.decimals).toFormat(2) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.totalBorrow, s.decimals)
+              .times(s.prices.min)
+              .toFormat(2)}
+          </Text>
+        </Column>
+      ),
       borrowApy: s.borrowAPY.toFormat(2) + " %",
       borrowBtn: (
         <Button

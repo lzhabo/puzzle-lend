@@ -20,6 +20,7 @@ interface IProps {
   urlParams: UrlParamsTypes;
   operationName: OPERATIONS_TYPE;
   tokenStats: TPoolStats;
+  onClose: () => void;
 }
 
 const Root = styled(Column)`
@@ -35,7 +36,8 @@ const Root = styled(Column)`
 const DashboardModalBody: React.FC<IProps> = ({
   operationName,
   tokenStats,
-  urlParams
+  urlParams,
+  onClose
 }) => {
   const vm = DashboardUseVM();
 
@@ -49,6 +51,7 @@ const DashboardModalBody: React.FC<IProps> = ({
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitSupply}
+          onClose={onClose}
         />
       )}
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
@@ -60,6 +63,7 @@ const DashboardModalBody: React.FC<IProps> = ({
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitWithdraw}
+          onClose={onClose}
         />
       )}
       {operationName === OPERATIONS_TYPE.BORROW && (
@@ -71,6 +75,7 @@ const DashboardModalBody: React.FC<IProps> = ({
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitBorrow}
+          onClose={onClose}
         />
       )}
       {operationName === OPERATIONS_TYPE.REPAY && (
@@ -81,6 +86,7 @@ const DashboardModalBody: React.FC<IProps> = ({
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
           onSubmit={vm.submitRepay}
+          onClose={onClose}
         />
       )}
     </Root>

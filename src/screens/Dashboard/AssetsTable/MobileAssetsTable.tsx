@@ -22,6 +22,7 @@ const Root = styled.div`
     grid-template-columns: 1fr 1fr;
   }
 `;
+
 const Asset = styled.div`
   padding: 16px;
   background: ${({ theme }) => theme.colors.white};
@@ -30,6 +31,26 @@ const Asset = styled.div`
   border-radius: 16px;
   @media (min-width: 768px) {
     padding: 24px;
+  }
+`;
+
+const StatsRow = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f2fe;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  cursor: pointer;
+
+  &:first-child {
+    margin-top: 16px;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 `;
 
@@ -64,7 +85,12 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 title: "Total supply",
                 value: `${BN.formatUnits(s.totalSupply, s.decimals).toFormat(
                   2
-                )} ${s.symbol}`
+                )} ${s.symbol}`,
+                dollarValue:
+                  "$ " +
+                  BN.formatUnits(s.totalSupply, s.decimals)
+                    .times(s.prices.min)
+                    .toFormat(2)
               },
               {
                 title: "Supply APY",
@@ -74,7 +100,12 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 title: "Total borrow",
                 value: `${BN.formatUnits(s.totalBorrow, s.decimals).toFormat(
                   2
-                )} ${s.symbol}`
+                )} ${s.symbol}`,
+                dollarValue:
+                  "$ " +
+                  BN.formatUnits(s.totalBorrow, s.decimals)
+                    .times(s.prices.min)
+                    .toFormat(2)
               },
               {
                 title: "Borrow APY",
@@ -95,13 +126,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 </Row>
                 <SizedBox height={16} />
                 <Data crossAxisSize="max">
-                  {data.map(({ title, value }, index) => (
-                    <Row
+                  {data.map(({ title, value, dollarValue }, index) => (
+                    <StatsRow
                       key={`asset-${index}`}
-                      justifyContent="space-between"
-                      style={{
-                        cursor: "pointer"
-                      }}
                       onClick={() =>
                         navigate(
                           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
@@ -111,11 +138,20 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                         )
                       }
                     >
-                      <Text fitContent>{title}</Text>
-                      <Text fitContent type="secondary">
-                        {value}
+                      <Text fitContent nowrap>
+                        {title}
                       </Text>
-                    </Row>
+                      <Column crossAxisSize="max">
+                        <Text weight={500} textAlign="right" size="medium">
+                          {value}
+                        </Text>
+                        {dollarValue && (
+                          <Text size="medium" textAlign="right">
+                            {dollarValue}
+                          </Text>
+                        )}
+                      </Column>
+                    </StatsRow>
                   ))}
                 </Data>
                 <SizedBox height={16} />

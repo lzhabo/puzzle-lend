@@ -25,9 +25,14 @@ interface IProps {
   modalAmount: BN;
   poolId: string;
   userHealth: BN;
+  onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
-  onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
+  onSubmit: (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => Promise<boolean>;
 }
 
 const WithdrawAssets: React.FC<IProps> = ({
@@ -35,6 +40,7 @@ const WithdrawAssets: React.FC<IProps> = ({
   poolId,
   modalAmount,
   userHealth,
+  onClose,
   modalSetAmount,
   onMaxClick,
   onSubmit
@@ -80,9 +86,15 @@ const WithdrawAssets: React.FC<IProps> = ({
     vm.setVMisDollar(isCurrentNative);
   };
 
-  const submitForm = () => {
+  const submitForm = async () => {
     const amountVal = vm.modalFormattedVal;
-    onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
+    const isSuccess = await onSubmit(
+      amountVal.toDecimalPlaces(0, 2),
+      token?.assetId,
+      poolId
+    );
+
+    if (isSuccess) onClose();
   };
 
   return (
@@ -172,7 +184,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           <Text size="medium" type="success" fitContent>
             {userHealth.toNumber().toFixed(2) || 0} %
           </Text>
-          {userHealth.toDecimalPlaces(2).lt(100) ? (
+          {vm.accountHealth < 100 ? (
             <>
               <BackIcon />
               <Text

@@ -24,9 +24,14 @@ interface IProps {
   token: TPoolStats;
   poolId: string;
   modalAmount: BN;
+  onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
-  onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
+  onSubmit: (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => Promise<boolean>;
 }
 
 const BorrowAssets: React.FC<IProps> = ({
@@ -35,7 +40,8 @@ const BorrowAssets: React.FC<IProps> = ({
   poolId,
   modalSetAmount,
   onMaxClick,
-  onSubmit
+  onSubmit,
+  onClose
 }) => {
   const vm = DashboardUseVM();
   const navigate = useNavigate();
@@ -72,9 +78,15 @@ const BorrowAssets: React.FC<IProps> = ({
     return val;
   };
 
-  const submitForm = () => {
+  const submitForm = async () => {
     const amountVal = vm.modalFormattedVal;
-    onSubmit(amountVal.toDecimalPlaces(0, 2), token?.assetId, poolId);
+    const isSuccess = await onSubmit(
+      amountVal.toDecimalPlaces(0, 2),
+      token?.assetId,
+      poolId
+    );
+
+    if (isSuccess) onClose();
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {

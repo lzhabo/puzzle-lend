@@ -113,6 +113,7 @@ const DashboardModalContent: React.FC<IProps> = () => {
           urlParams={vm.urlParams}
           operationName={vm.operationName}
           tokenStats={vm.token}
+          onClose={() => closeTab()}
         />
       )}
     </Dialog>
