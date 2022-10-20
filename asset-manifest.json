@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/puzzle-lend/static/css/main.025227e5.chunk.css",
-    "main.js": "/puzzle-lend/static/js/main.a1e39b2c.chunk.js",
-    "main.js.map": "/puzzle-lend/static/js/main.a1e39b2c.chunk.js.map",
+    "main.js": "/puzzle-lend/static/js/main.62d111e2.chunk.js",
+    "main.js.map": "/puzzle-lend/static/js/main.62d111e2.chunk.js.map",
     "runtime-main.js": "/puzzle-lend/static/js/runtime-main.e60e3224.js",
     "runtime-main.js.map": "/puzzle-lend/static/js/runtime-main.e60e3224.js.map",
     "static/css/2.cfc5016f.chunk.css": "/puzzle-lend/static/css/2.cfc5016f.chunk.css",
-    "static/js/2.ac46220d.chunk.js": "/puzzle-lend/static/js/2.ac46220d.chunk.js",
-    "static/js/2.ac46220d.chunk.js.map": "/puzzle-lend/static/js/2.ac46220d.chunk.js.map",
+    "static/js/2.8b5e32ec.chunk.js": "/puzzle-lend/static/js/2.8b5e32ec.chunk.js",
+    "static/js/2.8b5e32ec.chunk.js.map": "/puzzle-lend/static/js/2.8b5e32ec.chunk.js.map",
     "index.html": "/puzzle-lend/index.html",
     "static/css/2.cfc5016f.chunk.css.map": "/puzzle-lend/static/css/2.cfc5016f.chunk.css.map",
     "static/css/main.025227e5.chunk.css.map": "/puzzle-lend/static/css/main.025227e5.chunk.css.map",
-    "static/js/2.ac46220d.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.ac46220d.chunk.js.LICENSE.txt",
+    "static/js/2.8b5e32ec.chunk.js.LICENSE.txt": "/puzzle-lend/static/js/2.8b5e32ec.chunk.js.LICENSE.txt",
     "static/media/404.971bc32f.svg": "/puzzle-lend/static/media/404.971bc32f.svg",
     "static/media/BNB.b8f5fc3b.svg": "/puzzle-lend/static/media/BNB.b8f5fc3b.svg",
     "static/media/BUSD.8bdb43fc.svg": "/puzzle-lend/static/media/BUSD.8bdb43fc.svg",
@@ -60,7 +60,7 @@
     "static/media/darkArrowWithBorder.svg": "/puzzle-lend/static/media/darkArrowWithBorder.83d9f2af.svg",
     "static/media/darkDone.svg": "/puzzle-lend/static/media/darkDone.b76227e5.svg",
     "static/media/darkLimitOrderArrow.svg": "/puzzle-lend/static/media/darkLimitOrderArrow.81b47e0a.svg",
-    "static/media/darkLogo.svg": "/puzzle-lend/static/media/darkLogo.ff1e2878.svg",
+    "static/media/darkLogo.svg": "/puzzle-lend/static/media/darkLogo.14ce727e.svg",
     "static/media/darkSwap.svg": "/puzzle-lend/static/media/darkSwap.78935732.svg",
     "static/media/dash1.ff74071c.png": "/puzzle-lend/static/media/dash1.ff74071c.png",
     "static/media/dash2.ea0c4547.png": "/puzzle-lend/static/media/dash2.ea0c4547.png",
@@ -86,8 +86,9 @@
     "static/media/latina-logo.ed88e787.png": "/puzzle-lend/static/media/latina-logo.ed88e787.png",
     "static/media/lightArrowWithBorder.svg": "/puzzle-lend/static/media/lightArrowWithBorder.16575c49.svg",
     "static/media/limitOrderArrow.svg": "/puzzle-lend/static/media/limitOrderArrow.786be0c9.svg",
-    "static/media/logo.svg": "/puzzle-lend/static/media/logo.1c23e3bc.svg",
+    "static/media/logo.svg": "/puzzle-lend/static/media/logo.1310f594.svg",
     "static/media/ltc.55f7f240.svg": "/puzzle-lend/static/media/ltc.55f7f240.svg",
+    "static/media/main_bg.1d8f2a45.png": "/puzzle-lend/static/media/main_bg.1d8f2a45.png",
     "static/media/marvin-logo.f1f858e0.jpeg": "/puzzle-lend/static/media/marvin-logo.f1f858e0.jpeg",
     "static/media/math-logo.e64b79ad.png": "/puzzle-lend/static/media/math-logo.e64b79ad.png",
     "static/media/mini.3fde787a.jpeg": "/puzzle-lend/static/media/mini.3fde787a.jpeg",
@@ -98,7 +99,6 @@
     "static/media/nsbt-logo.227ac705.svg": "/puzzle-lend/static/media/nsbt-logo.227ac705.svg",
     "static/media/orderArrow.svg": "/puzzle-lend/static/media/orderArrow.d473b134.svg",
     "static/media/pink-wallet.923a945a.svg": "/puzzle-lend/static/media/pink-wallet.923a945a.svg",
-    "static/media/puzzleBg.9d02fff4.svg": "/puzzle-lend/static/media/puzzleBg.9d02fff4.svg",
     "static/media/puzzleusdn.76b00cf4.svg": "/puzzle-lend/static/media/puzzleusdn.76b00cf4.svg",
     "static/media/race-logo.2c6a8eae.svg": "/puzzle-lend/static/media/race-logo.2c6a8eae.svg",
     "static/media/sNSBT_TCI.a80ba7cd.svg": "/puzzle-lend/static/media/sNSBT_TCI.a80ba7cd.svg",
@@ -132,8 +132,8 @@
   "entrypoints": [
     "static/js/runtime-main.e60e3224.js",
     "static/css/2.cfc5016f.chunk.css",
-    "static/js/2.ac46220d.chunk.js",
+    "static/js/2.8b5e32ec.chunk.js",
     "static/css/main.025227e5.chunk.css",
-    "static/js/main.a1e39b2c.chunk.js"
+    "static/js/main.62d111e2.chunk.js"
   ]
 }
