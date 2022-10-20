@@ -8,13 +8,14 @@ import SizedBox from "@components/SizedBox";
 import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
+import SubMenu from "@components/Header/SubHeader";
 
 interface IProps {}
 
@@ -37,7 +38,7 @@ const TopMenu = styled.header`
   justify-content: space-between;
   width: 100%;
   height: 64px;
-  padding: 0 16px;
+  padding: 0 24px 0 16px;
   max-width: 1440px;
   z-index: 102;
   @media (min-width: 880px) {
@@ -55,6 +56,10 @@ const TopMenu = styled.header`
 
   .icon {
     cursor: pointer;
+  }
+
+  @media (min-width: 880px) {
+    padding: 0 16px;
   }
 `;
 
@@ -133,13 +138,12 @@ const Header: React.FC<IProps> = () => {
           {...{ bannerClosed }}
         />
       </Mobile>
-      {/*<Banner closed={bannerClosed} setClosed={setBannerClosed} />*/}
 
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <a href="https://lend.puzzleswap.org">
+          <Link to={ROUTES.DASHBOARD}>
             <img className="logo" src={theme.images.icons.logo} alt="logo" />
-          </a>
+          </Link>
           <Desktop>
             <SizedBox width={54} />
             {menuItems.map(({ name, link }) => (
@@ -187,6 +191,7 @@ const Header: React.FC<IProps> = () => {
           </Tooltip>
         </Desktop>
       </TopMenu>
+      <SubMenu />
     </Root>
   );
 };

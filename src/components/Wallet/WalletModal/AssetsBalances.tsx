@@ -29,11 +29,16 @@ const AssetsBalances: React.FC<IProps> = () => {
         <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       </Root>
     );
-  //todo
+
   return (
     <Root>
-      {vm.balances.length !== 0 ? (
-        vm.balances.map((b) => {
+      {vm.userAssets.length !== 0 ? (
+        vm.userAssets.map((b) => {
+          const stats = vm.tokenStats(b.assetId);
+          const dollarEquivalent = new BN(b.formatBalance)
+            .times(stats?.prices.min || BN.ZERO)
+            .toFormat(2);
+
           return (
             <InvestRow
               rateChange={BN.ZERO}
@@ -41,8 +46,8 @@ const AssetsBalances: React.FC<IProps> = () => {
               logo={b.logo}
               topLeftInfo={b.name}
               topRightInfo={b.formatBalance}
-              bottomLeftInfo={"$ "}
-              bottomRightInfo={b.formatUsdnEquivalent}
+              bottomLeftInfo={`$ ${stats?.prices.min}`}
+              bottomRightInfo={dollarEquivalent}
               withClickLogic
               onClick={() => {
                 accountStore.setAssetToSend(b);
@@ -61,7 +66,13 @@ const AssetsBalances: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <Button size="medium">Buy WAVES</Button>
+          <a
+            href="https://waves.exchange/trading/spot/WAVES_USDN"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Button size="medium">Buy WAVES</Button>
+          </a>
           <SizedBox height={100} />
         </Column>
       )}

@@ -25,9 +25,14 @@ interface IProps {
   poolId: string;
   modalAmount: BN;
   userHealth: BN;
+  onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
-  onSubmit?: (amount: BN, assetId: string, contractAddress: string) => void;
+  onSubmit: (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => Promise<boolean>;
 }
 
 const BorrowAssets: React.FC<IProps> = ({
@@ -37,7 +42,8 @@ const BorrowAssets: React.FC<IProps> = ({
   poolId,
   modalSetAmount,
   onMaxClick,
-  onSubmit
+  onSubmit,
+  onClose
 }) => {
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
@@ -62,12 +68,18 @@ const BorrowAssets: React.FC<IProps> = ({
     [debounce]
   );
 
-  const submitForm = () => {
+  const submitForm = async () => {
     let amountVal = modalAmount;
 
     if (vm.isDollar) amountVal = amountVal.div(token?.prices?.min);
 
-    onSubmit!(amountVal.toSignificant(0), token?.assetId, poolId);
+    const isSuccess = await onSubmit(
+      amountVal.toSignificant(0),
+      token?.assetId,
+      poolId
+    );
+
+    if (isSuccess) onClose();
   };
 
   const handleChangeAmount = (v: BN) => {
@@ -168,6 +180,17 @@ const BorrowAssets: React.FC<IProps> = ({
                 .toFixed(4)
             : 0}{" "}
           {token?.symbol}
+        </Text>
+      </Row>
+      <SizedBox height={14} />
+      <Row justifyContent="space-between">
+        <Text size="medium" type="secondary" fitContent>
+          Max possible to Borrow
+        </Text>
+        <Text size="medium" fitContent>
+          {vm.staticMaximum.toFormat(4) || 0}
+          <>&nbsp;</>
+          {vm.isDollar ? "$" : token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />

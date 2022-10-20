@@ -74,11 +74,35 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      supplied:
-        `${BN.formatUnits(s.selfSupply, s.decimals).toFormat(4)} ` + s.symbol,
+      supplied: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.selfSupply, s.decimals).toFormat(2) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.selfSupply, s.decimals)
+              .times(s.prices.min)
+              .toFormat(2)}
+          </Text>
+        </Column>
+      ),
       supplyApy: s.supplyAPY.toFormat(2) + "%",
-      dailyIncome:
-        `${BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6)} ` + s.symbol,
+      dailyIncome: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.dailyIncome, s.decimals)
+              .times(s.prices.min)
+              .toFormat(6)}
+          </Text>
+        </Column>
+      ),
       supplyBtn: (
         <Button
           onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
@@ -144,11 +168,35 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      toRepair:
-        BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) + ` ${s.symbol}`,
+      toRepair: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.selfBorrow, s.decimals)
+              .times(s.prices.min)
+              .toFormat(2)}
+          </Text>
+        </Column>
+      ),
       borrowApr: s.borrowAPY.toFormat(2) + " %",
-      dailyLoan:
-        BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) + " " + s.symbol,
+      dailyLoan: (
+        <Column crossAxisSize="max">
+          <Text weight={500} textAlign="right" size="medium">
+            {BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
+              ` ${s.symbol}`}
+          </Text>
+          <Text textAlign="right" size="small" type="secondary">
+            ${" "}
+            {BN.formatUnits(s.dailyLoan, s.decimals)
+              .times(s.prices.min)
+              .toFormat(6)}
+          </Text>
+        </Column>
+      ),
       borrowBtn: (
         <Button
           kind="secondary"

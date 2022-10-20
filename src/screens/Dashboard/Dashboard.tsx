@@ -1,22 +1,22 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { Navigate, RouteProps, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { Outlet } from "react-router-dom";
+import { useStores } from "@stores";
+import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
-import { observer } from "mobx-react-lite";
 import WhatIsLend from "@screens/Dashboard/WhatIsLend";
 import FAQ from "@screens/Dashboard/FAQ";
-import { useStores } from "@stores";
 import AssetsTable from "@screens/Dashboard/AssetsTable";
 import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
 import AccountHealth from "@screens/Dashboard/AccountHealth";
 import { Column } from "@src/components/Flex";
-import { useTheme } from "@emotion/react";
-import bg from "@src/assets/dashboard/puzzleBg.svg";
-import { Navigate, RouteProps, useParams } from "react-router-dom";
 import { POOLS, ROUTES } from "@src/constants";
-import { Outlet } from "react-router-dom";
+
+import bg from "@src/assets/dashboard/main_bg.png";
 
 interface IProps {}
 
@@ -29,7 +29,6 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   width: 100%;
   min-height: 100%;
   max-width: calc(1260px + 32px);
-  //max-width: calc(1460px + 32px);
   margin-bottom: 24px;
   margin-top: 40px;
   text-align: left;
@@ -65,18 +64,18 @@ const AccountDataWrapper = styled.div`
 `;
 const TotalLiquidity = styled.div`
   display: flex;
-  padding: 16px;
+  padding: 8px 20px;
   border-radius: 16px;
   width: calc(100% - 32px);
-  background: url(${bg}), #7075e9;
+  background: url(${bg});
   background-repeat: no-repeat;
-  background-position: right;
-  background-size: contain;
+  background-position: center;
+  background-size: cover;
 `;
 const DashboardImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
   const { accountStore, lendStore } = useStores();
-  const theme = useTheme();
+
   return (
     <Layout>
       <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
@@ -85,6 +84,8 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
           <a
             style={{ color: "#7075E9", paddingLeft: 4 }}
             href="https://waves.tech/"
+            target="_blank"
+            rel="noreferrer"
           >
             Waves blockchain
           </a>
@@ -96,21 +97,22 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
         <SizedBox height={40} />
         {accountStore != null && (
           <AccountDataWrapper>
-            <div>
-              <AccountHealth />
-            </div>
+            <AccountHealth />
             <Column crossAxisSize="max">
               <SizedBox height={24} />
-              {/*todo поправитть на маленьком экране*/}
               <TotalLiquidity>
-                <Text style={{ color: theme.colors.white }}>
-                  Total liquidity :{" "}
+                <Text style={{ color: "#ffffff" }}>
+                  Total liquidity:{" "}
                   <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                 </Text>
               </TotalLiquidity>
               <SizedBox height={24} />
-              <AccountSupplyAndBorrow />
-              <SizedBox height={40} />
+              {accountStore.address && (
+                <>
+                  <AccountSupplyAndBorrow />
+                  <SizedBox height={40} />
+                </>
+              )}
               <AssetsTable />
             </Column>
           </AccountDataWrapper>

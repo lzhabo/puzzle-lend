@@ -25,7 +25,11 @@ export const ROUTES = {
 };
 
 export const POOLS = [
-  { name: "Main Pool", address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH" }
+  {
+    name: "Main Pool",
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    link: ROUTES.DASHBOARD
+  }
 ];
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({

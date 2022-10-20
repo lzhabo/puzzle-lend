@@ -6,6 +6,13 @@ import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 
+const notifications = {
+  [OPERATIONS_TYPE.WITHDRAW]: `Congrats, it's successfull Withdraw! You can track the transaction on Waves Explorer.`,
+  [OPERATIONS_TYPE.SUPPLY]: `Congrats with successfull supply! You can track the transaction on Waves Explorer.`,
+  [OPERATIONS_TYPE.REPAY]: `Congrats, successfully Repaid you'r loan! You can track the transaction on Waves Explorer.`,
+  [OPERATIONS_TYPE.BORROW]: `Congrats, You successfully borrowed some money! You can track the transaction on Waves Explorer.`
+};
+
 type UrlParamsTypes = {
   tokenId?: string;
   modalPoolId?: string;
@@ -147,14 +154,24 @@ class DashboardModalVM {
       : this.modalAmount.times(this.token?.prices?.min);
   }
 
-  // BORROW MODAL
-  // counting maximum after USER INPUT
-  get userMaximumToBorrow(): BN {
-    const maximum = this.isDollar
+  get staticMaximum(): BN {
+    return this.isDollar
       ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
       : BN.formatUnits(this.userCollateral, 6)
           .div(this.token?.prices.min)
           .times(this.token?.lt);
+  }
+
+  get staticTokenAmount(): BN {
+    return !this.isDollar
+      ? this.tokenBalance
+      : this.tokenBalance.times(this.token?.prices?.min);
+  }
+
+  // BORROW MODAL
+  // counting maximum after USER INPUT
+  get userMaximumToBorrow(): BN {
+    const maximum = this.staticMaximum;
 
     const totalReserves = BN.formatUnits(
       this.token?.totalSupply,
@@ -179,9 +196,7 @@ class DashboardModalVM {
   }
 
   get countUserBalance(): string {
-    let val = !this.isDollar
-      ? this.tokenBalance
-      : this.tokenBalance.times(this.token?.prices?.min);
+    let val = this.staticTokenAmount;
 
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
       val = BN.formatUnits(val.plus(this.modalAmount), this.token?.decimals);
@@ -228,8 +243,6 @@ class DashboardModalVM {
           this.token?.prices?.min
         );
 
-    //fixme вынести расчет здоровья в функцию
-    // все что занимает больше 5 строк и повторяется больше 1 раза стоит выносить
     const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
@@ -459,9 +472,10 @@ class DashboardModalVM {
     amount: BN,
     assetId: string,
     contractAddress: string
-  ) => {
-    const { accountStore, notificationStore, lendStore } = this.rootStore;
-    if (lendStore.poolId == null) return;
+  ): Promise<boolean> => {
+    const { accountStore, lendStore } = this.rootStore;
+    let result = Promise.resolve(false);
+    if (lendStore.poolId == null) return result;
     await accountStore
       .invoke({
         dApp: contractAddress,
@@ -475,36 +489,29 @@ class DashboardModalVM {
         }
       })
       .then((txId) => {
-        txId &&
-          notificationStore.notify(
-            `Congrats, You successfully borrowed some money! You can track the transaction on Waves Explorer.`,
-            {
-              type: "success",
-              title: `Success`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
-              linkTitle: "View on Explorer"
-            }
-          );
+        this.showNotify(txId, OPERATIONS_TYPE.BORROW);
+        result = Promise.resolve(true);
       })
       .catch((e) => {
-        notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Oops, transaction is not completed"
-        });
+        this.showErrorNotify(e);
+        result = Promise.resolve(false);
       })
       .finally(() => {
         accountStore.updateAccountAssets(true);
         lendStore.syncPoolsStats();
       });
+
+    return result;
   };
 
   submitSupply = async (
     amount: BN,
     assetId: string,
     contractAddress: string
-  ) => {
-    const { accountStore, notificationStore, lendStore } = this.rootStore;
-    if (lendStore.poolId == null) return;
+  ): Promise<boolean> => {
+    const { accountStore, lendStore } = this.rootStore;
+    let result = Promise.resolve(false);
+    if (lendStore.poolId == null) return result;
 
     await accountStore
       .invoke({
@@ -513,36 +520,29 @@ class DashboardModalVM {
         call: { function: "supply", args: [] }
       })
       .then((txId) => {
-        txId &&
-          notificationStore.notify(
-            `Congrats with successfull supply! You can track the transaction on Waves Explorer.`,
-            {
-              type: "success",
-              title: `Success`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
-              linkTitle: "View on Explorer"
-            }
-          );
+        this.showNotify(txId, OPERATIONS_TYPE.SUPPLY);
+        result = Promise.resolve(true);
       })
       .catch((e) => {
-        notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Oops, transaction is not completed"
-        });
+        this.showErrorNotify(e);
+        result = Promise.resolve(false);
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
         lendStore.syncPoolsStats();
       });
+
+    return result;
   };
 
   submitWithdraw = async (
     amount: BN,
     assetId: string,
     contractAddress: string
-  ) => {
-    const { accountStore, notificationStore, lendStore } = this.rootStore;
-    if (lendStore.poolId == null) return;
+  ): Promise<boolean> => {
+    const { accountStore, lendStore } = this.rootStore;
+    let result = Promise.resolve(false);
+    if (lendStore.poolId == null) return result;
 
     await accountStore
       .invoke({
@@ -557,36 +557,29 @@ class DashboardModalVM {
         }
       })
       .then((txId) => {
-        txId &&
-          notificationStore.notify(
-            `Congrats, it's successfull Withdraw! You can track the transaction on Waves Explorer.`,
-            {
-              type: "success",
-              title: `Success`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
-              linkTitle: "View on Explorer"
-            }
-          );
+        this.showNotify(txId, OPERATIONS_TYPE.WITHDRAW);
+        result = Promise.resolve(true);
       })
       .catch((e) => {
-        notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Oops, transaction is not completed"
-        });
+        this.showErrorNotify(e);
+        result = Promise.resolve(false);
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
         lendStore.syncPoolsStats();
       });
+
+    return result;
   };
 
   submitRepay = async (
     amount: BN,
     assetId: string,
     contractAddress: string
-  ) => {
-    const { accountStore, notificationStore, lendStore } = this.rootStore;
-    if (lendStore.poolId == null) return;
+  ): Promise<boolean> => {
+    const { accountStore, lendStore } = this.rootStore;
+    let result = Promise.resolve(false);
+    if (lendStore.poolId == null) return result;
 
     await accountStore
       .invoke({
@@ -595,26 +588,34 @@ class DashboardModalVM {
         call: { function: "repay", args: [] }
       })
       .then((txId) => {
-        txId &&
-          notificationStore.notify(
-            `Congrats, successfully Repaid you'r loan! You can track the transaction on Waves Explorer.`,
-            {
-              type: "success",
-              title: `Success`,
-              link: `${EXPLORER_URL}/tx/${txId}`,
-              linkTitle: "View on Explorer"
-            }
-          );
+        this.showNotify(txId, OPERATIONS_TYPE.REPAY);
+        result = Promise.resolve(true);
       })
       .catch((e) => {
-        notificationStore.notify(e.message ?? JSON.stringify(e), {
-          type: "error",
-          title: "Oops, transaction is not completed"
-        });
+        this.showErrorNotify(e);
+        result = Promise.resolve(false);
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
         lendStore.syncPoolsStats();
       });
+
+    return result;
+  };
+
+  showNotify = (txId: string | null, operationName: OPERATIONS_TYPE) => {
+    this.rootStore.notificationStore.notify(notifications[operationName], {
+      type: "success",
+      title: `Success`,
+      link: `${EXPLORER_URL}/tx/${txId}`,
+      linkTitle: "View on Explorer"
+    });
+  };
+
+  showErrorNotify = (e: any) => {
+    this.rootStore.notificationStore.notify(e.message ?? JSON.stringify(e), {
+      type: "error",
+      title: "Oops, transaction is not completed"
+    });
   };
 }

@@ -26,13 +26,19 @@ interface IProps {
   modalAmount: BN;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
-  onSubmit: (amount: BN, assetId: string, contractAddress: string) => void;
+  onSubmit: (
+    amount: BN,
+    assetId: string,
+    contractAddress: string
+  ) => Promise<boolean>;
+  onClose: () => void;
 }
 
 const SupplyAssets: React.FC<IProps> = ({
   token,
   modalAmount,
   poolId,
+  onClose,
   modalSetAmount,
   onMaxClick,
   onSubmit
@@ -72,9 +78,15 @@ const SupplyAssets: React.FC<IProps> = ({
     return val;
   };
 
-  const submitForm = () => {
+  const submitForm = async () => {
     const amountVal = vm.modalFormattedVal;
-    onSubmit(amountVal.toSignificant(0), token?.assetId, poolId);
+    const isSuccess = await onSubmit(
+      amountVal.toSignificant(0),
+      token?.assetId,
+      poolId
+    );
+
+    if (isSuccess) onClose();
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {
@@ -118,9 +130,14 @@ const SupplyAssets: React.FC<IProps> = ({
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
-              {(
-                BN.formatUnits(amount, token?.decimals).toNumber() || 0
-              ).toFixed(4)}
+              {amount.gt(0)
+                ? (
+                    BN.formatUnits(
+                      amount.plus(vm.staticTokenAmount),
+                      token?.decimals
+                    ).toNumber() || 0
+                  ).toFixed(4)
+                : 0}
             </Text>
           </Row>
           <Text size="medium" type="secondary" nowrap>
