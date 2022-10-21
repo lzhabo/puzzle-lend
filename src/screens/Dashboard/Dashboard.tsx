@@ -35,19 +35,6 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   @media (min-width: 880px) {
     margin-top: 56px;
   }
-
-  .apy-group {
-    width: 20px;
-    height: 20px;
-    transform: ${({ apySort }) => (apySort ? "scale(1)" : "scale(1, -1)")};
-  }
-
-  .liquidity-group {
-    width: 20px;
-    height: 20px;
-    transform: ${({ liquiditySort }) =>
-      liquiditySort ? "scale(1)" : "scale(1, -1)"};
-  }
 `;
 const Subtitle = styled(Text)`
   @media (min-width: 880px) {
