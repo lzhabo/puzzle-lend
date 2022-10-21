@@ -35,7 +35,7 @@ const Root = styled.div`
 
   @media (min-width: 1440px) {
     margin-left: 40px;
-    margin-top: 120px;
+    margin-top: 98px;
   }
 `;
 const Title = styled(Text)`

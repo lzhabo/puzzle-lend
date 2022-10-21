@@ -86,7 +86,6 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
           <AccountDataWrapper>
             <AccountHealth />
             <Column crossAxisSize="max">
-              <SizedBox height={24} />
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>
                   Total liquidity:{" "}
@@ -94,12 +93,7 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
                 </Text>
               </TotalLiquidity>
               <SizedBox height={24} />
-              {accountStore.address && (
-                <>
-                  <AccountSupplyAndBorrow />
-                  <SizedBox height={40} />
-                </>
-              )}
+              {accountStore.address && <AccountSupplyAndBorrow />}
               <AssetsTable />
             </Column>
           </AccountDataWrapper>
