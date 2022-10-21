@@ -235,7 +235,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      emptyCell: <SizedBox width={90} />,
+      emptyCell: <SizedBox width={120} />,
       supplied: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
@@ -281,7 +281,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
-          style={{ maxWidth: "89px" }}
+          style={{ maxWidth: "99px", marginLeft: "auto" }}
         >
           Withdraw
         </Button>
@@ -412,7 +412,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      emptyCell: <SizedBox width={90} />,
+      emptyCell: <SizedBox width={120} />,
       toRepay: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
