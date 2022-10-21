@@ -2,7 +2,6 @@ import React, { HTMLAttributes } from "react";
 import styled from "@emotion/styled";
 import SizedBox from "@components/SizedBox";
 import { Column } from "@src/components/Flex";
-import { Anchor } from "@components/Anchor";
 import Text from "@components/Text";
 import { LOGIN_TYPE } from "@stores/AccountStore";
 import seed from "@src/assets/icons/seed.svg";

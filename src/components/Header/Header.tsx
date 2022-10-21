@@ -9,13 +9,14 @@ import Wallet from "@components/Wallet/Wallet";
 import { observer } from "mobx-react-lite";
 import { ROUTES } from "@src/constants";
 import { useLocation, Link } from "react-router-dom";
-import { Anchor } from "@components/Anchor";
 import { useTheme } from "@emotion/react";
 import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import SubMenu from "@components/Header/SubHeader";
+import { Anchor } from "@components/Anchor";
+import { ReactComponent as External } from "@src/assets/icons/external.svg";
 
 interface IProps {}
 
@@ -63,14 +64,12 @@ const TopMenu = styled.header`
   }
 `;
 
-const MenuItem = styled(Anchor)<{ selected?: boolean }>`
+const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
   font-size: 16px;
   line-height: 24px;
-  color: ${({ selected, theme }) =>
-    selected ? theme.colors.primary800 : theme.colors.primary650};
   box-sizing: border-box;
   border-bottom: 4px solid
     ${({ selected, theme }) =>
@@ -78,9 +77,16 @@ const MenuItem = styled(Anchor)<{ selected?: boolean }>`
   height: 100%;
   margin: 0 12px;
 
+  a {
+    color: ${({ selected, theme }) =>
+      selected ? theme.colors.primary800 : theme.colors.primary650};
+  }
+
   &:hover {
     border-bottom: 4px solid ${({ theme }) => theme.colors.primary300};
-    color: ${({ theme }) => theme.colors.blue500};
+    a {
+      color: ${({ theme }) => theme.colors.blue500};
+    }
   }
 `;
 
@@ -104,6 +110,12 @@ const Desktop = styled.div`
   }
 `;
 
+const ExternalLink = styled.div`
+  position: relative;
+  top: -5px;
+  left: 4px;
+`;
+
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [bannerClosed /*, setBannerClosed*/] = useState(false);
@@ -116,8 +128,12 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    { name: "Dashboard", link: ROUTES.DASHBOARD },
-    { name: "Guidebook", link: "https://puzzle-lend.gitbook.io/guidebook/" }
+    { name: "Dashboard", link: ROUTES.DASHBOARD, isBlank: false },
+    {
+      name: "Guidebook",
+      link: "https://puzzle-lend.gitbook.io/guidebook/",
+      isBlank: true
+    }
   ];
 
   const communityMenu = [
@@ -146,14 +162,26 @@ const Header: React.FC<IProps> = () => {
           </Link>
           <Desktop>
             <SizedBox width={54} />
-            {menuItems.map(({ name, link }) => (
+            {menuItems.map(({ name, link, isBlank }) => (
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
-                href={link}
-                target={link !== "https://puzzlemarket.org/" ? "_self" : ""}
               >
-                {name}
+                {!isBlank ? (
+                  <Link to={link}>{name}</Link>
+                ) : (
+                  <>
+                    <Anchor
+                      target="_blank"
+                      href="https://puzzle-lend.gitbook.io/guidebook/"
+                    >
+                      {name}
+                    </Anchor>
+                    <ExternalLink>
+                      <External />
+                    </ExternalLink>
+                  </>
+                )}
               </MenuItem>
             ))}
           </Desktop>
