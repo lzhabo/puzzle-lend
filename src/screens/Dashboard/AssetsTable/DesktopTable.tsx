@@ -12,30 +12,126 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@emotion/react";
+import { TPoolStats } from "@src/stores/LendStore";
+
+type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
 interface IProps {}
 
-const Root = styled.div`
+const Root = styled.div<{ sort?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: 96px;
-`;
 
+  .sort-icon {
+    width: 20px;
+    height: 20px;
+    transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
+  }
+`;
 const DesktopTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
+  const theme = useTheme();
   const [filteredAssets, setFilteredAssets] = useState<any[]>([]);
+  const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
+    "descending"
+  );
+  const [sort, setActiveSort] = useState<ISortTypes>("totalSupply");
+
+  const selectSort = useCallback(
+    (v: ISortTypes) => {
+      if (sort === v) {
+        setActiveSortMode(
+          sortMode === "ascending" ? "descending" : "ascending"
+        );
+      } else {
+        setActiveSort(v);
+        setActiveSortMode("descending");
+      }
+    },
+    [sortMode, sort]
+  );
   const navigate = useNavigate();
   const columns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Total supply", accessor: "supply" },
-      { Header: "Supply APY", accessor: "supplyApy" },
-      { Header: "Total borrow", accessor: "borrow" },
-      { Header: "Borrow APY", accessor: "borrowApy" },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() => selectSort("totalSupply")}
+          >
+            <Text size="medium" fitContent nowrap>
+              Total supply
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className="sort-icon"
+            />
+          </Row>
+        ),
+        accessor: "supply"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() => selectSort("supplyAPY")}
+          >
+            <Text size="medium" fitContent nowrap>
+              Supply APY
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className="sort-icon"
+            />
+          </Row>
+        ),
+        accessor: "supplyApy"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() => selectSort("totalBorrow")}
+          >
+            <Text size="medium" fitContent nowrap>
+              Total borrow
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className="sort-icon"
+            />
+          </Row>
+        ),
+        accessor: "borrow"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() => selectSort("borrowAPY")}
+          >
+            <Text size="medium" fitContent nowrap>
+              Borrow APY
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className="sort-icon"
+            />
+          </Row>
+        ),
+        accessor: "borrowApy"
+      },
       { Header: "", accessor: "borrowBtn" },
       { Header: "", accessor: "supplyBtn" }
     ],
-    []
+    [theme.images.icons.group, selectSort]
   );
 
   const openModal = useCallback(
@@ -52,7 +148,51 @@ const DesktopTable: React.FC<IProps> = () => {
   );
 
   useMemo(() => {
-    const data = lendStore.poolsStats.map((s) => ({
+    let data: any = lendStore.poolsStats.slice().sort((a, b) => {
+      const stats1: TPoolStats = a;
+      const stats2: TPoolStats = b;
+      let key: keyof TPoolStats | undefined;
+      if (sort === "totalSupply") key = "totalSupply";
+      if (sort === "totalBorrow") key = "totalBorrow";
+      if (sort === "supplyAPY") key = "supplyAPY";
+      if (sort === "borrowAPY") key = "borrowAPY";
+      if (key == null) return 0;
+
+      if (stats1 == null || stats2 == null) return 0;
+      if (stats1[key] == null && stats2[key] != null)
+        return sortMode === "descending" ? 1 : -1;
+      if (stats1[key] == null && stats2[key] == null)
+        return sortMode === "descending" ? -1 : 1;
+
+      const stat1 = stats1[key] as keyof TPoolStats;
+      const stat2 = stats2[key] as keyof TPoolStats;
+
+      // if filtering in $ equivalent
+      if (sort === "totalSupply" || sort === "totalBorrow") {
+        const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
+          .times(stats1?.prices.min)
+          .toDecimalPlaces(0);
+        const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
+          .times(stats2?.prices.min)
+          .toDecimalPlaces(0);
+        return sortMode === "descending"
+          ? val1.lt(val2)
+            ? 1
+            : -1
+          : val1.lt(val2)
+          ? -1
+          : 1;
+      }
+
+      return sortMode === "descending"
+        ? BN.formatUnits(stat1, 0).lt(stat2)
+          ? 1
+          : -1
+        : BN.formatUnits(stat1, 0).lt(stat2)
+        ? -1
+        : 1;
+    });
+    data = data.map((s: TPoolStats) => ({
       onClick: () => {
         navigate(
           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
@@ -128,6 +268,8 @@ const DesktopTable: React.FC<IProps> = () => {
     }));
     setFilteredAssets(data);
   }, [
+    sort,
+    sortMode,
     lendStore.pool.address,
     lendStore.poolsStats,
     lendStore.poolId,
@@ -136,7 +278,7 @@ const DesktopTable: React.FC<IProps> = () => {
   ]);
 
   return (
-    <Root>
+    <Root sort={sortMode === "descending"}>
       {lendStore.initialized && filteredAssets.length ? (
         <Table columns={columns} data={filteredAssets} />
       ) : (

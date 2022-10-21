@@ -11,31 +11,188 @@ import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@src/constants";
+import { useTheme } from "@emotion/react";
+import { TPoolStats } from "@src/stores/LendStore";
 
 interface IProps {}
 
-const Root = styled.div`
+type ISortTypes =
+  | "borrowAPY"
+  | "supplyAPY"
+  | "selfSupply"
+  | "selfBorrow"
+  | "dailyIncome"
+  | "dailyLoan";
+
+const Root = styled.div<{ sort?: boolean }>`
   display: flex;
   flex-direction: column;
-  @media (min-width: 768px) {
-    //gap: 24px;
+
+  .sort-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sort-icon-active {
+    width: 20px;
+    height: 20px;
+    transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
 const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+  const theme = useTheme();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
+  const [sort, setActiveSort] = useState<ISortTypes>("selfSupply");
+  const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
+    "descending"
+  );
+  const selectSort = useCallback(
+    (v: ISortTypes) => {
+      if (sort === v) {
+        setActiveSortMode(
+          sortMode === "ascending" ? "descending" : "ascending"
+        );
+      } else {
+        setActiveSort(v);
+        setActiveSortMode("descending");
+      }
+    },
+    [sortMode, sort]
+  );
+  const sortData = useCallback(
+    (poolsData: TPoolStats[]) => {
+      return poolsData.slice().sort((a, b) => {
+        const stats1: TPoolStats = a;
+        const stats2: TPoolStats = b;
+        let key: keyof TPoolStats | undefined;
+        if (sort === "borrowAPY") key = "borrowAPY";
+        if (sort === "supplyAPY") key = "supplyAPY";
+        if (sort === "selfSupply") key = "selfSupply";
+        if (sort === "selfBorrow") key = "selfBorrow";
+        if (sort === "dailyIncome") key = "dailyIncome";
+        if (sort === "dailyLoan") key = "dailyLoan";
+        if (key == null) return 0;
+
+        if (stats1 == null || stats2 == null) return 0;
+        if (stats1[key] == null && stats2[key] != null)
+          return sortMode === "descending" ? 1 : -1;
+        if (stats1[key] == null && stats2[key] == null)
+          return sortMode === "descending" ? -1 : 1;
+
+        const stat1 = stats1[key] as keyof TPoolStats;
+        const stat2 = stats2[key] as keyof TPoolStats;
+
+        // if filtering in $ equivalent
+        if (
+          ["selfSupply", "selfBorrow", "dailyIncome", "dailyLoan"].includes(
+            sort
+          )
+        ) {
+          const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
+            .times(stats1?.prices.min)
+            .toDecimalPlaces(0);
+          const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
+            .times(stats2?.prices.min)
+            .toDecimalPlaces(0);
+          return sortMode === "descending"
+            ? val1.lt(val2)
+              ? 1
+              : -1
+            : val1.lt(val2)
+            ? -1
+            : 1;
+        }
+
+        return sortMode === "descending"
+          ? BN.formatUnits(stat1, 0).lt(stat2)
+            ? 1
+            : -1
+          : BN.formatUnits(stat1, 0).lt(stat2)
+          ? -1
+          : 1;
+      });
+    },
+    [sort, sortMode]
+  );
+
   const supplyColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "Supplied", accessor: "supplied" },
-      { Header: "Supply APY", accessor: "supplyApy" },
-      { Header: "Daily income", accessor: "dailyIncome" },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              lendStore.accountSupply.length > 1
+                ? selectSort("selfSupply")
+                : null
+            }
+          >
+            <Text size="medium" fitContent nowrap>
+              Supplied
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className={
+                sort === "selfSupply" ? "sort-icon-active" : "sort-icon"
+              }
+            />
+          </Row>
+        ),
+        accessor: "supplied"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              lendStore.accountSupply.length > 1
+                ? selectSort("supplyAPY")
+                : null
+            }
+          >
+            <Text size="medium" fitContent nowrap>
+              Supply APY
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className={
+                sort === "supplyAPY" ? "sort-icon-active" : "sort-icon"
+              }
+            />
+          </Row>
+        ),
+        accessor: "supplyApy"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() => selectSort("dailyIncome")}
+          >
+            <Text size="medium" fitContent nowrap>
+              Daily income
+            </Text>
+            <img
+              src={theme.images.icons.group}
+              alt="group"
+              className={
+                sort === "dailyIncome" ? "sort-icon-active" : "sort-icon"
+              }
+            />
+          </Row>
+        ),
+        accessor: "dailyIncome"
+      },
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" }
     ],
-    []
+    [selectSort, sort, theme.images.icons.group]
   );
 
   const openModal = useCallback(
@@ -52,7 +209,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
 
   useMemo(() => {
-    const data = lendStore.accountSupply.map((s) => ({
+    const data = sortData(lendStore.accountSupply).map((s: TPoolStats) => ({
       onClick: () =>
         navigate(
           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
@@ -126,6 +283,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
     }));
     setFilteredSupplies(data);
   }, [
+    sortData,
     lendStore.pool.address,
     lendStore.accountSupply,
     lendStore.poolId,
@@ -137,16 +295,91 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const borrowColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
-      { Header: "To be repaid", accessor: "toRepair" },
-      { Header: "Borrow APR", accessor: "borrowApr" },
-      { Header: "Daily loan interest", accessor: "dailyLoan" },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              lendStore.accountBorrow.length > 1
+                ? selectSort("selfBorrow")
+                : null
+            }
+          >
+            <Text size="medium" fitContent nowrap>
+              To be repaid
+            </Text>
+            {lendStore.accountBorrow.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "selfBorrow" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
+          </Row>
+        ),
+        accessor: "toRepay"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              lendStore.accountBorrow.length > 1
+                ? selectSort("borrowAPY")
+                : null
+            }
+          >
+            <Text size="medium" fitContent nowrap>
+              Borrow APY
+            </Text>
+            {lendStore.accountBorrow.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "borrowAPY" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
+          </Row>
+        ),
+        accessor: "borrowAPY"
+      },
+      {
+        Header: () => (
+          <Row
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              lendStore.accountBorrow.length > 1
+                ? selectSort("dailyLoan")
+                : null
+            }
+          >
+            <Text size="medium" fitContent nowrap>
+              Daily loan interest
+            </Text>
+            {lendStore.accountBorrow.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "dailyLoan" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
+          </Row>
+        ),
+        accessor: "dailyLoan"
+      },
       { Header: "", accessor: "borrowBtn" },
       { Header: "", accessor: "repayBtn" }
     ],
-    []
+    [lendStore.accountBorrow.length, selectSort, sort, theme.images.icons.group]
   );
   useMemo(() => {
-    const data = lendStore.accountBorrow.map((s) => ({
+    const data = sortData(lendStore.accountBorrow).map((s: TPoolStats) => ({
       onClick: () =>
         navigate(
           ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
@@ -168,7 +401,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      toRepair: (
+      toRepay: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
             {BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) +
@@ -182,7 +415,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Text>
         </Column>
       ),
-      borrowApr: s.borrowAPY.toFormat(2) + " %",
+      borrowAPY: s.borrowAPY.toFormat(2) + " %",
       dailyLoan: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
@@ -220,6 +453,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
     }));
     setFilteredBorrows(data);
   }, [
+    sortData,
     lendStore.pool.address,
     lendStore.poolId,
     lendStore.accountBorrow,
@@ -227,7 +461,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
     navigate
   ]);
   return (
-    <Root>
+    <Root sort={sortMode === "descending"}>
       {lendStore.accountSupply.length > 0 && (
         <>
           <Text weight={500} type="secondary">
