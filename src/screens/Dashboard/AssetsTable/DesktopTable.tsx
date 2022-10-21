@@ -61,6 +61,7 @@ const DesktopTable: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => selectSort("totalSupply")}
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Total supply
@@ -79,6 +80,7 @@ const DesktopTable: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => selectSort("supplyAPY")}
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Supply APY
@@ -97,6 +99,7 @@ const DesktopTable: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => selectSort("totalBorrow")}
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Total borrow
@@ -115,6 +118,7 @@ const DesktopTable: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => selectSort("borrowAPY")}
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Borrow APY

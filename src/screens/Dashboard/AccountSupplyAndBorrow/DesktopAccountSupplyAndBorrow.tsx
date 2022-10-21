@@ -121,6 +121,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const supplyColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
+      { Header: "", accessor: "emptyCell" },
       {
         Header: () => (
           <Row
@@ -130,6 +131,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ? selectSort("selfSupply")
                 : null
             }
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Supplied
@@ -154,6 +156,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ? selectSort("supplyAPY")
                 : null
             }
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Supply APY
@@ -174,6 +177,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => selectSort("dailyIncome")}
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Daily income
@@ -192,7 +196,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" }
     ],
-    [selectSort, sort, theme.images.icons.group]
+    [selectSort, sort, theme.images.icons.group, lendStore.accountSupply.length]
   );
 
   const openModal = useCallback(
@@ -231,6 +235,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
+      emptyCell: <SizedBox width={90} />,
       supplied: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
@@ -276,6 +281,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
+          style={{ maxWidth: "89px" }}
         >
           Withdraw
         </Button>
@@ -295,6 +301,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const borrowColumns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
+      { Header: "", accessor: "emptyCell" },
       {
         Header: () => (
           <Row
@@ -304,6 +311,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ? selectSort("selfBorrow")
                 : null
             }
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               To be repaid
@@ -330,6 +338,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ? selectSort("borrowAPY")
                 : null
             }
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Borrow APY
@@ -356,6 +365,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ? selectSort("dailyLoan")
                 : null
             }
+            justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Daily loan interest
@@ -387,6 +397,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             lendStore.pool.address
           ).replace(":assetId", s.assetId)
         ),
+
       asset: (
         <Row alignItems="center">
           <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -401,6 +412,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
+      emptyCell: <SizedBox width={90} />,
       toRepay: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
