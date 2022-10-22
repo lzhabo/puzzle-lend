@@ -14,10 +14,8 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 24px;
-  @media (min-width: 768px) {
-    margin-bottom: 60px;
-  }
+  margin-bottom: 60px;
+
   @media (min-width: 1440px) {
     margin-bottom: 96px;
   }
@@ -48,6 +46,11 @@ const Card = styled(Column)`
   padding: 16px;
   background: ${({ theme }) => theme.colors.white};
   max-height: 260px;
+  justify-content: flex-end;
+
+  @media (min-width: 880px) {
+    justify-content: center;
+  }
 `;
 const Paint = styled.img`
   right: 0;
