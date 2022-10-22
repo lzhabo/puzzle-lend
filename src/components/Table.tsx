@@ -25,6 +25,10 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
     th {
       border-radius: 16px 16px 0 0;
+
+      :first-child {
+        text-align: left;
+      }
     }
 
     tr {
@@ -40,7 +44,6 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
         ${({ hovered, theme }) =>
           hovered && `background: ${theme.colors.primary50};`};
       }
-
       :last-child {
         td {
           border-bottom: none !important;
@@ -52,7 +55,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       font-weight: 400;
       font-size: 14px;
       line-height: 16px;
-      text-align: left;
+      text-align: right;
       padding: 14px;
       border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
       background: ${({ theme }) => `${theme.colors.white}`};
@@ -63,9 +66,14 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
+      text-align: right;
       color: ${({ theme }) => `${theme.colors.primary800}`};
       padding: 16px;
       border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
+
+      :first-child {
+        text-align: left;
+      }
 
       :last-child {
         border-right: 0;
