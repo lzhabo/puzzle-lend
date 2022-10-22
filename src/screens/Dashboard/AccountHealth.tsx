@@ -6,7 +6,6 @@ import Tooltip from "@components/Tooltip";
 import SizedBox from "@components/SizedBox";
 import CircularProgressbar from "@components/CircularProgressbar";
 import LoginTypesRender from "@components/LoginTypes";
-import Card from "@components/Card";
 import { LOGIN_TYPE } from "@stores/AccountStore";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
@@ -36,9 +35,7 @@ const Root = styled.div`
 
   @media (min-width: 1440px) {
     margin-left: 40px;
-    margin-top: 22px;
-    position: sticky;
-    top: 117px;
+    margin-top: 98px;
   }
 `;
 const Title = styled(Text)`

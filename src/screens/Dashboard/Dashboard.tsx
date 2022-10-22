@@ -35,19 +35,6 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   @media (min-width: 880px) {
     margin-top: 56px;
   }
-
-  .apy-group {
-    width: 20px;
-    height: 20px;
-    transform: ${({ apySort }) => (apySort ? "scale(1)" : "scale(1, -1)")};
-  }
-
-  .liquidity-group {
-    width: 20px;
-    height: 20px;
-    transform: ${({ liquiditySort }) =>
-      liquiditySort ? "scale(1)" : "scale(1, -1)"};
-  }
 `;
 const Subtitle = styled(Text)`
   @media (min-width: 880px) {
@@ -99,7 +86,6 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
           <AccountDataWrapper>
             <AccountHealth />
             <Column crossAxisSize="max">
-              <SizedBox height={24} />
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>
                   Total liquidity:{" "}
@@ -107,12 +93,7 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
                 </Text>
               </TotalLiquidity>
               <SizedBox height={24} />
-              {accountStore.address && (
-                <>
-                  <AccountSupplyAndBorrow />
-                  <SizedBox height={40} />
-                </>
-              )}
+              {accountStore.address && <AccountSupplyAndBorrow />}
               <AssetsTable />
             </Column>
           </AccountDataWrapper>
