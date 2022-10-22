@@ -172,29 +172,21 @@ const DesktopTable: React.FC<IProps> = () => {
       const stat2 = stats2[key] as keyof TPoolStats;
 
       // if filtering in $ equivalent
-      if (sort === "totalSupply" || sort === "totalBorrow") {
+      if (["totalBorrow", "totalSupply"].includes(sort)) {
         const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
           .times(stats1?.prices.min)
           .toDecimalPlaces(0);
         const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
           .times(stats2?.prices.min)
           .toDecimalPlaces(0);
-        return sortMode === "descending"
-          ? val1.lt(val2)
-            ? 1
-            : -1
-          : val1.lt(val2)
-          ? -1
-          : 1;
+
+        if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
+        else return val1.lt(val2) ? -1 : 1;
       }
 
-      return sortMode === "descending"
-        ? BN.formatUnits(stat1, 0).lt(stat2)
-          ? 1
-          : -1
-        : BN.formatUnits(stat1, 0).lt(stat2)
-        ? -1
-        : 1;
+      if (sortMode === "descending") {
+        return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
+      } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
     });
     data = data.map((s: TPoolStats) => ({
       onClick: () => {
