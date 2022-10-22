@@ -49,7 +49,7 @@ const toolsMenu = [
 const communityMenu = [
   { name: "Telegram", link: "https://t.me/puzzleswap", outer: true },
   { name: "Twitter", link: "https://twitter.com/puzzle_swap", outer: true },
-  { name: "Medium", link: "https://medium.com/@puzzleswap", outer: true }
+  { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true }
 ];
 
 const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {

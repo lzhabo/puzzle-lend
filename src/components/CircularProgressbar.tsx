@@ -1,12 +1,22 @@
 import styled from "@emotion/styled";
 import React, { HTMLAttributes } from "react";
 import { CircularProgressbar as Bar } from "react-circular-progressbar";
+import Text from "@components/Text";
 import "react-circular-progressbar/dist/styles.css";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   percent: number;
   text: string;
 }
+
+const HealthTextWrap = styled(Text)`
+  width: 65px;
+  text-align: center;
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+`;
 
 const Root = styled.div`
   width: 120px;
@@ -33,6 +43,7 @@ const Root = styled.div`
     font-size: 16px;
     line-height: 24px;
     fill: ${({ theme }) => theme.colors.primary800};
+    baseline-shift: 15px;
   }
 
   .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-trail {
@@ -40,10 +51,15 @@ const Root = styled.div`
   }
 `;
 
-const CircularProgressbar: React.FC<IProps> = ({ percent, ...rest }) => {
+const CircularProgressbar: React.FC<IProps> = ({ percent, text, ...rest }) => {
   return (
     <Root {...rest}>
-      <Bar value={percent} text={`${percent}%`} />
+      <HealthTextWrap>
+        <Text>{text}</Text>
+      </HealthTextWrap>
+      <Bar value={percent} text={`${percent}%`}>
+        {text}
+      </Bar>
     </Root>
   );
 };

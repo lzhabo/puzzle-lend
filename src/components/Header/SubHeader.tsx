@@ -12,7 +12,7 @@ const Root = styled(Column)`
   width: 100%;
   background: #fff;
   align-items: center;
-  z-index: 102;
+  z-index: 101;
   max-width: 1440px;
   // box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 

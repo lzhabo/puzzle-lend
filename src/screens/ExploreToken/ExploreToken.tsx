@@ -36,17 +36,6 @@ const SpinnerComponent = () => (
   </Layout>
 );
 
-const StatsItem = styled(Column)`
-  margin-right: 24px;
-  margin-bottom: 8px;
-  @media (min-width: 880px) {
-    margin-right: 32px;
-  }
-  &:last-of-type {
-    margin-right: 0;
-  }
-`;
-
 const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   const { lendStore } = useStores();
   const vm = useExploreTokenVM();
@@ -55,42 +44,6 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   else if (!vm.isAssetOk) return <Navigate to={ROUTES.ROOT} />;
   if (vm.statistics == null) return <Navigate to={ROUTES.ROOT} />;
 
-  const statistics = [
-    {
-      title: "Total supply",
-      value:
-        BN.formatUnits(
-          vm.statistics.totalSupply,
-          vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`
-    },
-    {
-      title: "Total borrow",
-      value:
-        BN.formatUnits(
-          vm.statistics.totalBorrow,
-          vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`
-    },
-    {
-      title: "Utilization ratio",
-      value:
-        vm.statistics.totalBorrow
-          .div(vm.statistics.totalSupply)
-          .times(100)
-          .toFixed(2) + " %"
-    },
-    {
-      title: "Reserves",
-      value:
-        BN.formatUnits(
-          vm.statistics.totalSupply.minus(vm.statistics.totalBorrow),
-          vm.statistics.decimals
-        ).toFormat(2) + ` ${vm.statistics.symbol}`
-    },
-    { title: "Supply APY", value: vm.statistics.supplyAPY.toFormat(2) + " %" },
-    { title: "Borrow APY", value: vm.statistics.borrowAPY.toFormat(2) + " %" }
-  ];
   return (
     <Layout>
       <ExploreLayout>
@@ -115,21 +68,6 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
             </TokenTitle>
           </Row>
           <SocialMediaAndFav />
-        </Row>
-        <SizedBox height={16} />
-        <Row
-          alignItems="end"
-          mainAxisSize="fit-content"
-          style={{ flexWrap: "wrap" }}
-        >
-          {statistics.map((s, i) => (
-            <StatsItem key={i}>
-              <Text size="medium" type="secondary">
-                {s.title}
-              </Text>
-              <Text>{s.value}</Text>
-            </StatsItem>
-          ))}
         </Row>
         <SizedBox height={24} />
         <ExploreTokenBasicInformation />
