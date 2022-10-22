@@ -3,7 +3,6 @@ import ExploreTokenPriceChart from "@screens/ExploreToken/ExploreTokenPriceChart
 import ExploreTokenPriceStatistics from "@screens/ExploreToken/ExploreTokenPriceStatistics";
 import useWindowSize from "@src/hooks/useWindowSize";
 import SizedBox from "@components/SizedBox";
-import { useTheme } from "@emotion/react";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import BN from "@src/utils/BN";

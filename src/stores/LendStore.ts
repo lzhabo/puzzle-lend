@@ -112,6 +112,7 @@ class LendStore {
 
       return {
         ...token,
+        interest: interests[index],
         prices: p,
         dailyIncome: dailyIncome.toDecimalPlaces(0),
         dailyLoan: dailyLoan.toDecimalPlaces(0),

@@ -9,7 +9,7 @@ import {
 } from "@screens/ExploreToken/ExploreTokenVm";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { POOLS, ROUTES } from "@src/constants";
-import { Column, Row } from "@components/Flex";
+import { Row } from "@components/Flex";
 import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
 import ExploreTokenBasicInformation from "@screens/ExploreToken/ExploreTokenBasicInformation";
 import styled from "@emotion/styled";
@@ -19,7 +19,6 @@ import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
 import { useTheme } from "@emotion/react";
 import { useStores } from "@stores";
 import Spinner from "@components/Spinner";
-import BN from "@src/utils/BN";
 
 interface IProps {}
 

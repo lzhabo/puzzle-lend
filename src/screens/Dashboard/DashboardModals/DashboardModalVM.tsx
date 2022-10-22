@@ -209,10 +209,10 @@ class DashboardModalVM {
   }
 
   get userDailyIncome(): BN {
-    return (
-      this.token?.interest.times(
-        BN.formatUnits(this.modalAmount, this.token?.decimals)
-      ) || BN.ZERO
+    const UR = this.token?.totalBorrow.div(this.token?.totalSupply);
+    const supplyInterest = this.token?.interest.times(UR).times(0.8);
+    return BN.formatUnits(this.modalAmount, this.token?.decimals).times(
+      supplyInterest
     );
   }
 
