@@ -1,10 +1,10 @@
-import React from "react";
-import { observer } from "mobx-react-lite";
 import styled from "@emotion/styled";
-import { useStores } from "@stores";
+import React from "react";
 import { ROUTES } from "@src/constants";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
+import { useLocation, useNavigate } from "react-router-dom";
+import isRoutesEquals from "@src/utils/isRoutesEquals";
 import Home from "@components/MobileNavBar/Home";
 import Invest from "@components/MobileNavBar/Invest";
 
@@ -39,56 +39,57 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   justify-content: center;
   align-items: center;
 
-  &.selected {
-    background-color: ${({ theme }) => `${theme.colors.primary650}`};
-    padding: 5px;
-    borde-radius: 4px;
-
-    p {
-      color: #fff;
-    }
+  &:hover {
   }
 `;
 const MobileNavBar: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
+  const location = useLocation();
+  const navigate = useNavigate();
   const menuItems = [
     {
       name: "My supply",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={lendStore.mobileDashboardAssets === 1 ? true : false} />
+        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      type: 1 as 1 | 2 | 3
+      big: false
     },
     {
       name: "Home",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Home active={lendStore.mobileDashboardAssets === 2 ? true : false} />
+        <Home active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      type: 2 as 1 | 2 | 3
+      big: false
     },
     {
       name: "My borrow",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={lendStore.mobileDashboardAssets === 3 ? true : false} />
+        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
       ),
-      type: 3 as 1 | 2 | 3
+      big: false
     }
   ];
   return (
     <Root>
-      {menuItems.map(({ icon, name, type }, index) => (
+      {menuItems.map(({ icon, name, big, link }, index) => (
         <MenuItem
           key={index}
-          onClick={() => lendStore.setDashboardAssetType(type)}
-          className={lendStore.mobileDashboardAssets === type ? "selected" : ""}
+          onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}
         >
           {icon}
           {name != null && <SizedBox height={6} />}
           {name != null && (
-            <Text size="small" fitContent>
+            <Text
+              size="small"
+              type={
+                isRoutesEquals(link, location.pathname)
+                  ? "primary"
+                  : "secondary"
+              }
+              fitContent
+            >
               {name}
             </Text>
           )}
@@ -97,4 +98,4 @@ const MobileNavBar: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(MobileNavBar);
+export default MobileNavBar;

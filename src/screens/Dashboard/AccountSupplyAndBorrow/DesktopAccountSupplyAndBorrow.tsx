@@ -222,7 +222,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
               {s.symbol}
             </Text>
             <Text type="secondary" size="small" fitContent>
-              $ {s.prices.max.toBigFormat(2)}
+              $ {s.prices.max.toFormat(2)}
             </Text>
           </Column>
         </Row>
@@ -231,29 +231,29 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       supplied: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.selfSupply, s.decimals).toBigFormat(2) +
+            {BN.formatUnits(s.selfSupply, s.decimals).toFormat(2) +
               ` ${s.symbol}`}
           </Text>
           <Text textAlign="right" size="small" type="secondary">
             ${" "}
             {BN.formatUnits(s.selfSupply, s.decimals)
               .times(s.prices.min)
-              .toBigFormat(2)}
+              .toFormat(2)}
           </Text>
         </Column>
       ),
-      supplyApy: s.supplyAPY.toBigFormat(2) + "%",
+      supplyApy: s.supplyAPY.toFormat(2) + "%",
       dailyIncome: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.dailyIncome, s.decimals).toBigFormat(6) +
+            {BN.formatUnits(s.dailyIncome, s.decimals).toFormat(6) +
               ` ${s.symbol}`}
           </Text>
           <Text textAlign="right" size="small" type="secondary">
             ${" "}
             {BN.formatUnits(s.dailyIncome, s.decimals)
               .times(s.prices.min)
-              .toBigFormat(6)}
+              .toFormat(6)}
           </Text>
         </Column>
       ),
@@ -400,7 +400,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
               {s.symbol}
             </Text>
             <Text type="secondary" size="small" fitContent>
-              $ {s.prices.max.toBigFormat(2)}
+              $ {s.prices.max.toFormat(2)}
             </Text>
           </Column>
         </Row>
@@ -409,29 +409,29 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       toRepay: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.selfBorrow, s.decimals).toBigFormat(2) +
+            {BN.formatUnits(s.selfBorrow, s.decimals).toFormat(2) +
               ` ${s.symbol}`}
           </Text>
           <Text textAlign="right" size="small" type="secondary">
             ${" "}
             {BN.formatUnits(s.selfBorrow, s.decimals)
               .times(s.prices.min)
-              .toBigFormat(2)}
+              .toFormat(2)}
           </Text>
         </Column>
       ),
-      borrowAPY: s.borrowAPY.toBigFormat(2) + " %",
+      borrowAPY: s.borrowAPY.toFormat(2) + " %",
       dailyLoan: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.dailyLoan, s.decimals).toBigFormat(6) +
+            {BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
               ` ${s.symbol}`}
           </Text>
           <Text textAlign="right" size="small" type="secondary">
             ${" "}
             {BN.formatUnits(s.dailyLoan, s.decimals)
               .times(s.prices.min)
-              .toBigFormat(6)}
+              .toFormat(6)}
           </Text>
         </Column>
       ),

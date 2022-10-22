@@ -24,9 +24,10 @@ const Root = styled.div`
   margin-top: 32px;
   align-self: flex-start;
   align-items: center;
+  max-width: 312px;
   flex-direction: column;
-  margin: 50px auto 20px auto;
-  width: 100%;
+  margin: 50px auto 0 auto;
+  width: calc(100% - 32px);
   box-sizing: border-box;
 
   @media (min-width: 880px) {
@@ -34,8 +35,6 @@ const Root = styled.div`
   }
 
   @media (min-width: 1440px) {
-    width: calc(100% - 32px);
-    max-width: 312px;
     margin-left: 40px;
     margin-top: 98px;
   }

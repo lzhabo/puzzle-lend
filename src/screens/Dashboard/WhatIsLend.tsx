@@ -14,12 +14,7 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
   margin-bottom: 60px;
-
-  @media (min-width: 880px) {
-    margin-top: 0;
-  }
 
   @media (min-width: 1440px) {
     margin-bottom: 96px;
