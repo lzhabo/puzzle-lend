@@ -34,6 +34,7 @@ const Root = styled(Column)`
 `;
 
 const TopMenu = styled.header`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -61,6 +62,16 @@ const TopMenu = styled.header`
 
   @media (min-width: 880px) {
     padding: 0 16px;
+  }
+  &:after {
+    position: absolute;
+    content: "";
+    bottom: -16px;
+    transform: translateX(-50%);
+    left: 50%;
+    background-color: ${({ theme }) => theme.colors.primary650};
+    width: 100%;
+    height: 1px;
   }
 `;
 
