@@ -70,7 +70,7 @@ const TopMenu = styled.header`
     transform: translateX(-50%);
     left: 50%;
     background-color: ${({ theme }) => theme.colors.primary650};
-    width: 100%;
+    width: 105%;
     height: 1px;
   }
 `;
