@@ -56,17 +56,7 @@ const LoginHeader = styled.div`
   width: 100%;
   text-align: center;
   position: relative;
-
-  &:after {
-    position: absolute;
-    content: "";
-    bottom: -16px;
-    transform: translateX(-50%);
-    left: 50%;
-    background-color: #f1f2fe;
-    width: 110%;
-    height: 1px;
-  }
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 const AccountHealth: React.FC<IProps> = () => {
   const { lendStore, accountStore } = useStores();
@@ -139,6 +129,7 @@ const AccountHealth: React.FC<IProps> = () => {
           <SizedBox height={8} />
           <LoginHeader>
             <Text weight={500}>Connect wallet</Text>
+            <SizedBox height={36} />
           </LoginHeader>
           <SizedBox height={32} />
           <LoginTypesRender

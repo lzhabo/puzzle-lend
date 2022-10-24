@@ -10,11 +10,9 @@ interface IProps {}
 
 const Root = styled(Column)`
   width: 100%;
-  background: #fff;
   align-items: center;
   z-index: 101;
-  max-width: 1440px;
-
+  background-color: ${({ theme }) => theme.colors.white};
   border-top: 1px solid ${({ theme }) => theme.colors.primary100};
   a {
     text-decoration: none;
@@ -23,6 +21,7 @@ const Root = styled(Column)`
 
 const TopMenu = styled.div`
   display: flex;
+  max-width: 1440px;
   align-items: center;
   justify-content: space-between;
   width: 100%;
