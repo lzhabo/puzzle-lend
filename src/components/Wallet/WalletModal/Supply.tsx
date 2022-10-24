@@ -51,7 +51,7 @@ const Borrow: React.FC<IProps> = () => {
               topLeftInfo={"My supply"}
               topRightInfo={supply}
               bottomLeftInfo={"Supply APY"}
-              bottomRightInfo={stats?.supplyAPY.toFormat(2) || "0"}
+              bottomRightInfo={`${stats?.supplyAPY.toFormat(2)}%` || "0"}
               withClickLogic
               onClick={() => {
                 accountStore.setAssetToSend(b);
