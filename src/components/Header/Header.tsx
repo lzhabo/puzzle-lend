@@ -63,16 +63,6 @@ const TopMenu = styled.header`
   @media (min-width: 880px) {
     padding: 0 16px;
   }
-  &:after {
-    position: absolute;
-    content: "";
-    bottom: 0px;
-    transform: translateX(-50%);
-    left: 50%;
-    background-color: ${({ theme }) => theme.colors.primary100};
-    width: 105%;
-    height: 1px;
-  }
 `;
 
 const MenuItem = styled.div<{ selected?: boolean }>`

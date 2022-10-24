@@ -14,9 +14,8 @@ const Root = styled(Column)`
   align-items: center;
   z-index: 101;
   max-width: 1440px;
-  // box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
-  //todo check
+  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
   a {
     text-decoration: none;
   }
