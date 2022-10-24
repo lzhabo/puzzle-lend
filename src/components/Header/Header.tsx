@@ -14,7 +14,7 @@ import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import SubMenu from "@components/Header/SubHeader";
+import SubHeader from "@components/Header/SubHeader";
 import { Anchor } from "@components/Anchor";
 import { ReactComponent as External } from "@src/assets/icons/external.svg";
 
@@ -34,6 +34,7 @@ const Root = styled(Column)`
 `;
 
 const TopMenu = styled.header`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -154,7 +155,6 @@ const Header: React.FC<IProps> = () => {
           {...{ bannerClosed }}
         />
       </Mobile>
-
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
           <Link to={ROUTES.DASHBOARD}>
@@ -219,7 +219,7 @@ const Header: React.FC<IProps> = () => {
           </Tooltip>
         </Desktop>
       </TopMenu>
-      <SubMenu />
+      <SubHeader />
     </Root>
   );
 };

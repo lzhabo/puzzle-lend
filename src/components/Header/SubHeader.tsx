@@ -3,7 +3,7 @@ import React from "react";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
 import { POOLS } from "@src/constants";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 interface IProps {}
@@ -14,9 +14,8 @@ const Root = styled(Column)`
   align-items: center;
   z-index: 101;
   max-width: 1440px;
-  // box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
-  //todo check
+  border-top: 1px solid ${({ theme }) => theme.colors.primary100};
   a {
     text-decoration: none;
   }
@@ -44,7 +43,7 @@ const TopMenu = styled.div`
   }
 `;
 
-const MenuItem = styled.div<{ selected?: boolean }>`
+const MenuItem = styled(Link)<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -85,6 +84,7 @@ const Header: React.FC<IProps> = () => {
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
+                to={link}
               >
                 <Text
                   weight={500}

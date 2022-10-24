@@ -40,13 +40,12 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   align-items: center;
   padding: 5px;
   padding-bottom: 10px;
-
+  p {
+    color: ${({ theme }) => `${theme.colors.primary650}`};
+  }
   &.selected {
-    background-color: ${({ theme }) => `${theme.colors.primary650}`};
-    borde-radius: 4px;
-
     p {
-      color: ${({ theme }) => `${theme.colors.white}`};
+      color: ${({ theme }) => `${theme.colors.primary800}`};
     }
   }
 `;
