@@ -52,7 +52,9 @@ const Health = styled.div`
   position: relative;
 `;
 const LoginHeader = styled.div`
-  display: block;
+  display: flex;
+  width: 100%;
+  text-align: center;
   position: relative;
 
   &:after {
