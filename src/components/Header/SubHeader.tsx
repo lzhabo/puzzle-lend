@@ -14,7 +14,6 @@ const Root = styled(Column)`
   align-items: center;
   z-index: 101;
   max-width: 1440px;
-  padding-top: 16px;
   // box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
   //todo check
