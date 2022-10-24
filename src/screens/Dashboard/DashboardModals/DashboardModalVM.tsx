@@ -196,16 +196,11 @@ class DashboardModalVM {
   }
 
   get countUserBalance(): string {
-    let val = this.staticTokenAmount;
-
-    if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
-      val = BN.formatUnits(val.plus(this.modalAmount), this.token?.decimals);
-    }
-    if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
-      val = BN.formatUnits(val.minus(this.modalAmount), this.token?.decimals);
-    }
-
-    return val.toFormat(4) || "0";
+    return (
+      BN.formatUnits(this.staticTokenAmount, this.token?.decimals).toFormat(
+        4
+      ) || "0"
+    );
   }
 
   get userDailyIncome(): BN {

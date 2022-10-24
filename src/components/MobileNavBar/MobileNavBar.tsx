@@ -38,10 +38,11 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 5px;
+  padding-bottom: 10px;
 
   &.selected {
     background-color: ${({ theme }) => `${theme.colors.primary650}`};
-    padding: 5px;
     borde-radius: 4px;
 
     p {

@@ -247,6 +247,7 @@ const DesktopTable: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Borrow
         </Button>
@@ -257,6 +258,7 @@ const DesktopTable: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Supply
         </Button>
