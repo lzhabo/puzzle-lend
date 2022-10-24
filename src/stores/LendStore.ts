@@ -41,7 +41,7 @@ class LendStore {
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
-  mobileDashboardAssets: ASSETS_TYPE = 2;
+  mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
   setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
   tokensSetups: Array<TPoolToken> = [];
