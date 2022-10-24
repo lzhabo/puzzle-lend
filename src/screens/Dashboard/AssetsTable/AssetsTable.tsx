@@ -1,5 +1,8 @@
 import React from "react";
 import styled from "@emotion/styled";
+import { useStores } from "@stores";
+import { observer } from "mobx-react-lite";
+import { ASSETS_TYPE } from "@src/constants";
 import Text from "@src/components/Text";
 import SizedBox from "@components/SizedBox";
 import useWindowSize from "@src/hooks/useWindowSize";
@@ -20,6 +23,15 @@ const Root = styled.div`
 
 const AssetsTable: React.FC<IProps> = () => {
   const { width } = useWindowSize();
+  const { lendStore } = useStores();
+
+  if (
+    width &&
+    width < 880 &&
+    lendStore.mobileDashboardAssets !== ASSETS_TYPE.HOME
+  )
+    return null;
+
   //todo add filter
   return (
     <Root>
@@ -28,8 +40,8 @@ const AssetsTable: React.FC<IProps> = () => {
       </Text>
       <SizedBox height={8} />
       {/*filter*/}
-      {width && width >= 768 ? <DesktopTable /> : <MobileAssetsTable />}
+      {width && width >= 880 ? <DesktopTable /> : <MobileAssetsTable />}
     </Root>
   );
 };
-export default AssetsTable;
+export default observer(AssetsTable);

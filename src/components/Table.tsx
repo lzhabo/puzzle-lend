@@ -68,7 +68,7 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       line-height: 20px;
       text-align: right;
       color: ${({ theme }) => `${theme.colors.primary800}`};
-      padding: 16px;
+      padding: 16px 8px;
       border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
 
       :first-child {
@@ -77,6 +77,10 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
 
       :last-child {
         border-right: 0;
+      }
+
+      @media (min-width: 880px) {
+        padding: 16px;
       }
     }
   }
