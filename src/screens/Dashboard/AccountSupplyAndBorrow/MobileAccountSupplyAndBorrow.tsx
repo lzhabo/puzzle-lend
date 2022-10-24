@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
+import { ASSETS_TYPE } from "@src/constants";
 
 interface IProps {}
 
@@ -82,7 +83,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   return (
     <Root>
       <SizedBox height={40} />
-      {lendStore.mobileDashboardAssets === 1 &&
+      {lendStore.mobileDashboardAssets === ASSETS_TYPE.SUPPLY_BLOCK &&
         lendStore.accountSupply.length > 0 && (
           <Column crossAxisSize="max">
             <Text weight={500} type="secondary">
@@ -179,7 +180,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
             </Wrapper>
           </Column>
         )}
-      {lendStore.mobileDashboardAssets === 3 &&
+      {lendStore.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK &&
         lendStore.accountBorrow.length > 0 && (
           <Column crossAxisSize="max">
             <Text weight={500} type="secondary">

@@ -3,6 +3,7 @@ import PoolStateFetchService, {
   TPoolToken
 } from "@src/services/PoolStateFetchService";
 import BN from "@src/utils/BN";
+import { ASSETS_TYPE } from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
@@ -40,8 +41,8 @@ class LendStore {
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
-  mobileDashboardAssets: 1 | 2 | 3 = 2;
-  setDashboardAssetType = (v: 1 | 2 | 3) => (this.mobileDashboardAssets = v);
+  mobileDashboardAssets: ASSETS_TYPE = 2;
+  setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
   tokensSetups: Array<TPoolToken> = [];
   private setTokensSetups = (v: Array<TPoolToken>) => (this.tokensSetups = v);

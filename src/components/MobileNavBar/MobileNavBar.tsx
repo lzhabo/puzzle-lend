@@ -2,7 +2,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import styled from "@emotion/styled";
 import { useStores } from "@stores";
-import { ROUTES } from "@src/constants";
+import { ROUTES, ASSETS_TYPE } from "@src/constants";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Home from "@components/MobileNavBar/Home";
@@ -45,7 +45,7 @@ const MenuItem = styled.div<{ selected?: boolean }>`
     borde-radius: 4px;
 
     p {
-      color: #fff;
+      color: ${({ theme }) => `${theme.colors.white}`};
     }
   }
 `;
@@ -56,25 +56,29 @@ const MobileNavBar: React.FC<IProps> = () => {
       name: "My supply",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={lendStore.mobileDashboardAssets === 1 ? true : false} />
+        <Invest
+          active={lendStore.mobileDashboardAssets === ASSETS_TYPE.SUPPLY_BLOCK}
+        />
       ),
-      type: 1 as 1 | 2 | 3
+      type: ASSETS_TYPE.SUPPLY_BLOCK
     },
     {
       name: "Home",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Home active={lendStore.mobileDashboardAssets === 2 ? true : false} />
+        <Home active={lendStore.mobileDashboardAssets === ASSETS_TYPE.HOME} />
       ),
-      type: 2 as 1 | 2 | 3
+      type: ASSETS_TYPE.HOME
     },
     {
       name: "My borrow",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={lendStore.mobileDashboardAssets === 3 ? true : false} />
+        <Invest
+          active={lendStore.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK}
+        />
       ),
-      type: 3 as 1 | 2 | 3
+      type: ASSETS_TYPE.BORROW_BLOCK
     }
   ];
   return (
