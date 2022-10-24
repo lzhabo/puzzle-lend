@@ -259,11 +259,11 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       ),
       supplyBtn: (
         <Button
-          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
           kind="secondary"
           size="medium"
           fixed
-          style={{ width: "92px" }}
+          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Supply
         </Button>
@@ -274,7 +274,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
-          style={{ width: "92px" }}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Withdraw
         </Button>
@@ -441,7 +441,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
-          style={{ width: "92px" }}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Borrow
         </Button>
@@ -452,7 +452,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           size="medium"
           fixed
           onClick={(e) => openModal(e, lendStore.poolId, "repay", s.assetId)}
-          style={{ width: "92px" }}
+          style={{ width: "100px", margin: "0 auto" }}
         >
           Repay
         </Button>

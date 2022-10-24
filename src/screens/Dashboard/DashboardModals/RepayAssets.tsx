@@ -114,27 +114,26 @@ const BorrowAssets: React.FC<IProps> = ({
           </Column>
         </Row>
         <Column alignItems="flex-end">
-          <Row alignItems="center" justifyContent="flex-end">
-            <Text size="medium" type="secondary" fitContent>
-              {BN.formatUnits(amount, token?.decimals).toFormat(4)}
-            </Text>
-            <BackIcon />
-            <Text
-              size="medium"
-              fitContent
-              onClick={() => {
-                setFocused(true);
-                onMaxClick && onMaxClick(getMax());
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              {vm.userRepayAmount}
+          <Row alignItems="center">
+            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
+              {vm.countUserBalance || 0}
               <>&nbsp;</>
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
+            <BackIcon />
+            <Text size="medium" type="secondary" fitContent>
+              {amount.gt(0)
+                ? (
+                    BN.formatUnits(
+                      vm.staticTokenAmount.minus(amount),
+                      token?.decimals
+                    ).toNumber() || 0
+                  ).toFixed(4)
+                : 0}
+            </Text>
           </Row>
           <Text textAlign="right" nowrap size="medium" type="secondary">
-            Borrow Balance
+            Wallet Balance
           </Text>
         </Column>
       </Row>

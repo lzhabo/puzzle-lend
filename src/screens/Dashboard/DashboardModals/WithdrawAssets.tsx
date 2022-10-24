@@ -117,11 +117,24 @@ const WithdrawAssets: React.FC<IProps> = ({
           </Column>
         </Row>
         <Column alignItems="flex-end">
-          <Text size="medium" textAlign="right">
-            {vm.countUserBalance}
-            <>&nbsp;</>
-            {vm.isDollar ? "$" : token?.symbol}
-          </Text>
+          <Row alignItems="center">
+            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
+              {vm.countUserBalance || 0}
+              <>&nbsp;</>
+              {vm.isDollar ? "$" : token?.symbol}
+            </Text>
+            <BackIcon />
+            <Text size="medium" type="secondary" fitContent>
+              {amount.gt(0)
+                ? (
+                    BN.formatUnits(
+                      vm.staticTokenAmount.plus(amount),
+                      token?.decimals
+                    ).toNumber() || 0
+                  ).toFixed(4)
+                : 0}
+            </Text>
+          </Row>
           <Text nowrap size="medium" type="secondary">
             Wallet Balance
           </Text>
