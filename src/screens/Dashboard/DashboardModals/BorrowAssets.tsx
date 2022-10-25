@@ -111,31 +111,27 @@ const BorrowAssets: React.FC<IProps> = ({
             </Text>
           </Column>
         </Row>
-        <Column alignItems="flex-end">
-          <Row alignItems="center" justifyContent="flex-end">
-            <Text size="medium" type="secondary" fitContent>
-              {BN.formatUnits(amount, token?.decimals).toNumber().toFixed(4) ||
-                0}
-            </Text>
-            <BackIcon />
-            <Text
-              size="medium"
-              fitContent
-              onClick={() => {
-                setFocused(true);
-                onMaxClick && onMaxClick(vm.userMaximumToBorrowBN());
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              {token?.cf && token?.prices.max
-                ? vm.userMaximumToBorrow.toFormat(6)
-                : 0}
+        <Column alignItems="flex-end" justifyContent="flex-end">
+          <Row alignItems="center">
+            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
+              {vm.countUserBalance || 0}
               <>&nbsp;</>
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
+            <BackIcon />
+            <Text size="medium" type="secondary" fitContent>
+              {amount.gt(0)
+                ? (
+                    BN.formatUnits(
+                      amount.plus(vm.staticTokenAmount),
+                      token?.decimals
+                    ).toNumber() || 0
+                  ).toFixed(4)
+                : 0}
+            </Text>
           </Row>
-          <Text textAlign="right" nowrap size="medium" type="secondary">
-            Max possible to borrow
+          <Text size="medium" type="secondary" nowrap textAlign="right">
+            Wallet Balance
           </Text>
         </Column>
       </Row>

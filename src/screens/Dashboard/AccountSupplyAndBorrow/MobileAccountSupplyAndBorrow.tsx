@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
+import { ASSETS_TYPE } from "@src/constants";
 
 interface IProps {}
 
@@ -81,207 +82,209 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
 
   return (
     <Root>
-      {lendStore.accountSupply.length > 0 && (
-        <Column crossAxisSize="max">
-          <Text weight={500} type="secondary">
-            My supply
-          </Text>
-          <SizedBox height={8} />
-          <Wrapper>
-            {lendStore.accountSupply.map((s) => {
-              const supplied = BN.formatUnits(s.selfSupply, s.decimals);
-              const dIncome = BN.formatUnits(s.dailyIncome, s.decimals);
-              const data = [
-                {
-                  title: "Supplied",
-                  value: `${supplied.toFormat(4)} ${s.symbol}`,
-                  dollarValue: "$ " + supplied.times(s.prices.min).toFormat(2)
-                },
-                { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
-                {
-                  title: "Daily income",
-                  value: `${dIncome.toFormat(6)} ` + s.symbol,
-                  dollarValue: "$ " + dIncome.times(s.prices.min).toFormat(6)
-                }
-              ];
-              return (
-                <Asset key={`token-${s.assetId}`}>
-                  <Row>
-                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                    <SizedBox width={16} />
-                    <Column>
-                      <Text>{s.symbol}</Text>
-                      <Text size="small" type="secondary">
-                        ${s.prices.max.toFormat(2)}
-                      </Text>
-                    </Column>
-                  </Row>
-                  <SizedBox height={16} />
-                  <Data crossAxisSize="max">
-                    {data.map(({ title, value, dollarValue }, index) => (
-                      <StatsRow
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          navigate(
-                            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                              ":poolId",
-                              lendStore.pool.address
-                            ).replace(":assetId", s.assetId)
-                          )
-                        }
-                        key={`asset-${index}`}
-                      >
-                        <Text fitContent nowrap>
-                          {title}
-                        </Text>
-                        <Column crossAxisSize="max">
-                          <Text weight={500} textAlign="right" size="medium">
-                            {value}
-                          </Text>
-                          {dollarValue && (
-                            <Text size="medium" textAlign="right">
-                              {dollarValue}
-                            </Text>
-                          )}
-                        </Column>
-                      </StatsRow>
-                    ))}
-                  </Data>
-                  <SizedBox height={16} />
-                  <Row>
-                    <Button
-                      size="medium"
-                      kind="secondary"
-                      fixed
-                      onClick={(e) =>
-                        openModal(e, lendStore.poolId, "supply", s.assetId)
-                      }
-                    >
-                      Supply
-                    </Button>
-                    <SizedBox width={8} />
-                    <Button
-                      size="medium"
-                      kind="secondary"
-                      fixed
-                      onClick={(e) =>
-                        openModal(e, lendStore.poolId, "withdraw", s.assetId)
-                      }
-                    >
-                      Withdraw
-                    </Button>
-                  </Row>
-                </Asset>
-              );
-            })}
-          </Wrapper>
-        </Column>
-      )}
       <SizedBox height={40} />
-      {lendStore.accountBorrow.length > 0 && (
-        <Column crossAxisSize="max">
-          <Text weight={500} type="secondary">
-            My borrow
-          </Text>
-          <SizedBox height={8} />
-          <Wrapper>
-            {lendStore.accountBorrow.map((s) => {
-              const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
-              const data = [
-                {
-                  title: "Borrow APR",
-                  value: `${s.borrowAPY.toFormat(2)} %`
-                },
-                {
-                  title: "To be repaid",
-                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
-                  dollarValue: "$ " + borrowed.times(s.prices.min).toFormat(6)
-                },
-                {
-                  title: "Daily loan interest",
-                  value:
-                    BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
-                    ` ${s.symbol}`,
-                  dollarValue:
-                    "$ " +
-                    BN.formatUnits(s.dailyLoan, s.decimals)
-                      .times(s.prices.min)
-                      .toFormat(6)
-                }
-              ];
-              return (
-                <Asset key={`token-${s.assetId}`}>
-                  <Row>
-                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                    <SizedBox width={16} />
-                    <Column>
-                      <Text>{s.symbol}</Text>
-                      <Text size="small" type="secondary">
-                        ${s.prices.max.toFormat(2)}
-                      </Text>
-                    </Column>
-                  </Row>
-                  <SizedBox height={16} />
-                  <Data crossAxisSize="max">
-                    {data.map(({ title, value, dollarValue }, index) => (
-                      <StatsRow
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          navigate(
-                            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                              ":poolId",
-                              lendStore.pool.address
-                            ).replace(":assetId", s.assetId)
-                          )
-                        }
-                        key={`asset-${index}`}
-                      >
-                        <Text fitContent nowrap>
-                          {title}
+      {lendStore.mobileDashboardAssets === ASSETS_TYPE.SUPPLY_BLOCK &&
+        lendStore.accountSupply.length > 0 && (
+          <Column crossAxisSize="max">
+            <Text weight={500} type="secondary">
+              My supply
+            </Text>
+            <SizedBox height={8} />
+            <Wrapper>
+              {lendStore.accountSupply.map((s) => {
+                const supplied = BN.formatUnits(s.selfSupply, s.decimals);
+                const dIncome = BN.formatUnits(s.dailyIncome, s.decimals);
+                const data = [
+                  {
+                    title: "Supplied",
+                    value: `${supplied.toFormat(4)} ${s.symbol}`,
+                    dollarValue: "$ " + supplied.times(s.prices.min).toFormat(2)
+                  },
+                  { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
+                  {
+                    title: "Daily income",
+                    value: `${dIncome.toFormat(6)} ` + s.symbol,
+                    dollarValue: "$ " + dIncome.times(s.prices.min).toFormat(6)
+                  }
+                ];
+                return (
+                  <Asset key={`token-${s.assetId}`}>
+                    <Row>
+                      <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                      <SizedBox width={16} />
+                      <Column>
+                        <Text>{s.symbol}</Text>
+                        <Text size="small" type="secondary">
+                          ${s.prices.max.toFormat(2)}
                         </Text>
-                        <Column crossAxisSize="max">
-                          <Text weight={500} textAlign="right" size="medium">
-                            {value}
+                      </Column>
+                    </Row>
+                    <SizedBox height={16} />
+                    <Data crossAxisSize="max">
+                      {data.map(({ title, value, dollarValue }, index) => (
+                        <StatsRow
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate(
+                              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                                ":poolId",
+                                lendStore.pool.address
+                              ).replace(":assetId", s.assetId)
+                            )
+                          }
+                          key={`asset-${index}`}
+                        >
+                          <Text fitContent nowrap>
+                            {title}
                           </Text>
-                          {dollarValue && (
-                            <Text size="medium" textAlign="right">
-                              {dollarValue}
+                          <Column crossAxisSize="max">
+                            <Text weight={500} textAlign="right" size="medium">
+                              {value}
                             </Text>
-                          )}
-                        </Column>
-                      </StatsRow>
-                    ))}
-                  </Data>
-                  <SizedBox height={16} />
-                  <Row>
-                    <Button
-                      size="medium"
-                      kind="secondary"
-                      fixed
-                      onClick={(e) =>
-                        openModal(e, lendStore.poolId, "borrow", s.assetId)
-                      }
-                    >
-                      Borrow
-                    </Button>
-                    <SizedBox width={8} />
-                    <Button
-                      size="medium"
-                      kind="secondary"
-                      fixed
-                      onClick={(e) =>
-                        openModal(e, lendStore.poolId, "repay", s.assetId)
-                      }
-                    >
-                      Repay
-                    </Button>
-                  </Row>
-                </Asset>
-              );
-            })}
-          </Wrapper>
-        </Column>
-      )}
+                            {dollarValue && (
+                              <Text size="medium" textAlign="right">
+                                {dollarValue}
+                              </Text>
+                            )}
+                          </Column>
+                        </StatsRow>
+                      ))}
+                    </Data>
+                    <SizedBox height={16} />
+                    <Row>
+                      <Button
+                        size="medium"
+                        kind="secondary"
+                        fixed
+                        onClick={(e) =>
+                          openModal(e, lendStore.poolId, "supply", s.assetId)
+                        }
+                      >
+                        Supply
+                      </Button>
+                      <SizedBox width={8} />
+                      <Button
+                        size="medium"
+                        kind="secondary"
+                        fixed
+                        onClick={(e) =>
+                          openModal(e, lendStore.poolId, "withdraw", s.assetId)
+                        }
+                      >
+                        Withdraw
+                      </Button>
+                    </Row>
+                  </Asset>
+                );
+              })}
+            </Wrapper>
+          </Column>
+        )}
+      {lendStore.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK &&
+        lendStore.accountBorrow.length > 0 && (
+          <Column crossAxisSize="max">
+            <Text weight={500} type="secondary">
+              My borrow
+            </Text>
+            <SizedBox height={8} />
+            <Wrapper>
+              {lendStore.accountBorrow.map((s) => {
+                const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
+                const data = [
+                  {
+                    title: "Borrow APR",
+                    value: `${s.borrowAPY.toFormat(2)} %`
+                  },
+                  {
+                    title: "To be repaid",
+                    value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                    dollarValue: "$ " + borrowed.times(s.prices.min).toFormat(6)
+                  },
+                  {
+                    title: "Daily loan interest",
+                    value:
+                      BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
+                      ` ${s.symbol}`,
+                    dollarValue:
+                      "$ " +
+                      BN.formatUnits(s.dailyLoan, s.decimals)
+                        .times(s.prices.min)
+                        .toFormat(6)
+                  }
+                ];
+                return (
+                  <Asset key={`token-${s.assetId}`}>
+                    <Row>
+                      <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                      <SizedBox width={16} />
+                      <Column>
+                        <Text>{s.symbol}</Text>
+                        <Text size="small" type="secondary">
+                          ${s.prices.max.toFormat(2)}
+                        </Text>
+                      </Column>
+                    </Row>
+                    <SizedBox height={16} />
+                    <Data crossAxisSize="max">
+                      {data.map(({ title, value, dollarValue }, index) => (
+                        <StatsRow
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate(
+                              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                                ":poolId",
+                                lendStore.pool.address
+                              ).replace(":assetId", s.assetId)
+                            )
+                          }
+                          key={`asset-${index}`}
+                        >
+                          <Text fitContent nowrap>
+                            {title}
+                          </Text>
+                          <Column crossAxisSize="max">
+                            <Text weight={500} textAlign="right" size="medium">
+                              {value}
+                            </Text>
+                            {dollarValue && (
+                              <Text size="medium" textAlign="right">
+                                {dollarValue}
+                              </Text>
+                            )}
+                          </Column>
+                        </StatsRow>
+                      ))}
+                    </Data>
+                    <SizedBox height={16} />
+                    <Row>
+                      <Button
+                        size="medium"
+                        kind="secondary"
+                        fixed
+                        onClick={(e) =>
+                          openModal(e, lendStore.poolId, "borrow", s.assetId)
+                        }
+                      >
+                        Borrow
+                      </Button>
+                      <SizedBox width={8} />
+                      <Button
+                        size="medium"
+                        kind="secondary"
+                        fixed
+                        onClick={(e) =>
+                          openModal(e, lendStore.poolId, "repay", s.assetId)
+                        }
+                      >
+                        Repay
+                      </Button>
+                    </Row>
+                  </Asset>
+                );
+              })}
+            </Wrapper>
+          </Column>
+        )}
     </Root>
   );
 };

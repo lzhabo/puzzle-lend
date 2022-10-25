@@ -115,15 +115,7 @@ const SupplyAssets: React.FC<IProps> = ({
         </Row>
         <Column alignItems="flex-end">
           <Row alignItems="center">
-            <Text
-              size="medium"
-              fitContent
-              onClick={() => {
-                setFocused(true);
-                onMaxClick && onMaxClick(getMaxSupply());
-              }}
-              style={{ cursor: "pointer" }}
-            >
+            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
               {vm.countUserBalance || 0}
               <>&nbsp;</>
               {vm.isDollar ? "$" : token?.symbol}

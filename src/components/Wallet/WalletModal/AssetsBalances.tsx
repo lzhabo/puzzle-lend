@@ -35,7 +35,7 @@ const AssetsBalances: React.FC<IProps> = () => {
       {vm.userAssets.length !== 0 ? (
         vm.userAssets.map((b) => {
           const stats = vm.tokenStats(b.assetId);
-          const dollarEquivalent = new BN(b.formatBalance)
+          const dollarEquivalent = new BN(b.formatBalance || 0)
             .times(stats?.prices.min || BN.ZERO)
             .toFormat(2);
 

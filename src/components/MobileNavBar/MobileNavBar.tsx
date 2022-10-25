@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
 import React from "react";
-import { ROUTES } from "@src/constants";
+import { observer } from "mobx-react-lite";
+import styled from "@emotion/styled";
+import { useStores } from "@stores";
+import { ROUTES, ASSETS_TYPE } from "@src/constants";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
-import { useLocation, useNavigate } from "react-router-dom";
-import isRoutesEquals from "@src/utils/isRoutesEquals";
 import Home from "@components/MobileNavBar/Home";
 import Invest from "@components/MobileNavBar/Invest";
 
@@ -38,58 +38,61 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  &:hover {
+  padding: 5px;
+  padding-bottom: 10px;
+  p {
+    color: ${({ theme }) => `${theme.colors.primary650}`};
+  }
+  &.selected {
+    p {
+      color: ${({ theme }) => `${theme.colors.primary800}`};
+    }
   }
 `;
 const MobileNavBar: React.FC<IProps> = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { lendStore } = useStores();
   const menuItems = [
     {
       name: "My supply",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
+        <Invest
+          active={lendStore.mobileDashboardAssets === ASSETS_TYPE.SUPPLY_BLOCK}
+        />
       ),
-      big: false
+      type: ASSETS_TYPE.SUPPLY_BLOCK
     },
     {
       name: "Home",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Home active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
+        <Home active={lendStore.mobileDashboardAssets === ASSETS_TYPE.HOME} />
       ),
-      big: false
+      type: ASSETS_TYPE.HOME
     },
     {
       name: "My borrow",
       link: ROUTES.DASHBOARD,
       icon: (
-        <Invest active={isRoutesEquals(ROUTES.DASHBOARD, location.pathname)} />
+        <Invest
+          active={lendStore.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK}
+        />
       ),
-      big: false
+      type: ASSETS_TYPE.BORROW_BLOCK
     }
   ];
   return (
     <Root>
-      {menuItems.map(({ icon, name, big, link }, index) => (
+      {menuItems.map(({ icon, name, type }, index) => (
         <MenuItem
           key={index}
-          onClick={() => (name === "NFT" ? window.open(link) : navigate(link))}
+          onClick={() => lendStore.setDashboardAssetType(type)}
+          className={lendStore.mobileDashboardAssets === type ? "selected" : ""}
         >
           {icon}
           {name != null && <SizedBox height={6} />}
           {name != null && (
-            <Text
-              size="small"
-              type={
-                isRoutesEquals(link, location.pathname)
-                  ? "primary"
-                  : "secondary"
-              }
-              fitContent
-            >
+            <Text size="small" fitContent>
               {name}
             </Text>
           )}
@@ -98,4 +101,4 @@ const MobileNavBar: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default MobileNavBar;
+export default observer(MobileNavBar);

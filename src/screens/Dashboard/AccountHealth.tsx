@@ -24,10 +24,9 @@ const Root = styled.div`
   margin-top: 32px;
   align-self: flex-start;
   align-items: center;
-  max-width: 312px;
   flex-direction: column;
-  margin: 50px auto 0 auto;
-  width: calc(100% - 32px);
+  margin: 50px auto 20px auto;
+  width: 100%;
   box-sizing: border-box;
 
   @media (min-width: 880px) {
@@ -35,6 +34,8 @@ const Root = styled.div`
   }
 
   @media (min-width: 1440px) {
+    width: calc(100% - 32px);
+    max-width: 312px;
     margin-left: 40px;
     margin-top: 98px;
   }
@@ -51,19 +52,11 @@ const Health = styled.div`
   position: relative;
 `;
 const LoginHeader = styled.div`
-  display: block;
+  display: flex;
+  width: 100%;
+  text-align: center;
   position: relative;
-
-  &:after {
-    position: absolute;
-    content: "";
-    bottom: -16px;
-    transform: translateX(-50%);
-    left: 50%;
-    background-color: #f1f2fe;
-    width: 110%;
-    height: 1px;
-  }
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 const AccountHealth: React.FC<IProps> = () => {
   const { lendStore, accountStore } = useStores();
@@ -136,6 +129,7 @@ const AccountHealth: React.FC<IProps> = () => {
           <SizedBox height={8} />
           <LoginHeader>
             <Text weight={500}>Connect wallet</Text>
+            <SizedBox height={36} />
           </LoginHeader>
           <SizedBox height={32} />
           <LoginTypesRender
