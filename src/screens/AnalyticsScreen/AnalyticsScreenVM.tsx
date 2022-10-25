@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import nodeService from "@src/services/nodeService";
-import { IToken, POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { IToken, FILTERED_POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
 import PoolStateFetchService from "@src/services/PoolStateFetchService";
 
@@ -90,7 +90,7 @@ class AnalyticsScreenVM {
   }
 
   syncPrices = async () => {
-    const poolIds = POOLS.map((pool) => pool.address);
+    const poolIds = FILTERED_POOLS.map((pool) => pool.address);
     const res = await Promise.all(
       poolIds.map(async (id) => {
         const fetchService = new PoolStateFetchService(id);
@@ -112,7 +112,7 @@ class AnalyticsScreenVM {
   };
 
   syncData = async () => {
-    const poolIds = POOLS.map((pool) => pool.address);
+    const poolIds = FILTERED_POOLS.map((pool) => pool.address);
     const rgxp = "(.*)_(supplied%7Cborrowed)_(.*)";
     const req = poolIds.map((pool) => nodeService.nodeMatchRequest(pool, rgxp));
     const res = await Promise.all(req).then((data) =>
@@ -123,7 +123,7 @@ class AnalyticsScreenVM {
             .map(parseInfoFromDataEntry)
             .filter((v) => v != null)
             .map((v) => {
-              const poolId = POOLS[index].address;
+              const poolId = FILTERED_POOLS[index].address;
               return { ...v, poolId } as TStatisticItem;
             })
         ],

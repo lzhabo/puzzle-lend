@@ -27,10 +27,21 @@ export const ROUTES = {
 export const POOLS = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    address: process.env.REACT_APP_MAIN_POOL,
     link: ROUTES.DASHBOARD
+  },
+  {
+    name: "Puzzle Pool",
+    address: process.env.REACT_APP_PUZZLE_POOL,
+    link: `/${process.env.REACT_APP_PUZZLE_POOL}`
   }
 ];
+
+export const FILTERED_POOLS = POOLS.filter((p: IPool) =>
+  p.address ? p : false
+) as Array<IFilteredPool>;
+
+console.log(FILTERED_POOLS, "FILTERED_POOLS");
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,
@@ -47,6 +58,18 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
 
 export const NODE_URL = "https://nodes-puzzle.wavesnodes.com";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";
+
+export interface IPool {
+  name: string;
+  address?: string;
+  link: string;
+}
+
+export interface IFilteredPool {
+  name: string;
+  address: string;
+  link: string;
+}
 
 export interface IToken {
   assetId: string;

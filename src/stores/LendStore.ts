@@ -7,7 +7,7 @@ import { ASSETS_TYPE } from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
-import { POOLS } from "@src/constants";
+import { FILTERED_POOLS } from "@src/constants";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -33,6 +33,7 @@ class LendStore {
 
   setFetchService = async (pool: string) => {
     this._fetchService = new PoolStateFetchService(pool);
+    console.log(pool, "setFetchService");
     return await this._fetchService
       .fetchSetups()
       .then(this.setTokensSetups)
@@ -56,11 +57,11 @@ class LendStore {
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
 
-  pool = POOLS[0];
+  pool = FILTERED_POOLS[0];
   setPool = (pool: { name: string; address: string; link: string }) =>
     (this.pool = pool);
 
-  get poolId() {
+  get poolId(): string {
     return this.pool.address;
   }
 
@@ -134,16 +135,16 @@ class LendStore {
 
   get health() {
     const bc = this.poolsStats.reduce((acc: BN, stat, index) => {
-      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
+      const deposit = BN.formatUnits(stat?.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
-      const cf = this.tokensSetups[index].cf;
-      const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+      const cf = this.tokensSetups[index]?.cf;
+      const assetBc = cf?.times(1).times(deposit).times(stat?.prices?.min);
       return acc.plus(assetBc);
     }, BN.ZERO);
     const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
-      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-      const lt = this.tokensSetups[index].lt;
-      const assetBcu = borrow.times(stat.prices.max).div(lt);
+      const borrow = BN.formatUnits(stat?.selfBorrow, stat?.decimals);
+      const lt = this.tokensSetups[index]?.lt;
+      const assetBcu = borrow.times(stat?.prices?.max).div(lt);
       return acc.plus(assetBcu);
     }, BN.ZERO);
     const health = new BN(1).minus(bcu.div(bc)).times(100);

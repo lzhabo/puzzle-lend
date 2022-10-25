@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { useStores } from "@stores";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { POOLS } from "@src/constants";
-import { useLocation, Link } from "react-router-dom";
+import { FILTERED_POOLS, IFilteredPool } from "@src/constants";
+import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 interface IProps {}
@@ -42,7 +43,7 @@ const TopMenu = styled.div`
   }
 `;
 
-const MenuItem = styled(Link)<{ selected?: boolean }>`
+const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -66,24 +67,28 @@ const MenuItem = styled(Link)<{ selected?: boolean }>`
 const isRoutesEquals = (a: string, b: string) =>
   a.replaceAll("/", "") === b.replaceAll("/", "");
 
-const menuItems = POOLS.map((pool) => ({
-  name: pool.name,
-  link: pool.link
-}));
+const menuItems = FILTERED_POOLS;
 
 const Header: React.FC<IProps> = () => {
+  const { lendStore } = useStores();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const changePool = (pool: IFilteredPool) => {
+    lendStore.setPool(pool);
+    navigate(`/${pool.address}`);
+  };
 
   return (
     <Root>
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          {menuItems.map(({ name, link }) => {
+          {menuItems.map((pool) => {
             return (
               <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-                to={link}
+                key={pool.name}
+                selected={isRoutesEquals(pool.link, location.pathname)}
+                onClick={() => changePool(pool)}
               >
                 <Text
                   weight={500}
@@ -91,7 +96,7 @@ const Header: React.FC<IProps> = () => {
                     cursor: "pointer"
                   }}
                 >
-                  {name}
+                  {pool.name}
                 </Text>
               </MenuItem>
             );
