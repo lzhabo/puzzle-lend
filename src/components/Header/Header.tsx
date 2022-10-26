@@ -124,7 +124,6 @@ const Header: React.FC<IProps> = () => {
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    document.body.classList.toggle("noscroll", state);
     setMobileMenuOpened(state);
   };
 

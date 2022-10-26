@@ -17,6 +17,7 @@ import {
   Footer,
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
+import Warning from "@src/screens/Dashboard/DashboardModals/components/Warning";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
 import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 
@@ -223,6 +224,12 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
       </Row>
       <SizedBox height={24} />
+      {vm.modalErrorText && (
+        <>
+          <Warning />
+          <SizedBox height={24} />
+        </>
+      )}
       {/* if NO liquidity show ERROR, else borrow or login */}
       <Footer>
         {accountStore && !accountStore.address ? (
