@@ -17,6 +17,7 @@ import {
   Footer,
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
+import Warning from "@src/screens/Dashboard/DashboardModals/components/Warning";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
 import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 
@@ -28,6 +29,7 @@ interface IProps {
   onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
+  //fixme
   onSubmit: (
     amount: BN,
     assetId: string,
@@ -107,26 +109,24 @@ const BorrowAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token?.name || ""}
+              {token?.name}
             </Text>
           </Column>
         </Row>
         <Column alignItems="flex-end" justifyContent="flex-end">
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
-              {vm.countUserBalance || 0}
-              <>&nbsp;</>
+              {vm.countUserBalance ?? 0}
+              &nbsp;
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
-                ? (
-                    BN.formatUnits(
-                      amount.plus(vm.staticTokenAmount),
-                      token?.decimals
-                    ).toNumber() || 0
-                  ).toFixed(4)
+                ? BN.formatUnits(
+                    amount.plus(vm.staticTokenAmount),
+                    token?.decimals
+                  ).toFormat(4) ?? 0
                 : 0}
             </Text>
           </Row>
@@ -161,7 +161,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrow APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.borrowAPY ? token?.borrowAPY.toNumber().toFixed(2) : 0} %
+          {token?.borrowAPY ? token?.borrowAPY.toFormat(2) : 0} %
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -171,9 +171,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Text size="medium" fitContent>
           {token?.selfBorrow
-            ? BN.formatUnits(token?.selfBorrow, token?.decimals)
-                .toNumber()
-                .toFixed(4)
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2)
             : 0}{" "}
           {token?.symbol}
         </Text>
@@ -184,7 +182,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Max possible to Borrow
         </Text>
         <Text size="medium" fitContent>
-          {vm.staticMaximum.toFormat(4) || 0}
+          {vm.staticMaximum.toFormat(2) ?? 0}
           <>&nbsp;</>
           {vm.isDollar ? "$" : token?.symbol}
         </Text>
@@ -196,7 +194,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {userHealth.toNumber().toFixed(2) || 0} %
+            {userHealth.toFormat(2) ?? 0} %
           </Text>
           {vm.accountHealth !== 100 ? (
             <>
@@ -206,7 +204,7 @@ const BorrowAssets: React.FC<IProps> = ({
                 size="medium"
                 fitContent
               >
-                <>&nbsp;</>
+                &nbsp;
                 {vm.accountHealth && amount ? vm.accountHealth.toFixed(2) : 0}%
               </Text>
             </>
@@ -223,6 +221,12 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
       </Row>
       <SizedBox height={24} />
+      {vm.modalErrorText && (
+        <>
+          <Warning />
+          <SizedBox height={24} />
+        </>
+      )}
       {/* if NO liquidity show ERROR, else borrow or login */}
       <Footer>
         {accountStore && !accountStore.address ? (
@@ -239,7 +243,7 @@ const BorrowAssets: React.FC<IProps> = ({
           accountStore &&
           accountStore.address && (
             <Button
-              disabled={+amount === 0 || vm.modalErrorText !== ""}
+              disabled={amount.eq(0) || vm.modalErrorText !== ""}
               fixed
               onClick={() => submitForm()}
               size="large"

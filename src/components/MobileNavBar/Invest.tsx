@@ -4,7 +4,7 @@ import { useTheme } from "@emotion/react";
 interface IProps extends React.SVGProps<SVGSVGElement> {
   active?: boolean;
 }
-
+//fixme
 const Invest: React.FC<IProps> = ({ active }) => {
   const theme = useTheme();
   return (

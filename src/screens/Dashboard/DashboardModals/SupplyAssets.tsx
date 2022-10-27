@@ -109,26 +109,24 @@ const SupplyAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token?.name || ""}
+              {token?.name}
             </Text>
           </Column>
         </Row>
         <Column alignItems="flex-end">
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
-              {vm.countUserBalance || 0}
-              <>&nbsp;</>
+              {vm.countUserBalance ?? 0}
+              &nbsp;
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
-                ? (
-                    BN.formatUnits(
-                      amount.plus(vm.staticTokenAmount),
-                      token?.decimals
-                    ).toNumber() || 0
-                  ).toFixed(4)
+                ? BN.formatUnits(
+                    amount.plus(vm.staticTokenAmount),
+                    token?.decimals
+                  ).toFormat(4) ?? 0
                 : 0}
             </Text>
           </Row>
@@ -171,7 +169,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Supply APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.supplyAPY.toFormat(2) || 0}%
+          {token?.supplyAPY.toFormat(2) ?? 0}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -180,7 +178,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {BN.formatUnits(token?.selfBorrow, token?.decimals).toNumber() || 0}
+          {BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2) ?? 0}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -196,7 +194,7 @@ const SupplyAssets: React.FC<IProps> = ({
       <Footer>
         {accountStore && accountStore.address ? (
           <Button
-            disabled={+amount === 0 || vm.modalErrorText !== ""}
+            disabled={amount.eq(0) || vm.modalErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"

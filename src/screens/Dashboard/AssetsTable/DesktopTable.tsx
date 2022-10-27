@@ -1,5 +1,7 @@
-import styled from "@emotion/styled";
 import React, { useMemo, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import Tooltip from "@components/Tooltip";
 import Table from "@components/Table";
 import { ROUTES } from "@src/constants";
 import { Column, Row } from "@src/components/Flex";
@@ -11,7 +13,6 @@ import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
 
@@ -27,6 +28,7 @@ const Root = styled.div<{ sort?: boolean }>`
   .sort-icon {
     width: 20px;
     height: 20px;
+    margin-left: 4px;
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
@@ -63,9 +65,22 @@ const DesktopTable: React.FC<IProps> = () => {
             onClick={() => selectSort("totalSupply")}
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Total supply
-            </Text>
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Amount of deposited tokens in total.
+                </Text>
+              }
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Total supply
+              </Text>
+            </Tooltip>
             <img
               src={theme.images.icons.group}
               alt="group"
@@ -82,9 +97,22 @@ const DesktopTable: React.FC<IProps> = () => {
             onClick={() => selectSort("supplyAPY")}
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Supply APY
-            </Text>
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Amount of deposited tokens in total.
+                </Text>
+              }
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Supply APY
+              </Text>
+            </Tooltip>
             <img
               src={theme.images.icons.group}
               alt="group"
@@ -101,9 +129,22 @@ const DesktopTable: React.FC<IProps> = () => {
             onClick={() => selectSort("totalBorrow")}
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Total borrow
-            </Text>
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Amount of borrowed tokens in total.
+                </Text>
+              }
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Total borrow
+              </Text>
+            </Tooltip>
             <img
               src={theme.images.icons.group}
               alt="group"
@@ -120,9 +161,23 @@ const DesktopTable: React.FC<IProps> = () => {
             onClick={() => selectSort("borrowAPY")}
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Borrow APY
-            </Text>
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Annual interest paid by borrowers taking into account
+                  compounding.
+                </Text>
+              }
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Borrow APY
+              </Text>
+            </Tooltip>
             <img
               src={theme.images.icons.group}
               alt="group"

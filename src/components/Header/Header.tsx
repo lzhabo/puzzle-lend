@@ -16,7 +16,6 @@ import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
 import SubHeader from "@components/Header/SubHeader";
 import { Anchor } from "@components/Anchor";
-import { ReactComponent as External } from "@src/assets/icons/external.svg";
 
 interface IProps {}
 
@@ -27,7 +26,6 @@ const Root = styled(Column)`
   z-index: 102;
   box-shadow: 0 8px 56px rgba(54, 56, 112, 0.16);
 
-  //todo check
   a {
     text-decoration: none;
   }
@@ -111,40 +109,40 @@ const Desktop = styled.div`
   }
 `;
 
-const ExternalLink = styled.div`
-  position: relative;
-  top: -5px;
-  left: 4px;
-`;
-
 const Header: React.FC<IProps> = () => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
-  const [bannerClosed /*, setBannerClosed*/] = useState(false);
   const location = useLocation();
   const theme = useTheme();
   const toggleMenu = (state: boolean) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-    document.body.classList.toggle("noscroll", state);
     setMobileMenuOpened(state);
   };
 
   const menuItems = [
-    { name: "Dashboard", link: ROUTES.DASHBOARD, isBlank: false },
+    { name: "Dashboard", link: ROUTES.DASHBOARD },
     {
       name: "Guidebook",
       link: "https://puzzle-lend.gitbook.io/guidebook/",
-      isBlank: true
+      isExternalLink: true
     }
   ];
 
   const communityMenu = [
-    { name: "Telegram chat", link: "https://t.me/puzzleswap", outer: true },
+    {
+      name: "Telegram chat",
+      link: "https://t.me/puzzleswap",
+      isExternalLink: true
+    },
     {
       name: "Notifications bot",
       link: "https://t.me/puzzle_swap",
-      outer: true
+      isExternalLink: true
     },
-    { name: "Alerts bot", link: "https://t.me/puzzle_alerts_bot", outer: true }
+    {
+      name: "Alerts bot",
+      link: "https://t.me/puzzle_alerts_bot",
+      isExternalLink: true
+    }
   ];
   return (
     <Root>
@@ -152,7 +150,6 @@ const Header: React.FC<IProps> = () => {
         <MobileMenu
           opened={mobileMenuOpened}
           onClose={() => toggleMenu(false)}
-          {...{ bannerClosed }}
         />
       </Mobile>
       <TopMenu>
@@ -162,25 +159,15 @@ const Header: React.FC<IProps> = () => {
           </Link>
           <Desktop>
             <SizedBox width={54} />
-            {menuItems.map(({ name, link, isBlank }) => (
+            {menuItems.map(({ name, link, isExternalLink }) => (
               <MenuItem
                 key={name}
                 selected={isRoutesEquals(link, location.pathname)}
               >
-                {!isBlank ? (
-                  <Link to={link}>{name}</Link>
+                {isExternalLink ? (
+                  <Anchor href={link}>{name}</Anchor>
                 ) : (
-                  <>
-                    <Anchor
-                      target="_blank"
-                      href="https://puzzle-lend.gitbook.io/guidebook/"
-                    >
-                      {name}
-                    </Anchor>
-                    <ExternalLink>
-                      <External />
-                    </ExternalLink>
-                  </>
+                  <Link to={link}>{name}</Link>
                 )}
               </MenuItem>
             ))}

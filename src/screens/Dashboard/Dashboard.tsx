@@ -53,11 +53,12 @@ const TotalLiquidity = styled.div`
   display: flex;
   padding: 8px 20px;
   border-radius: 16px;
-  width: calc(100% - 32px);
+  width: 100%;
   background: url(${bg});
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  box-sizing: border-box;
 `;
 const DashboardImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
@@ -88,7 +89,7 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
             <Column crossAxisSize="max">
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>
-                  Total liquidity:{" "}
+                  Total liquidity:
                   <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                 </Text>
               </TotalLiquidity>

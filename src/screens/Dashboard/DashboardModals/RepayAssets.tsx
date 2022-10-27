@@ -109,26 +109,24 @@ const BorrowAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token?.name ? token?.name : ""}
+              {token?.name}
             </Text>
           </Column>
         </Row>
         <Column alignItems="flex-end">
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
-              {vm.countUserBalance || 0}
-              <>&nbsp;</>
+              {vm.countUserBalance ?? 0}
+              &nbsp;
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
-                ? (
-                    BN.formatUnits(
-                      vm.staticTokenAmount.minus(amount),
-                      token?.decimals
-                    ).toNumber() || 0
-                  ).toFixed(4)
+                ? BN.formatUnits(
+                    vm.staticTokenAmount.minus(amount),
+                    token?.decimals
+                  ).toFormat(4) ?? 0
                 : 0}
             </Text>
           </Row>
@@ -154,7 +152,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrow APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.borrowAPY.toFormat(2) || 0}%
+          {token?.borrowAPY.toFormat(2) ?? 0}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -164,9 +162,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Text size="medium" fitContent>
           {token?.selfBorrow
-            ? BN.formatUnits(token?.selfBorrow, token?.decimals)
-                .toNumber()
-                .toFixed(4)
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(4)
             : 0}
         </Text>
       </Row>
@@ -180,7 +176,7 @@ const BorrowAssets: React.FC<IProps> = ({
             vm.tokenBalance.minus(amount),
             token?.decimals
           ).toFormat(2)}
-          <>&nbsp;</>
+          &nbsp;
           {token?.name}
         </Text>
       </Row>

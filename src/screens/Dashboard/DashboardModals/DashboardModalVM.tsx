@@ -7,15 +7,15 @@ import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 
 const notifications = {
-  [OPERATIONS_TYPE.WITHDRAW]: `Congrats, it's successfull Withdraw! You can track the transaction on Waves Explorer.`,
-  [OPERATIONS_TYPE.SUPPLY]: `Congrats with successfull supply! You can track the transaction on Waves Explorer.`,
-  [OPERATIONS_TYPE.REPAY]: `Congrats, successfully Repaid you'r loan! You can track the transaction on Waves Explorer.`,
-  [OPERATIONS_TYPE.BORROW]: `Congrats, You successfully borrowed some money! You can track the transaction on Waves Explorer.`
+  [OPERATIONS_TYPE.WITHDRAW]: `The withdrawal is successful! You can view the transaction on Waves Explorer`,
+  [OPERATIONS_TYPE.SUPPLY]: `You successfully supplied assets! You can view the transaction on Waves Explorer`,
+  [OPERATIONS_TYPE.REPAY]: `You successfully repaid your loan! You can view the transaction on Waves Explorer`,
+  [OPERATIONS_TYPE.BORROW]: `You successfully borrowed some money! You can view the transaction on Waves Explorer`
 };
 
 type UrlParamsTypes = {
   tokenId?: string;
-  modalPoolId?: string;
+  poolId?: string;
 };
 
 const ctx = React.createContext<DashboardModalVM | null>(null);
@@ -199,7 +199,7 @@ class DashboardModalVM {
     return (
       BN.formatUnits(this.staticTokenAmount, this.token?.decimals).toFormat(
         4
-      ) || "0"
+      ) ?? "0"
     );
   }
 

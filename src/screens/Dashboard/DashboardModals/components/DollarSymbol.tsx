@@ -1,6 +1,9 @@
 import styled from "@emotion/styled";
+import React from "react";
 
-const DollarSymbol = styled.div`
+interface IProps {}
+//fixme change this shit (sorry)
+const Dollar = styled.div`
   display: flex;
   align-items: center;
   position: absolute;
@@ -10,5 +13,7 @@ const DollarSymbol = styled.div`
   color: ${({ theme }) => theme.colors.primary800};
   transform: translateY(-50%);
 `;
+
+const DollarSymbol: React.FC<IProps> = () => <Dollar>$</Dollar>;
 
 export default DollarSymbol;

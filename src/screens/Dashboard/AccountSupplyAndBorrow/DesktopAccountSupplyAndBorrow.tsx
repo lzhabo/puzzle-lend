@@ -5,6 +5,7 @@ import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
 import { useStores } from "@stores";
 import Table from "@components/Table";
+import Tooltip from "@components/Tooltip";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
@@ -31,14 +32,18 @@ const Root = styled.div<{ sort?: boolean }>`
   .sort-icon {
     width: 20px;
     height: 20px;
+    margin-left: 4px;
   }
 
   .sort-icon-active {
     width: 20px;
     height: 20px;
+    margin-left: 4px;
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
+//fixme replace sort logic to VM
+// divide to components, 500 lines is too much
 const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
@@ -128,13 +133,15 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Supplied
             </Text>
-            <img
-              src={theme.images.icons.group}
-              alt="group"
-              className={
-                sort === "selfSupply" ? "sort-icon-active" : "sort-icon"
-              }
-            />
+            {lendStore.accountSupply.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "selfSupply" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
           </Row>
         ),
         accessor: "supplied"
@@ -150,16 +157,32 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             }
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Supply APY
-            </Text>
-            <img
-              src={theme.images.icons.group}
-              alt="group"
-              className={
-                sort === "supplyAPY" ? "sort-icon-active" : "sort-icon"
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Annual interest paid to investors taking into account
+                  compounding.
+                </Text>
               }
-            />
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Supply APY
+              </Text>
+            </Tooltip>
+            {lendStore.accountSupply.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "supplyAPY" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
           </Row>
         ),
         accessor: "supplyApy"
@@ -174,13 +197,15 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Daily income
             </Text>
-            <img
-              src={theme.images.icons.group}
-              alt="group"
-              className={
-                sort === "dailyIncome" ? "sort-icon-active" : "sort-icon"
-              }
-            />
+            {lendStore.accountSupply.length > 1 && (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  sort === "dailyIncome" ? "sort-icon-active" : "sort-icon"
+                }
+              />
+            )}
           </Row>
         ),
         accessor: "dailyIncome"
@@ -333,9 +358,23 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             }
             justifyContent="flex-end"
           >
-            <Text size="medium" fitContent nowrap>
-              Borrow APY
-            </Text>
+            <Tooltip
+              content={
+                <Text textAlign="left">
+                  Annual interest paid by borrowers taking into account
+                  compounding.
+                </Text>
+              }
+            >
+              <Text
+                style={{ textDecoration: "underline dotted" }}
+                size="medium"
+                fitContent
+                nowrap
+              >
+                Borrow APY
+              </Text>
+            </Tooltip>
             {lendStore.accountBorrow.length > 1 && (
               <img
                 src={theme.images.icons.group}

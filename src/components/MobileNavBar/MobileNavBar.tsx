@@ -49,6 +49,7 @@ const MenuItem = styled.div<{ selected?: boolean }>`
     }
   }
 `;
+//fixme
 const MobileNavBar: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const menuItems = [
