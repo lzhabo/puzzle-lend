@@ -15,7 +15,7 @@ const notifications = {
 
 type UrlParamsTypes = {
   tokenId?: string;
-  modalPoolId?: string;
+  poolId?: string;
 };
 
 const ctx = React.createContext<DashboardModalVM | null>(null);

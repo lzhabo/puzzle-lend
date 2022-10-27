@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
+import React from "react";
 
 interface IProps {}
-
+//fixme change this shit (sorry)
 const Dollar = styled.div`
   display: flex;
   align-items: center;

@@ -7,7 +7,7 @@ import { Anchor } from "@components/Anchor";
 interface ILinkGroupItem {
   name: string;
   link: string;
-  outer?: boolean;
+  isExternalLink?: boolean;
 }
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
@@ -45,8 +45,8 @@ const LinkGroup: React.FC<IProps> = ({ title, links, ...rest }) => {
   return (
     <Root {...rest}>
       <Text type="secondary">{title}</Text>
-      {links.map(({ name, link, outer }, key) =>
-        outer ? (
+      {links.map(({ name, link, isExternalLink }, key) =>
+        isExternalLink ? (
           <StyledAnchor href={link} key={key}>
             {name}
           </StyledAnchor>

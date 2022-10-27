@@ -74,6 +74,7 @@ const Header: React.FC<IProps> = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  //fixme replace it to app.tsx
   const changePool = (pool: IPool, index: number) => {
     lendStore.setPool(pool);
     if (index === 0) return navigate("/");

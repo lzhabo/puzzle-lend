@@ -11,6 +11,7 @@ import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
 import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
+import { Anchor } from "@components/Anchor";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -70,13 +71,9 @@ const Borrow: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <a
-            href="https://waves.exchange/trading/spot/WAVES_USDN"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Anchor href="https://waves.exchange/trading/spot/WAVES_USDN">
             <Button size="medium">Buy WAVES</Button>
-          </a>
+          </Anchor>
           <SizedBox height={100} />
         </Column>
       )}

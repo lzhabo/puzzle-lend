@@ -11,7 +11,7 @@ import { TPoolStats } from "@src/stores/LendStore";
 import { TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<WalletVM | null>(null);
-
+//fixme review wallet and fix issues
 export const WalletVMProvider: React.FC = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new WalletVM(rootStore), [rootStore]);

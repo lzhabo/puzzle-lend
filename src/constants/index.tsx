@@ -13,10 +13,10 @@ export const ROUTES = {
   DASHBOARD: "/",
   DASHBOARD_MODAL_WITHDRAW: "",
   DASHBOARD_MODALS: {
-    [OPERATIONS_TYPE.SUPPLY]: ":modalPoolId/supply/:tokenId",
-    [OPERATIONS_TYPE.WITHDRAW]: ":modalPoolId/withdraw/:tokenId",
-    [OPERATIONS_TYPE.BORROW]: ":modalPoolId/borrow/:tokenId",
-    [OPERATIONS_TYPE.REPAY]: ":modalPoolId/repay/:tokenId"
+    [OPERATIONS_TYPE.SUPPLY]: ":poolId/supply/:tokenId",
+    [OPERATIONS_TYPE.WITHDRAW]: ":poolId/withdraw/:tokenId",
+    [OPERATIONS_TYPE.BORROW]: ":poolId/borrow/:tokenId",
+    [OPERATIONS_TYPE.REPAY]: ":poolId/repay/:tokenId"
   },
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
@@ -34,22 +34,21 @@ export const POOLS_PROD = [
 export const POOLS_DEV = [
   {
     name: "Main Pool",
-    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
   },
   {
     name: "Puzzle Pool",
-    address: "3PEhGDwvjrjVKRPv5kHkjfDLmBJK1dd2frT"
+    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
   }
 ];
 
-export const POOLS_LIST = {
+export const POOLS_LIST: Record<string, Array<IPool>> = {
   PROD: POOLS_PROD,
   DEV: POOLS_DEV
 };
 
-export const POOLS =
-  POOLS_LIST[process?.env?.REACT_APP_NODE_ENV as keyof typeof POOLS_LIST] ??
-  POOLS_LIST.PROD;
+export const POOLS = POOLS_LIST[process.env.REACT_APP_NODE_ENV ?? "PROD"];
+console.log(POOLS[0].address);
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,

@@ -6,7 +6,6 @@ import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
 import { OPERATIONS_TYPE } from "@src/constants";
-import { sleep } from "@src/utils/sleep";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
 import DashboardModalBody from "@screens/Dashboard/DashboardModals/DashboardModalBody";
@@ -67,7 +66,7 @@ const DashboardModalContent: React.FC<IProps> = () => {
           : OPERATIONS_TYPE.SUPPLY;
       vm.setDashboardModalStep(step);
       return navigate(
-        `/${vm.urlParams?.modalPoolId}/${operation}/${vm.urlParams?.tokenId}`
+        `/${vm.urlParams?.poolId}/${operation}/${vm.urlParams?.tokenId}`
       );
     }
 
@@ -80,16 +79,12 @@ const DashboardModalContent: React.FC<IProps> = () => {
           : OPERATIONS_TYPE.BORROW;
       vm.setDashboardModalStep(step);
       return navigate(
-        `/${vm.urlParams?.modalPoolId}/${operation}/${vm.urlParams?.tokenId}`
+        `/${vm.urlParams?.poolId}/${operation}/${vm.urlParams?.tokenId}`
       );
     }
   };
 
-  const closeTab = async () => {
-    setOpen(false);
-    await sleep(400);
-    return navigate("/");
-  };
+  const closeTab = () => navigate(`/${vm.urlParams?.poolId}`);
 
   return (
     <Dialog
@@ -113,7 +108,7 @@ const DashboardModalContent: React.FC<IProps> = () => {
           urlParams={vm.urlParams}
           operationName={vm.operationName}
           tokenStats={vm.token}
-          onClose={() => closeTab()}
+          onClose={closeTab}
         />
       )}
     </Dialog>
@@ -121,7 +116,7 @@ const DashboardModalContent: React.FC<IProps> = () => {
 };
 
 const DashboardModal: React.FC<IPropsVM> = ({ operationName }) => {
-  const urlParams = useParams<{ tokenId: string; modalPoolId: string }>();
+  const urlParams = useParams<{ tokenId: string; poolId: string }>();
   const { lendStore } = useStores();
 
   return (

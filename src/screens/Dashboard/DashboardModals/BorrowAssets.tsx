@@ -28,6 +28,7 @@ interface IProps {
   onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
+  //fixme
   onSubmit: (
     amount: BN,
     assetId: string,

@@ -39,7 +39,7 @@ const StatsRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f1f2fe;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
   padding-bottom: 8px;
   margin-bottom: 16px;
   cursor: pointer;

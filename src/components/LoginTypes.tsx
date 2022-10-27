@@ -7,6 +7,7 @@ import { LOGIN_TYPE } from "@stores/AccountStore";
 import seed from "@src/assets/icons/seed.svg";
 import email from "@src/assets/icons/email.svg";
 import keeper from "@src/assets/icons/keeper.svg";
+import { Anchor } from "@components/Anchor";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -77,14 +78,12 @@ const LoginTypesRender: React.FC<{
       <SizedBox height={24} />
       <Text textAlign="center" size="medium">
         New to Waves blockchain?{" "}
-        <a
+        <Anchor
           style={{ color: "#7075E9", paddingTop: 4, display: "block" }}
           href="https://docs.waves.exchange/en/waves-exchange/waves-exchange-online-desktop/online-desktop-account/online-desktop-creation"
-          target="_blank"
-          rel="noreferrer"
         >
           Learn more about wallets
-        </a>
+        </Anchor>
       </Text>
       <SizedBox height={24} />
     </Column>

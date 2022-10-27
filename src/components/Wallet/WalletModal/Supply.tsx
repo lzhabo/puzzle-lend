@@ -11,6 +11,7 @@ import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
 import { useWalletVM } from "@components/Wallet/WalletModal/WalletVM";
 import { ReactComponent as NotFoundIcon } from "@src/assets/notFound.svg";
+import { Anchor } from "@components/Anchor";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -30,7 +31,7 @@ const Borrow: React.FC<IProps> = () => {
         <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       </Root>
     );
-
+  //fixme remove buy waves tokens
   return (
     <Root>
       {vm.userAssets.length !== 0 ? (
@@ -48,9 +49,9 @@ const Borrow: React.FC<IProps> = () => {
               rateChange={BN.ZERO}
               key={b.assetId}
               logo={b.logo}
-              topLeftInfo={"My supply"}
+              topLeftInfo="My supply"
               topRightInfo={supply}
-              bottomLeftInfo={"Supply APY"}
+              bottomLeftInfo="Supply APY"
               bottomRightInfo={`${stats?.supplyAPY.toFormat(2)}%` ?? "0"}
               withClickLogic
               onClick={() => {
@@ -70,13 +71,9 @@ const Borrow: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <a
-            href="https://waves.exchange/trading/spot/WAVES_USDN"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Anchor href="https://waves.exchange/trading/spot/WAVES_USDN">
             <Button size="medium">Buy WAVES</Button>
-          </a>
+          </Anchor>
           <SizedBox height={100} />
         </Column>
       )}

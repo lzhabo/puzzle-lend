@@ -13,7 +13,7 @@ import BorrowAssets from "@screens/Dashboard/DashboardModals/BorrowAssets";
 
 type UrlParamsTypes = {
   tokenId?: string;
-  modalPoolId?: string;
+  poolId?: string;
 };
 
 interface IProps {
@@ -46,7 +46,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.SUPPLY && (
         <SupplyAssets
           token={tokenStats}
-          poolId={urlParams?.modalPoolId || vm.currentPoolId}
+          poolId={urlParams?.poolId || vm.currentPoolId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
@@ -57,7 +57,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
           token={tokenStats}
-          poolId={urlParams?.modalPoolId || vm.currentPoolId}
+          poolId={urlParams?.poolId || vm.currentPoolId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -69,7 +69,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.BORROW && (
         <BorrowAssets
           token={tokenStats}
-          poolId={urlParams?.modalPoolId || vm.currentPoolId}
+          poolId={urlParams?.poolId || vm.currentPoolId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -81,7 +81,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.REPAY && (
         <RepayAssets
           token={tokenStats}
-          poolId={urlParams?.modalPoolId || vm.currentPoolId}
+          poolId={urlParams?.poolId || vm.currentPoolId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}

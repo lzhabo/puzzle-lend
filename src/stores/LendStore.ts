@@ -41,6 +41,7 @@ class LendStore {
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
+  //fixme make scroll to borrow/supply block
   mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
   setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
