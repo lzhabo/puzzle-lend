@@ -42,13 +42,12 @@ export const POOLS_DEV = [
   }
 ];
 
-export const POOLS_LIST: Record<string, Array<IPool>> = {
+const POOLS_LIST: Record<string, Array<IPool>> = {
   PROD: POOLS_PROD,
   DEV: POOLS_DEV
 };
 
-export const POOLS = POOLS_LIST[process.env.REACT_APP_NODE_ENV ?? "PROD"];
-console.log(POOLS[0].address);
+export const POOLS = POOLS_LIST[process.env.REACT_APP_NODE_ENV ?? "DEV"];
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,

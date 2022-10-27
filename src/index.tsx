@@ -34,14 +34,14 @@ ReactDOM.render(
   <React.StrictMode>
     <storesContext.Provider value={mobxStore}>
       <ThemeWrapper>
-        {process.env.REACT_APP_NODE_ENV === "DEV" ? (
-          <HashRouter>
-            <App />
-          </HashRouter>
-        ) : (
+        {process.env.REACT_APP_NODE_ENV === "PROD" ? (
           <BrowserRouter>
             <App />
           </BrowserRouter>
+        ) : (
+          <HashRouter>
+            <App />
+          </HashRouter>
         )}
         <GlobalStyles />
       </ThemeWrapper>
