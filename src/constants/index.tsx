@@ -41,8 +41,6 @@ export const FILTERED_POOLS = POOLS.filter((p: IPool) =>
   p.address ? p : false
 ) as Array<IFilteredPool>;
 
-console.log(FILTERED_POOLS, "FILTERED_POOLS");
-
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,
   logo: tokenLogos[t.symbol]
