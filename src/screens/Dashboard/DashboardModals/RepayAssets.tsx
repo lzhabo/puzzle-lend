@@ -117,7 +117,7 @@ const BorrowAssets: React.FC<IProps> = ({
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
               {vm.countUserBalance ?? 0}
-              <>&nbsp;</>
+              &nbsp;
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
@@ -152,7 +152,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrow APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.borrowAPY.toFormat(2) || 0}%
+          {token?.borrowAPY.toFormat(2) ?? 0}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -176,7 +176,7 @@ const BorrowAssets: React.FC<IProps> = ({
             vm.tokenBalance.minus(amount),
             token?.decimals
           ).toFormat(2)}
-          <>&nbsp;</>
+          &nbsp;
           {token?.name}
         </Text>
       </Row>

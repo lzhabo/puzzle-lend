@@ -180,7 +180,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Max possible to Borrow
         </Text>
         <Text size="medium" fitContent>
-          {vm.staticMaximum.toFormat(2) || 0}
+          {vm.staticMaximum.toFormat(2) ?? 0}
           <>&nbsp;</>
           {vm.isDollar ? "$" : token?.symbol}
         </Text>
@@ -192,7 +192,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Row alignItems="center" justifyContent="flex-end">
           <Text size="medium" type="success" fitContent>
-            {userHealth.toFormat(2) || 0} %
+            {userHealth.toFormat(2) ?? 0} %
           </Text>
           {vm.accountHealth !== 100 ? (
             <>
@@ -202,7 +202,7 @@ const BorrowAssets: React.FC<IProps> = ({
                 size="medium"
                 fitContent
               >
-                <>&nbsp;</>
+                &nbsp;
                 {vm.accountHealth && amount ? vm.accountHealth.toFixed(2) : 0}%
               </Text>
             </>
@@ -235,7 +235,7 @@ const BorrowAssets: React.FC<IProps> = ({
           accountStore &&
           accountStore.address && (
             <Button
-              disabled={+amount === 0 || vm.modalErrorText !== ""}
+              disabled={amount.eq(0) || vm.modalErrorText !== ""}
               fixed
               onClick={() => submitForm()}
               size="large"

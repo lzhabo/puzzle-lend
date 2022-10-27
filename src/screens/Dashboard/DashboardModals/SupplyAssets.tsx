@@ -117,7 +117,7 @@ const SupplyAssets: React.FC<IProps> = ({
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
               {vm.countUserBalance ?? 0}
-              <>&nbsp;</>
+              &nbsp;
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
@@ -169,7 +169,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Supply APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.supplyAPY.toFormat(2) || 0}%
+          {token?.supplyAPY.toFormat(2) ?? 0}%
         </Text>
       </Row>
       <SizedBox height={14} />
