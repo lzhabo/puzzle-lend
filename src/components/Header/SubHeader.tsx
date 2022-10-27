@@ -3,7 +3,7 @@ import React from "react";
 import { useStores } from "@stores";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { FILTERED_POOLS, IFilteredPool } from "@src/constants";
+import { POOLS, IPool } from "@src/constants";
 import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
@@ -64,31 +64,37 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   }
 `;
 
-const isRoutesEquals = (a: string, b: string) =>
-  a.replaceAll("/", "") === b.replaceAll("/", "");
-
-const menuItems = FILTERED_POOLS;
+const isRoutesEquals = (a: string, b: string, index: number) => {
+  if (index === 0 && b === "/") return true;
+  return a.replaceAll("/", "") === b.replaceAll("/", "");
+};
 
 const Header: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const changePool = (pool: IFilteredPool) => {
+  const changePool = (pool: IPool, index: number) => {
     lendStore.setPool(pool);
-    navigate(`/${pool.address}`);
+    if (index === 0) return navigate("/");
+
+    return navigate(`/${pool.address}`);
   };
 
   return (
     <Root>
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          {menuItems.map((pool) => {
+          {POOLS.map((pool, index) => {
             return (
               <MenuItem
-                key={pool.name}
-                selected={isRoutesEquals(pool.link, location.pathname)}
-                onClick={() => changePool(pool)}
+                key={pool.address}
+                selected={isRoutesEquals(
+                  pool.address,
+                  location.pathname,
+                  index
+                )}
+                onClick={() => changePool(pool, index)}
               >
                 <Text
                   weight={500}

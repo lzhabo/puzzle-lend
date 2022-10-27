@@ -7,7 +7,7 @@ import { ASSETS_TYPE } from "@src/constants";
 import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
-import { FILTERED_POOLS } from "@src/constants";
+import { POOLS } from "@src/constants";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -56,9 +56,8 @@ class LendStore {
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
 
-  pool = FILTERED_POOLS[0];
-  setPool = (pool: { name: string; address: string; link: string }) =>
-    (this.pool = pool);
+  pool = POOLS[0];
+  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
   get poolId(): string {
     return this.pool.address;

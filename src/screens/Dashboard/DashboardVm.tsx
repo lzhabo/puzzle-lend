@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { IToken, FILTERED_POOLS, TOKENS_LIST } from "@src/constants";
+import { IToken, POOLS, TOKENS_LIST } from "@src/constants";
 
 const ctx = React.createContext<DashboardVM | null>(null);
 
@@ -44,8 +44,8 @@ class DashboardVM {
   constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.poolId = poolId ?? FILTERED_POOLS[0].address;
-    const pool = FILTERED_POOLS.find((pool) => pool.address === this.poolId)!;
+    this.poolId = poolId ?? POOLS[0].address;
+    const pool = POOLS.find((pool) => pool.address === this.poolId)!;
     this.rootStore.lendStore.setPool(pool);
   }
 }

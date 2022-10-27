@@ -24,22 +24,32 @@ export const ROUTES = {
   NOT_FOUND: "/404"
 };
 
-export const POOLS = [
+export const POOLS_PROD = [
   {
     name: "Main Pool",
-    address: process.env.REACT_APP_MAIN_POOL,
-    link: ROUTES.DASHBOARD
-  },
-  {
-    name: "Puzzle Pool",
-    address: process.env.REACT_APP_PUZZLE_POOL,
-    link: `/${process.env.REACT_APP_PUZZLE_POOL}`
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
   }
 ];
 
-export const FILTERED_POOLS = POOLS.filter((p: IPool) =>
-  p.address ? p : false
-) as Array<IFilteredPool>;
+export const POOLS_DEV = [
+  {
+    name: "Main Pool",
+    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
+  },
+  {
+    name: "Puzzle Pool",
+    address: "3PEhGDwvjrjVKRPv5kHkjfDLmBJK1dd2frT"
+  }
+];
+
+export const POOLS_LIST = {
+  PROD: POOLS_PROD,
+  DEV: POOLS_DEV
+};
+
+export const POOLS =
+  POOLS_LIST[process?.env?.REACT_APP_NODE_ENV as keyof typeof POOLS_LIST] ??
+  POOLS_LIST.PROD;
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,
@@ -59,14 +69,7 @@ export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export interface IPool {
   name: string;
-  address?: string;
-  link: string;
-}
-
-export interface IFilteredPool {
-  name: string;
   address: string;
-  link: string;
 }
 
 export interface IToken {
@@ -81,7 +84,7 @@ export interface IToken {
 }
 
 export enum ASSETS_TYPE {
-  SUPPLY_BLOCK = 1,
-  HOME = 2,
-  BORROW_BLOCK = 3
+  SUPPLY_BLOCK,
+  HOME,
+  BORROW_BLOCK
 }

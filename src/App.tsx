@@ -48,6 +48,17 @@ const App: React.FC = () => {
             />
           ))}
         </Route>
+        <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
+          {[...Object.entries(ROUTES.DASHBOARD_MODALS_MOBILE)].map(([type, path]) => (
+            <Route
+              path={path}
+              key={path}
+              element={
+                <DashboardModal operationName={type as OPERATIONS_TYPE} />
+              }
+            />
+          ))}
+        </Route>
         <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
         <Route
           path={ROUTES.DASHBOARD_TOKEN_DETAILS}

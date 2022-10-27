@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { FILTERED_POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import transactionsService from "@src/services/transactionsService";
@@ -149,7 +149,7 @@ class ExploreTokenVM {
     this.rootStore = rootStore;
     this.assetId = assetId;
     makeAutoObservable(this);
-    const pool = FILTERED_POOLS.find((pool) => pool.address === poolId)!;
+    const pool = POOLS.find((pool) => pool.address === poolId)!;
     this.rootStore.lendStore.setPool(pool);
     Promise.all([
       this.syncChart(),
