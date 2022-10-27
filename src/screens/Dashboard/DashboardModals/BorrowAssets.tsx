@@ -107,7 +107,7 @@ const BorrowAssets: React.FC<IProps> = ({
           <Column>
             <Text size="medium">{token?.symbol}</Text>
             <Text size="small" type="secondary">
-              {token?.name || ""}
+              {token?.name}
             </Text>
           </Column>
         </Row>
