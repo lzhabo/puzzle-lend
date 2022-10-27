@@ -84,7 +84,7 @@ const AccountHealth: React.FC<IProps> = () => {
   const isKeeperDisabled = !accountStore.isWavesKeeperInstalled;
   return (
     <Root>
-      {accountStore.address ? (
+      {accountStore.address && lendStore.health ? (
         <>
           <Health>
             <Text weight={500} type="secondary" fitContent>

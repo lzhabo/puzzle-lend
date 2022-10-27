@@ -92,7 +92,7 @@ const ModalTokenInput: React.FC<IProps> = ({
 
   return (
     <ModalInputContainer focused={focused} readOnly={!amount}>
-      {isDollar && <DollarSymbol>$</DollarSymbol>}
+      {isDollar && <DollarSymbol />}
       {onMaxClick && (
         <MaxButton
           onClick={() => {

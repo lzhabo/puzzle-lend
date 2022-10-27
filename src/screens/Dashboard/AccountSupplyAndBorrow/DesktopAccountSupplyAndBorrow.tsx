@@ -42,6 +42,8 @@ const Root = styled.div<{ sort?: boolean }>`
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
+//fixme replace sort logic to VM
+// divide to components, 500 lines is too much
 const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();

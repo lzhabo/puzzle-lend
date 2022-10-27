@@ -61,7 +61,6 @@ class AccountStore {
       this.setAddress(initState.address);
     }
     //todo добавить состояние логаут когда все сбрасывается
-    // this.setAddress("3PQRdFwrRmc6qV3zXo8SWVEkYKWUrZcUu6N");
     Promise.all([this.checkScriptedAccount(), this.updateAccountAssets()]);
     setInterval(this.updateAccountAssets, 10 * 1000);
     reaction(

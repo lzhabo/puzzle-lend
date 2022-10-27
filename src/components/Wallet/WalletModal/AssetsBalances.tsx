@@ -11,6 +11,7 @@ import styled from "@emotion/styled";
 import { useStores } from "@stores";
 import Skeleton from "react-loading-skeleton";
 import BN from "@src/utils/BN";
+import { Anchor } from "@components/Anchor";
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -35,7 +36,7 @@ const AssetsBalances: React.FC<IProps> = () => {
       {vm.userAssets.length !== 0 ? (
         vm.userAssets.map((b) => {
           const stats = vm.tokenStats(b.assetId);
-          const dollarEquivalent = new BN(b.formatBalance || 0)
+          const dollarEquivalent = new BN(b.formatBalance ?? 0)
             .times(stats?.prices.min || BN.ZERO)
             .toFormat(2);
 
@@ -66,13 +67,9 @@ const AssetsBalances: React.FC<IProps> = () => {
             Buy WAVES on Waves Exchange to start trading.
           </Text>
           <SizedBox height={16} />
-          <a
-            href="https://waves.exchange/trading/spot/WAVES_USDN"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Anchor href="https://waves.exchange/trading/spot/WAVES_USDN">
             <Button size="medium">Buy WAVES</Button>
-          </a>
+          </Anchor>
           <SizedBox height={100} />
         </Column>
       )}

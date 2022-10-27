@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { useStores } from "@stores";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { POOLS } from "@src/constants";
-import { useLocation, Link } from "react-router-dom";
+import { POOLS, IPool } from "@src/constants";
+import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
 interface IProps {}
@@ -42,7 +43,7 @@ const TopMenu = styled.div`
   }
 `;
 
-const MenuItem = styled(Link)<{ selected?: boolean }>`
+const MenuItem = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -63,27 +64,38 @@ const MenuItem = styled(Link)<{ selected?: boolean }>`
   }
 `;
 
-const isRoutesEquals = (a: string, b: string) =>
-  a.replaceAll("/", "") === b.replaceAll("/", "");
-
-const menuItems = POOLS.map((pool) => ({
-  name: pool.name,
-  link: pool.link
-}));
+const isRoutesEquals = (a: string, b: string, index: number) => {
+  if (index === 0 && b === "/") return true;
+  return a.replaceAll("/", "") === b.replaceAll("/", "");
+};
 
 const Header: React.FC<IProps> = () => {
+  const { lendStore } = useStores();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  //fixme replace it to app.tsx
+  const changePool = (pool: IPool, index: number) => {
+    lendStore.setPool(pool);
+    if (index === 0) return navigate("/");
+
+    return navigate(`/${pool.address}`);
+  };
 
   return (
     <Root>
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          {menuItems.map(({ name, link }) => {
+          {POOLS.map((pool, index) => {
             return (
               <MenuItem
-                key={name}
-                selected={isRoutesEquals(link, location.pathname)}
-                to={link}
+                key={pool.address}
+                selected={isRoutesEquals(
+                  pool.address,
+                  location.pathname,
+                  index
+                )}
+                onClick={() => changePool(pool, index)}
               >
                 <Text
                   weight={500}
@@ -91,7 +103,7 @@ const Header: React.FC<IProps> = () => {
                     cursor: "pointer"
                   }}
                 >
-                  {name}
+                  {pool.name}
                 </Text>
               </MenuItem>
             );

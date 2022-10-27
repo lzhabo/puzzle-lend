@@ -12,7 +12,7 @@ import DarkMode from "@components/Header/DarkMode";
 
 interface IProps {
   onClose: () => void;
-  bannerClosed: boolean;
+  bannerClosed?: boolean;
   opened: boolean;
 }
 
@@ -52,7 +52,11 @@ const communityMenu = [
   { name: "Medium", link: "https://medium.com/@puzzlenetwork", outer: true }
 ];
 
-const MobileMenu: React.FC<IProps> = ({ bannerClosed, opened, onClose }) => {
+const MobileMenu: React.FC<IProps> = ({
+  bannerClosed = false,
+  opened,
+  onClose
+}) => {
   const mainFunctional = [
     { name: "Dashboard", link: ROUTES.DASHBOARD, outer: false },
     {

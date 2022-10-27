@@ -41,6 +41,7 @@ class LendStore {
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
+  //fixme make scroll to borrow/supply block
   mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
   setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
@@ -57,10 +58,9 @@ class LendStore {
     this.poolsStats.find((s) => s.assetId === assetId);
 
   pool = POOLS[0];
-  setPool = (pool: { name: string; address: string; link: string }) =>
-    (this.pool = pool);
+  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
-  get poolId() {
+  get poolId(): string {
     return this.pool.address;
   }
 
@@ -135,14 +135,15 @@ class LendStore {
   get health() {
     const bc = this.poolsStats.reduce((acc: BN, stat, index) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
-      if (deposit.eq(0)) return acc;
-      const cf = this.tokensSetups[index].cf;
+      const cf = this.tokensSetups[index]?.cf;
+      if (deposit.eq(0) || !cf) return acc;
       const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
       return acc.plus(assetBc);
     }, BN.ZERO);
     const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-      const lt = this.tokensSetups[index].lt;
+      const lt = this.tokensSetups[index]?.lt;
+      if (borrow.eq(0) || !lt) return acc;
       const assetBcu = borrow.times(stat.prices.max).div(lt);
       return acc.plus(assetBcu);
     }, BN.ZERO);
