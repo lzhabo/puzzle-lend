@@ -199,7 +199,7 @@ class DashboardModalVM {
     return (
       BN.formatUnits(this.staticTokenAmount, this.token?.decimals).toFormat(
         4
-      ) || "0"
+      ) ?? "0"
     );
   }
 

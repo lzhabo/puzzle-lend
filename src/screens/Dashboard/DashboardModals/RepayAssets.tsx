@@ -116,19 +116,17 @@ const BorrowAssets: React.FC<IProps> = ({
         <Column alignItems="flex-end">
           <Row alignItems="center">
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
-              {vm.countUserBalance || 0}
+              {vm.countUserBalance ?? 0}
               <>&nbsp;</>
               {vm.isDollar ? "$" : token?.symbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
-                ? (
-                    BN.formatUnits(
-                      vm.staticTokenAmount.minus(amount),
-                      token?.decimals
-                    ).toNumber() || 0
-                  ).toFixed(4)
+                ? BN.formatUnits(
+                    vm.staticTokenAmount.minus(amount),
+                    token?.decimals
+                  ).toFormat(4) ?? 0
                 : 0}
             </Text>
           </Row>
@@ -164,9 +162,7 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
         <Text size="medium" fitContent>
           {token?.selfBorrow
-            ? BN.formatUnits(token?.selfBorrow, token?.decimals)
-                .toNumber()
-                .toFixed(4)
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(4)
             : 0}
         </Text>
       </Row>
