@@ -124,7 +124,7 @@ const SupplyAssets: React.FC<IProps> = ({
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
                 ? BN.formatUnits(
-                    amount.plus(vm.staticTokenAmount),
+                    vm.staticTokenAmount.minus(amount),
                     token?.decimals
                   ).toFormat(4) ?? 0
                 : 0}
