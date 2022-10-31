@@ -1,13 +1,14 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect } from "react";
 import Text from "@components/Text";
 import { Row } from "@src/components/Flex";
 import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { observer } from "mobx-react-lite";
-import { useAnalyticsScreenVM } from "@screens/UsersListScreen/AnalyticsScreenVM";
+import { useAnalyticsScreenVM } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import Table from "@components/Table";
+import Button from "@components/Button";
 
 interface IProps {}
 
@@ -15,9 +16,15 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
+interface ITableData {
+  borrowed: string;
+  supplied: string;
+  user: string;
+  action?: typeof Button;
+}
 const AnalyticsScreenTable: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
+
   return (
     <Root>
       <Text type="secondary" weight={500}>
@@ -56,7 +63,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
             // }))
           ]}
           selected={vm.assetId ?? undefined}
-          onSelect={vm.setAssetId}
+          onSelect={console.log}
         />
       </Row>
       <SizedBox height={16} />
@@ -64,10 +71,17 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         columns={[
           { Header: "User", accessor: "user" },
           { Header: "Supplied", accessor: "supplied" },
-          { Header: "Borrowed", accessor: "borrowed" }
-          // { Header: "", accessor: "action" }
+          { Header: "Borrowed", accessor: "borrowed" },
+          { Header: "", accessor: "action" }
         ]}
-        data={vm.tableData}
+        data={vm.tableData.map((e: ITableData) => ({
+          ...e,
+          action: (
+            <Button size="medium" kind="secondary" fixed>
+              Check User
+            </Button>
+          )
+        }))}
       ></Table>
     </Root>
   );

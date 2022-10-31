@@ -21,6 +21,7 @@ export const ROUTES = {
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
   ANALYTICS: "/:poolId/analytics",
+  USUERSLIST: "/:poolId/userslist",
   NOT_FOUND: "/404"
 };
 

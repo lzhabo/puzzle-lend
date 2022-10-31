@@ -243,6 +243,7 @@ const DesktopTable: React.FC<IProps> = () => {
         return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
       } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
     });
+    console.log(data);
     data = data.map((s: TPoolStats) => ({
       onClick: () => {
         navigate(
