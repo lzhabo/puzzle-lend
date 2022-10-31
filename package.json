@@ -2,7 +2,6 @@
   "name": "puzzle-lend",
   "version": "1.0.0",
   "private": false,
-  "homepage": "https://lzhabo.github.io/puzzle-lend/",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@emotion/core": "^11.0.0",
@@ -110,8 +109,10 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "add-homepage": "node scripts/addHomepageToPackage.js &&  prettier -w ./package.json ",
+    "remove-homepage": "node scripts/removeHomepageFromPackage.js &&  prettier -w ./package.json ",
+    "predeploy": "npm run add-homepage && npm run build",
+    "deploy": "gh-pages -d build && npm run remove-homepage",
     "lint": "eslint src/**/*.ts[x] --fix ."
   },
   "engines": {

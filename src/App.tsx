@@ -20,7 +20,6 @@ const Root = styled(Column)`
   background: ${({ theme }) => theme.colors.primary50};
   min-height: 100vh;
 `;
-
 const MobileSpace = styled.div`
   height: 56px;
   @media (min-width: 880px) {
