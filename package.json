@@ -109,10 +109,8 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "add-homepage": "node scripts/addHomepageToPackage.js &&  prettier -w ./package.json ",
-    "remove-homepage": "node scripts/removeHomepageFromPackage.js &&  prettier -w ./package.json ",
-    "predeploy": "npm run add-homepage && npm run build",
-    "deploy": "gh-pages -d build && npm run remove-homepage",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "lint": "eslint src/**/*.ts[x] --fix ."
   },
   "engines": {
