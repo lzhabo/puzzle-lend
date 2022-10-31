@@ -16,6 +16,11 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const UsersTable = styled(Table)`
+  border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
+`;
+
 interface ITableData {
   borrowed: string;
   supplied: string;
@@ -56,7 +61,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         <SizedBox width={24} />
         <Select
           options={[
-            { key: null as any, title: "Most borrowed" },
+            { key: "None", title: "No sort" },
             ...vm.sortOptions.map((t) => ({
               title: t,
               key: t
@@ -67,7 +72,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         />
       </Row>
       <SizedBox height={16} />
-      <Table
+      <UsersTable
         columns={[
           { Header: "User", accessor: "user" },
           { Header: "Supplied", accessor: "supplied" },
@@ -82,7 +87,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
             </Button>
           )
         }))}
-      ></Table>
+      ></UsersTable>
     </Root>
   );
 };

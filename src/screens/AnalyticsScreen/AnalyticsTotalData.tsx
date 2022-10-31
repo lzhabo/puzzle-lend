@@ -14,7 +14,7 @@ import { useStores } from "@stores";
 import AnalyticsScreenTable from "@screens/UsersListScreen/AnalyticsScreenTable";
 import AnalyticsScreenBaseInfo from "@screens/UsersListScreen/AnalyticsScreenBaseInfo";
 import Card from "@components/Card";
-import Table from "@components/Table";
+// import Table from "@components/Table";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import {
@@ -44,8 +44,16 @@ const TotalVal = styled(Card)`
   /* display: flex; */
 `;
 
+const Table = styled.table`
+  > div:last-child {
+      border-bottom: none !important;
+    }
+  }
+`;
+
 const TableRow = styled(Row)`
-  margin: 8px 0 0 0;
+  padding: 8px 0 8px 0;
+  border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
 `;
 
 const AnalyticsTotalData: React.FC<IProps> = () => {
@@ -65,7 +73,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
         Total value
         <SizedBox height={24} />
       </Title>
-      <table>
+      <Table>
         {totalData.map((s: ITStatisticItem) => (
           <TableRow alignItems="center" justifyContent="space-between">
             <Row>
@@ -98,7 +106,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
             </Row>
           </TableRow>
         ))}
-      </table>
+      </Table>
     </TotalVal>
   );
 };
