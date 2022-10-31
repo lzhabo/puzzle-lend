@@ -28,7 +28,7 @@ const WarningError: React.FC<IProps> = () => {
           In case of market insolvency borrow limit of assets may decrease which
           may cause liquidation of your assets
         </Text>
-        <Anchor href="https://puzzle-lend.gitbook.io/guidebook/">
+        <Anchor href="https://puzzle-lend.gitbook.io/guidebook/suppliers-guide/safety-features">
           <Text weight={500} type="error">
             Learn more
           </Text>
