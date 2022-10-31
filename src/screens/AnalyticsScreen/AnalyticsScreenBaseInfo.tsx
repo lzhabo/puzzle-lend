@@ -3,7 +3,10 @@ import React from "react";
 import Text from "@components/Text";
 import { Column, Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
-import { useAnalyticsScreenVM } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
+import {
+  useAnalyticsScreenVM,
+  ITStatisticItem
+} from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 
 interface IProps {}
 const StatsItem = styled(Column)`
@@ -18,23 +21,35 @@ const StatsItem = styled(Column)`
 `;
 const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
+
+  console.log(vm.popularOf("borrow"));
   const statistics = [
     { title: "Users", value: vm.uniqueUsers.length },
     {
       title: "Total supplied",
-      value: "10,5M"
+      value: vm.totalOf("supply").toFormat(2)
     },
     {
       title: "Total borrowing",
-      value: "15M"
+      value: vm.totalOf("borrow").toFormat(2)
     },
     {
       title: "Popular coin to supplie",
-      value: "PUZZLE"
+      value: vm
+        .popularOf("supply")
+        .sort(
+          (prev: ITStatisticItem, curr: ITStatisticItem) =>
+            Number(prev.amountTotal) < Number(curr.amountTotal)
+        )[0]?.asset.name
     },
     {
       title: "Popular coin to borrow",
-      value: "USDN"
+      value: vm
+        .popularOf("borrow")
+        .sort(
+          (prev: ITStatisticItem, curr: ITStatisticItem) =>
+            Number(prev.amountTotal) < Number(curr.amountTotal)
+        )[0]?.asset.name
     }
   ];
   return (

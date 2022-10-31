@@ -30,7 +30,22 @@ type TStatisticItem = {
   address: string;
   asset: IToken;
   poolId: string;
+  amountTotal?: number;
+  nBorrowed?: number;
+  nSupplied?: number;
 };
+
+type TSort =
+  | "Most borrowed"
+  | "Most supplied"
+  | "Least borrowed"
+  | "Least supplied";
+
+interface ITStatisticItem extends TStatisticItem {}
+
+export type { ITStatisticItem };
+
+// export { TStatisticItem };
 
 class AnalyticsScreenVM {
   poolId: string | null = null;
@@ -45,12 +60,70 @@ class AnalyticsScreenVM {
   prices: TAssetPrices = {};
   setPrices = (p: TAssetPrices) => (this.prices = p);
 
+  sort: TSort = "Most borrowed";
+  setSort = (s: string) => (this.sort = s as TSort);
+
+  sortOptions: TSort[] = [
+    "Most borrowed",
+    "Most supplied",
+    "Least borrowed",
+    "Least supplied"
+  ];
+
   get tokens() {
     return this.statistics.reduce(
       (acc, { asset: { assetId } }) =>
         acc.includes(assetId) ? acc : [...acc, assetId],
       [] as string[]
     );
+  }
+
+  get totalOf() {
+    return (type: string) =>
+      this.statistics
+        .filter((v: TStatisticItem) => v.type === type)
+        .reduce((prev, { amount, poolId, asset }) => {
+          const rate = this.prices[poolId]?.find(
+            ({ assetId }) => assetId === asset.assetId
+          )?.prices.min;
+
+          return rate
+            ? prev.plus(BN.formatUnits(amount, asset.decimals).times(rate))
+            : prev;
+        }, BN.ZERO);
+  }
+
+  get popularOf() {
+    return (type: string) =>
+      this.statistics
+        .filter((v: TStatisticItem) => v.type === type)
+        .reduce((prev, curr) => {
+          const rate = this.prices[curr.poolId]?.find(
+            ({ assetId }) => assetId === curr.asset.assetId
+          )?.prices.min;
+
+          const index = prev
+            .map((e: TStatisticItem) => (e.asset ? e.asset.assetId : null))
+            .indexOf(curr.asset.assetId);
+
+          const dataObj = index >= 0 ? prev[index] : curr;
+
+          const resultWithTotal = rate
+            ? {
+                ...dataObj,
+                amountTotal: dataObj.amountTotal
+                  ? dataObj.amountTotal +
+                    BN.formatUnits(curr.amount, curr.asset.decimals)
+                      .times(rate)
+                      .toFormat(2)
+                  : BN.formatUnits(curr.amount, curr.asset.decimals)
+                      .times(rate)
+                      .toFormat(2)
+              }
+            : curr;
+
+          return index >= 0 ? prev : [...prev, resultWithTotal];
+        }, [] as any);
   }
 
   get uniqueUsers() {
@@ -85,8 +158,19 @@ class AnalyticsScreenVM {
       .map((v) => ({
         ...v,
         borrowed: "$" + v.borrowed.toFormat(2),
-        supplied: "$" + v.supplied.toFormat(2)
-      }));
+        supplied: "$" + v.supplied.toFormat(2),
+        nBorrowed: Number(v.borrowed.toNumber()),
+        nSupplied: Number(v.supplied.toNumber())
+      }))
+      .sort((p, c) =>
+        this.sort === "Most borrowed"
+          ? c.nBorrowed - p.nBorrowed
+          : this.sort === "Most supplied"
+          ? c.nSupplied - p.nSupplied
+          : this.sort === "Least borrowed"
+          ? p.nBorrowed - c.nBorrowed
+          : p.nSupplied - c.nSupplied
+      );
   }
 
   syncPrices = async () => {

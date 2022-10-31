@@ -13,7 +13,6 @@ import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
 import DashboardModal from "@screens/Dashboard/DashboardModals";
 import AnalyticsScreen from "@screens/AnalyticsScreen";
-import UsersListScreen from "@screens/UsersListScreen";
 
 const Root = styled(Column)`
   width: 100%;
@@ -37,7 +36,6 @@ const App: React.FC = () => {
       <Routes>
         {/*Account*/}
         <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
-        <Route path={ROUTES.USUERSLIST} element={<UsersListScreen />} />
 
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
