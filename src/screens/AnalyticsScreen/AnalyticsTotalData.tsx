@@ -17,6 +17,10 @@ import Card from "@components/Card";
 import Table from "@components/Table";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
+import {
+  useAnalyticsScreenVM,
+  ITStatisticItem
+} from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 
 interface IProps {}
 
@@ -46,36 +50,15 @@ const TableRow = styled(Row)`
 
 const AnalyticsTotalData: React.FC<IProps> = () => {
   const { lendStore } = useStores();
-  const totalData = [
-    {
-      symbol: "PUZZLE",
-      prices: {
-        min: 14
-      },
-      total: 114
-    },
-    {
-      symbol: "WAVES",
-      prices: {
-        min: 4.93
-      },
-      total: 102
-    },
-    {
-      symbol: "USDN",
-      prices: {
-        min: 1
-      },
-      total: 74
-    },
-    {
-      symbol: "USDT",
-      prices: {
-        min: 1
-      },
-      total: 45
-    }
-  ];
+  const vm = useAnalyticsScreenVM();
+
+  const totalData = vm
+    .popularOf("supply")
+    .sort(
+      (prev: ITStatisticItem, curr: ITStatisticItem) =>
+        curr.amountTotal - prev.amountTotal
+    );
+
   return (
     <TotalVal>
       <Title>
@@ -83,31 +66,33 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
         <SizedBox height={24} />
       </Title>
       <table>
-        {totalData.map((s) => (
+        {totalData.map((s: ITStatisticItem) => (
           <TableRow alignItems="center" justifyContent="space-between">
             <Row>
               <SquareTokenIcon
                 size="small"
-                src={tokenLogos[s.symbol]}
+                src={tokenLogos[s.asset.symbol]}
                 alt="logo"
               />
               <SizedBox width={16} />
               <Column>
                 <Text size="small" fitContent>
-                  {s.symbol}
+                  {s.asset.symbol}
                 </Text>
                 <Text type="secondary" size="small" fitContent>
-                  $ {s.prices.min}
+                  $ {vm.priceForToken(s).toNumber()}
                 </Text>
               </Column>
             </Row>
             <Row justifyContent={"flex-end"}>
               <Column>
                 <Text textAlign={"end"} size="small">
-                  {s.total + "M " + s.symbol}
+                  {(s.amountTotal / vm.priceForToken(s).toNumber()).toFixed(2) +
+                    " " +
+                    s.asset.symbol}
                 </Text>
                 <Text textAlign={"end"} type="secondary" size="small">
-                  $ {(s.prices.min * s.total).toFixed(2)}M
+                  $ {s.amountTotal.toFixed(2)}
                 </Text>
               </Column>
             </Row>

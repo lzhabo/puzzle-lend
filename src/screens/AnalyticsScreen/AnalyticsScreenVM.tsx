@@ -30,7 +30,7 @@ type TStatisticItem = {
   address: string;
   asset: IToken;
   poolId: string;
-  amountTotal?: number;
+  amountTotal: number;
   nBorrowed?: number;
   nSupplied?: number;
 };
@@ -93,6 +93,16 @@ class AnalyticsScreenVM {
         }, BN.ZERO);
   }
 
+  get priceForToken() {
+    return (token: TStatisticItem) => {
+      return (
+        this.prices[token.poolId]?.find(
+          ({ assetId }) => assetId === token.asset.assetId
+        )?.prices.min ?? BN.ZERO
+      );
+    };
+  }
+
   get popularOf() {
     return (type: string) =>
       this.statistics
@@ -115,10 +125,10 @@ class AnalyticsScreenVM {
                   ? dataObj.amountTotal +
                     BN.formatUnits(curr.amount, curr.asset.decimals)
                       .times(rate)
-                      .toFormat(2)
+                      .toNumber()
                   : BN.formatUnits(curr.amount, curr.asset.decimals)
                       .times(rate)
-                      .toFormat(2)
+                      .toNumber()
               }
             : curr;
 

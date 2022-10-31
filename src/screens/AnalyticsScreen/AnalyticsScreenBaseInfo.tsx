@@ -39,7 +39,7 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
         .popularOf("supply")
         .sort(
           (prev: ITStatisticItem, curr: ITStatisticItem) =>
-            Number(prev.amountTotal) < Number(curr.amountTotal)
+            curr.amountTotal - prev.amountTotal
         )[0]?.asset.name
     },
     {
@@ -48,7 +48,7 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
         .popularOf("borrow")
         .sort(
           (prev: ITStatisticItem, curr: ITStatisticItem) =>
-            Number(prev.amountTotal) < Number(curr.amountTotal)
+            curr.amountTotal - prev.amountTotal
         )[0]?.asset.name
     }
   ];
