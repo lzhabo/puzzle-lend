@@ -6,7 +6,7 @@ import { ROUTES, ASSETS_TYPE } from "@src/constants";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Home from "@components/MobileNavBar/Home";
-import Invest from "@components/MobileNavBar/Invest";
+import Invest from "@src/components/MobileNavBar/Invest";
 
 interface IProps {}
 
@@ -40,9 +40,11 @@ const MenuItem = styled.div<{ selected?: boolean }>`
   align-items: center;
   padding: 5px;
   padding-bottom: 10px;
+
   p {
     color: ${({ theme }) => `${theme.colors.primary650}`};
   }
+
   &.selected {
     p {
       color: ${({ theme }) => `${theme.colors.primary800}`};
@@ -76,6 +78,7 @@ const MobileNavBar: React.FC<IProps> = () => {
       link: ROUTES.DASHBOARD,
       icon: (
         <Invest
+          isBorrow
           active={lendStore.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK}
         />
       ),

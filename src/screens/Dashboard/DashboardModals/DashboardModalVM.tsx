@@ -446,7 +446,7 @@ class DashboardModalVM {
   // SUPPLY MODAL
   supplyChangeAmount = (v: BN) => {
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
-    const walletBal = this.isDollar
+    const walletBal = !this.isDollar
       ? BN.formatUnits(this.tokenBalance, this.token?.decimals)
       : BN.formatUnits(this.tokenBalance, this.token?.decimals).times(
           this.token?.prices?.min
@@ -454,7 +454,7 @@ class DashboardModalVM {
 
     let isError = false;
 
-    if (walletBal.lt(formattedVal)) {
+    if (formattedVal.gt(walletBal)) {
       this.setError("Wallet Balance too low");
       isError = true;
     }

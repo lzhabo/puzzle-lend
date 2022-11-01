@@ -23,7 +23,7 @@ const data = [
   },
   {
     title: "What are the risks of using Puzzle Lend?",
-    text: "When supplying an asset, there are 2 types of risks. The first one is the utilisation ratio: if it reaches 100%, you will be temporarily unable to withdraw your deposit. The second one is the smart contract risk: we don’t recommend putting a significant amount of supply before Puzzle Lend smart contracts get official audits."
+    text: "When supplying an asset, there are 2 types of risks. The first one is the utilisation ratio: if it reaches 100%, you will be temporarily unable to withdraw your deposit. The second one is the smart contract risk, still all smart contracts involved in Puzzle Lend have been audited by external entity."
   },
   {
     title: "What is Supply and Borrow APY?",
