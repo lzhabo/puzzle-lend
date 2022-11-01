@@ -44,12 +44,7 @@ const TableRow = styled(Row)`
 const AnalyticsTotalData: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
-  const totalData = vm
-    .popularOf("supply")
-    .sort(
-      (prev: ITStatisticItem, curr: ITStatisticItem) =>
-        curr.amountTotal - prev.amountTotal
-    );
+  const totalData = vm.popularOf("supply");
 
   return (
     <TotalVal>
@@ -59,7 +54,11 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
       </Title>
       <Table>
         {totalData.map((s: ITStatisticItem) => (
-          <TableRow alignItems="center" justifyContent="space-between">
+          <TableRow
+            key={s.address}
+            alignItems="center"
+            justifyContent="space-between"
+          >
             <Row>
               <SquareTokenIcon
                 size="small"

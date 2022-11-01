@@ -31,13 +31,14 @@ const UsersTable = styled(Table)`
     margin: auto;
   }
 `;
+
+//TODO пометка для себя я бы эти стили переписал без трех > div селекторов, а на классах
 const RowSelect = styled(Row)`
   @media (max-width: 880px) {
     flex-direction: column;
     > div {
       width: 100%;
       margin: 4px 0 0 0;
-
       > div {
         max-width: calc(100vw - 32px);
         width: calc(100vw - 32px);
@@ -90,7 +91,6 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         <SizedBox width={24} />
         <Select
           options={[
-            { key: "None", title: "No sort" },
             ...vm.sortOptions.map((t) => ({
               title: t,
               key: t
@@ -110,6 +110,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         ]}
         data={vm.tableData.map((e: ITableData) => ({
           ...e,
+          //TODO добавить онклик на кнопку для переброса на новую страницу
           action: (
             <Button size="medium" kind="secondary" fixed>
               Check User

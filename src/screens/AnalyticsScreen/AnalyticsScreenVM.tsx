@@ -61,6 +61,8 @@ class AnalyticsScreenVM {
   sort: TSort = "Most borrowed";
   setSort = (s: string) => (this.sort = s as TSort);
 
+  //TODO тут надо заменить string[] на Array<{keyName: string, text: string}>
+  //тк на 177 строке есть sortOptions и приходится юзать сами строки а не их ключи
   sortOptions: TSort[] = [
     "Most borrowed",
     "Most supplied",
@@ -131,7 +133,9 @@ class AnalyticsScreenVM {
             : curr;
 
           return index >= 0 ? prev : [...prev, resultWithTotal];
-        }, [] as any);
+          //TODO убрать any
+        }, [] as TStatisticItem[])
+        .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
   }
 
   get uniqueUsers() {
@@ -167,17 +171,17 @@ class AnalyticsScreenVM {
         ...v,
         borrowed: "$" + v.borrowed.toFormat(2),
         supplied: "$" + v.supplied.toFormat(2),
-        nBorrowed: Number(v.borrowed.toNumber()),
-        nSupplied: Number(v.supplied.toNumber())
+        nBorrowed: v.borrowed.toNumber(),
+        nSupplied: v.supplied.toNumber()
       }))
-      .sort((p, c) =>
+      .sort((prev, curr) =>
         this.sort === "Most borrowed"
-          ? c.nBorrowed - p.nBorrowed
+          ? curr.nBorrowed - prev.nBorrowed
           : this.sort === "Most supplied"
-          ? c.nSupplied - p.nSupplied
+          ? curr.nSupplied - prev.nSupplied
           : this.sort === "Least borrowed"
-          ? p.nBorrowed - c.nBorrowed
-          : p.nSupplied - c.nSupplied
+          ? prev.nBorrowed - curr.nBorrowed
+          : prev.nSupplied - curr.nSupplied
       );
   }
 

@@ -3,10 +3,7 @@ import React from "react";
 import Text from "@components/Text";
 import { Column, Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
-import {
-  useAnalyticsScreenVM,
-  ITStatisticItem
-} from "@screens/AnalyticsScreen/AnalyticsScreenVM";
+import { useAnalyticsScreenVM } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 
 interface IProps {}
 
@@ -36,23 +33,11 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
     },
     {
       title: "Popular coin to supplie",
-      value:
-        vm
-          .popularOf("supply")
-          .sort(
-            (prev: ITStatisticItem, curr: ITStatisticItem) =>
-              curr.amountTotal - prev.amountTotal
-          )[0]?.asset.name ?? "Loading..."
+      value: vm.popularOf("supply")[0]?.asset.name ?? "Loading..."
     },
     {
       title: "Popular coin to borrow",
-      value:
-        vm
-          .popularOf("borrow")
-          .sort(
-            (prev: ITStatisticItem, curr: ITStatisticItem) =>
-              curr.amountTotal - prev.amountTotal
-          )[0]?.asset.name ?? "Loading..."
+      value: vm.popularOf("borrow")[0]?.asset.name ?? "Loading..."
     }
   ];
   return (
