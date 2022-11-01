@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { BrowserRouter, HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "normalize.css";
 import { RootStore, storesContext } from "@stores";
 import { loadState, saveState } from "@src/utils/localStorage";
@@ -34,15 +34,9 @@ ReactDOM.render(
   <React.StrictMode>
     <storesContext.Provider value={mobxStore}>
       <ThemeWrapper>
-        {process.env.REACT_APP_NODE_ENV === "PROD" ? (
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        ) : (
-          <HashRouter>
-            <App />
-          </HashRouter>
-        )}
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
         <GlobalStyles />
       </ThemeWrapper>
     </storesContext.Provider>
