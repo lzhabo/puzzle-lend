@@ -9,6 +9,7 @@ import {
 } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 
 interface IProps {}
+
 const StatsItem = styled(Column)`
   margin-right: 24px;
   margin-bottom: 8px;
@@ -19,10 +20,10 @@ const StatsItem = styled(Column)`
     margin-right: 0;
   }
 `;
+
 const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
-  console.log(vm.popularOf("borrow"));
   const statistics = [
     { title: "Users", value: vm.uniqueUsers.length },
     {

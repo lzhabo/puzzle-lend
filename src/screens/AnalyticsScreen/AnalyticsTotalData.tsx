@@ -1,20 +1,10 @@
 import styled from "@emotion/styled";
-import React, { useState } from "react";
-import { AnalyticsScreenVMProvider } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
-import { Link } from "react-router-dom";
-import { ROUTES } from "@src/constants";
-import Layout from "@components/Layout";
-import ExploreLayout from "@screens/ExploreToken/ExploreLayout";
+import React from "react";
 import { Column, Row } from "@components/Flex";
-import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
-import AnalyticsScreenTable from "@screens/UsersListScreen/AnalyticsScreenTable";
-import AnalyticsScreenBaseInfo from "@screens/UsersListScreen/AnalyticsScreenBaseInfo";
 import Card from "@components/Card";
-// import Table from "@components/Table";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import {
@@ -29,24 +19,14 @@ const Title = styled(Text)`
   line-height: 32px;
 `;
 
-const TableContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-`;
-
 const TotalVal = styled(Card)`
   margin: 32px 0 0 40px;
   max-width: 427px;
-  /* width: auto; */
   @media (max-width: 1440px) {
     margin: 32px 0 0 0;
     max-width: 100%;
     width: 100%;
   }
-
-  /* max-height: 300px; */
-  /* display: flex; */
 `;
 
 const Table = styled.table`
@@ -62,7 +42,6 @@ const TableRow = styled(Row)`
 `;
 
 const AnalyticsTotalData: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
   const vm = useAnalyticsScreenVM();
 
   const totalData = vm

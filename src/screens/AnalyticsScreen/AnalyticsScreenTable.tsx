@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React, { useEffect } from "react";
+import React from "react";
 import Text from "@components/Text";
 import { Row } from "@src/components/Flex";
 import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
@@ -56,6 +56,7 @@ interface ITableData {
   user: string;
   action?: typeof Button;
 }
+
 const AnalyticsScreenTable: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
@@ -67,7 +68,6 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <RowSelect>
         <Select
-          // style={{ width: 100 }}
           options={[
             { key: null as any, title: "All pools" },
             ...POOLS.map((p) => ({ title: p.name, key: p.address }))

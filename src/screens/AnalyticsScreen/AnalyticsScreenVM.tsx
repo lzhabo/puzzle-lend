@@ -45,8 +45,6 @@ interface ITStatisticItem extends TStatisticItem {}
 
 export type { ITStatisticItem };
 
-// export { TStatisticItem };
-
 class AnalyticsScreenVM {
   poolId: string | null = null;
   setPoolId = (poolId: string | null) => (this.poolId = poolId);
