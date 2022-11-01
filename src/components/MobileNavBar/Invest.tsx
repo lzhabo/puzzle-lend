@@ -3,10 +3,12 @@ import { useTheme } from "@emotion/react";
 
 interface IProps extends React.SVGProps<SVGSVGElement> {
   active?: boolean;
+  isBorrow?: boolean;
 }
 //fixme
-const Invest: React.FC<IProps> = ({ active }) => {
+const Invest: React.FC<IProps> = ({ active, isBorrow }) => {
   const theme = useTheme();
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -26,13 +28,23 @@ const Invest: React.FC<IProps> = ({ active }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
-        d="M7.46533 9.78821L12.4653 14.7882L17.4653 9.78821"
-        stroke={active ? theme.colors.primary800 : theme.colors.blue500}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {isBorrow ? (
+        <path
+          d="M17.1318 7.78821L12.1318 2.78821L7.13184 7.78821"
+          stroke={active ? theme.colors.primary800 : theme.colors.blue500}
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      ) : (
+        <path
+          d="M7.46533 9.78821L12.4653 14.7882L17.4653 9.78821"
+          stroke={active ? theme.colors.primary800 : theme.colors.blue500}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      )}
       <path
         d="M12.4653 14.7882L12.4653 2.78821"
         stroke={active ? theme.colors.primary800 : theme.colors.blue500}

@@ -46,7 +46,6 @@ const StatsRow = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.colors.primary100}`};
   padding-bottom: 8px;
   margin-bottom: 16px;
-  cursor: pointer;
 
   &:first-child {
     margin-top: 16px;
@@ -109,7 +108,17 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ];
                 return (
                   <Asset key={`token-${s.assetId}`}>
-                    <Row>
+                    <Row
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        navigate(
+                          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                            ":poolId",
+                            lendStore.pool.address
+                          ).replace(":assetId", s.assetId)
+                        )
+                      }
+                    >
                       <SquareTokenIcon size="small" src={s.logo} alt="token" />
                       <SizedBox width={16} />
                       <Column>
@@ -122,18 +131,7 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                     <SizedBox height={16} />
                     <Data crossAxisSize="max">
                       {data.map(({ title, value, dollarValue }, index) => (
-                        <StatsRow
-                          style={{ cursor: "pointer" }}
-                          onClick={() =>
-                            navigate(
-                              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                                ":poolId",
-                                lendStore.pool.address
-                              ).replace(":assetId", s.assetId)
-                            )
-                          }
-                          key={`asset-${index}`}
-                        >
+                        <StatsRow key={`asset-${index}`}>
                           <Text fitContent nowrap>
                             {title}
                           </Text>
@@ -214,7 +212,17 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 ];
                 return (
                   <Asset key={`token-${s.assetId}`}>
-                    <Row>
+                    <Row
+                      style={{ cursor: "pointer" }}
+                      onClick={() =>
+                        navigate(
+                          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                            ":poolId",
+                            lendStore.pool.address
+                          ).replace(":assetId", s.assetId)
+                        )
+                      }
+                    >
                       <SquareTokenIcon size="small" src={s.logo} alt="token" />
                       <SizedBox width={16} />
                       <Column>
@@ -229,14 +237,6 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                       {data.map(({ title, value, dollarValue }, index) => (
                         <StatsRow
                           style={{ cursor: "pointer" }}
-                          onClick={() =>
-                            navigate(
-                              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                                ":poolId",
-                                lendStore.pool.address
-                              ).replace(":assetId", s.assetId)
-                            )
-                          }
                           key={`asset-${index}`}
                         >
                           <Text fitContent nowrap>

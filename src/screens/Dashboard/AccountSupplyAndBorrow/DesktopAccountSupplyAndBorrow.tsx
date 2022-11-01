@@ -252,7 +252,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      emptyCell: <SizedBox width={120} />,
+      emptyCell: <SizedBox width={160} />,
       supplied: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
@@ -444,7 +444,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
           </Column>
         </Row>
       ),
-      emptyCell: <SizedBox width={120} />,
+      emptyCell: <SizedBox width={140} />,
       toRepay: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">

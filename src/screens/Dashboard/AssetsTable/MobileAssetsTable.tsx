@@ -42,7 +42,6 @@ const StatsRow = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
   padding-bottom: 8px;
   margin-bottom: 16px;
-  cursor: pointer;
 
   &:first-child {
     margin-top: 16px;
@@ -114,7 +113,17 @@ const MobileAssetsTable: React.FC<IProps> = () => {
             ];
             return (
               <Asset key={`token-${s.assetId}`}>
-                <Row>
+                <Row
+                  style={{ cursor: "pointer" }}
+                  onClick={() =>
+                    navigate(
+                      ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                        ":poolId",
+                        lendStore.pool.address
+                      ).replace(":assetId", s.assetId)
+                    )
+                  }
+                >
                   <SquareTokenIcon size="small" src={s.logo} alt="token" />
                   <SizedBox width={16} />
                   <Column>
@@ -127,17 +136,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                 <SizedBox height={16} />
                 <Data crossAxisSize="max">
                   {data.map(({ title, value, dollarValue }, index) => (
-                    <StatsRow
-                      key={`asset-${index}`}
-                      onClick={() =>
-                        navigate(
-                          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                            ":poolId",
-                            lendStore.pool.address
-                          ).replace(":assetId", s.assetId)
-                        )
-                      }
-                    >
+                    <StatsRow key={`asset-${index}`}>
                       <Text fitContent nowrap>
                         {title}
                       </Text>

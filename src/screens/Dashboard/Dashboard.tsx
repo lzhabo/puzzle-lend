@@ -29,11 +29,16 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   width: 100%;
   min-height: 100%;
   max-width: calc(1328px + 32px);
-  margin-bottom: 24px;
+  margin-bottom: 72px;
   margin-top: 40px;
   text-align: left;
+
+  @media (min-width: 560px) {
+    margin-top: 60px;
+  }
+
   @media (min-width: 880px) {
-    margin-top: 56px;
+    margin-bottom: 96px;
   }
 `;
 const Subtitle = styled(Text)`
