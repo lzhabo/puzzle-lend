@@ -25,10 +25,8 @@ import {
 interface IProps {}
 
 const Title = styled(Text)`
-  @media (min-width: 880px) {
-    font-size: 24px;
-    line-height: 32px;
-  }
+  font-size: 24px;
+  line-height: 32px;
 `;
 
 const TableContainer = styled.div`
@@ -38,8 +36,15 @@ const TableContainer = styled.div`
 `;
 
 const TotalVal = styled(Card)`
-  margin: 32px 0 0 0;
+  margin: 32px 0 0 40px;
   max-width: 427px;
+  /* width: auto; */
+  @media (max-width: 1440px) {
+    margin: 32px 0 0 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
   /* max-height: 300px; */
   /* display: flex; */
 `;

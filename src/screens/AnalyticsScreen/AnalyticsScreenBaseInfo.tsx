@@ -35,21 +35,23 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
     },
     {
       title: "Popular coin to supplie",
-      value: vm
-        .popularOf("supply")
-        .sort(
-          (prev: ITStatisticItem, curr: ITStatisticItem) =>
-            curr.amountTotal - prev.amountTotal
-        )[0]?.asset.name
+      value:
+        vm
+          .popularOf("supply")
+          .sort(
+            (prev: ITStatisticItem, curr: ITStatisticItem) =>
+              curr.amountTotal - prev.amountTotal
+          )[0]?.asset.name ?? "Loading..."
     },
     {
       title: "Popular coin to borrow",
-      value: vm
-        .popularOf("borrow")
-        .sort(
-          (prev: ITStatisticItem, curr: ITStatisticItem) =>
-            curr.amountTotal - prev.amountTotal
-        )[0]?.asset.name
+      value:
+        vm
+          .popularOf("borrow")
+          .sort(
+            (prev: ITStatisticItem, curr: ITStatisticItem) =>
+              curr.amountTotal - prev.amountTotal
+          )[0]?.asset.name ?? "Loading..."
     }
   ];
   return (

@@ -18,16 +18,20 @@ import AnalyticsScreenBaseInfo from "@screens/AnalyticsScreen/AnalyticsScreenBas
 interface IProps {}
 
 const Title = styled(Text)`
-  @media (min-width: 880px) {
-    font-size: 24px;
-    line-height: 32px;
-  }
+  font-size: 24px;
+  line-height: 32px;
 `;
 
 const TableContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
+  @media (max-width: 1440px) {
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const AnalyticsScreenImpl: React.FC<IProps> = observer(() => {

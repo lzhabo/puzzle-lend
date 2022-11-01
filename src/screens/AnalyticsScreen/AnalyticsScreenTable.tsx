@@ -15,10 +15,39 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: auto;
+  width: 100%;
+  @media (max-width: 1440px) {
+    margin: 40px 0 0 0;
+  }
 `;
 
 const UsersTable = styled(Table)`
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
+
+  @media (max-width: 880px) {
+    max-width: calc(100vw - 38px);
+    overflow-x: scroll;
+    margin: auto;
+  }
+`;
+const RowSelect = styled(Row)`
+  @media (max-width: 880px) {
+    flex-direction: column;
+    > div {
+      width: 100%;
+      margin: 4px 0 0 0;
+
+      > div {
+        max-width: calc(100vw - 32px);
+        width: calc(100vw - 32px);
+        > div {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
 `;
 
 interface ITableData {
@@ -36,9 +65,9 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         All users ({vm.uniqueUsers.length})
       </Text>
       <SizedBox height={8} />
-      <Row>
+      <RowSelect>
         <Select
-          style={{ width: 100 }}
+          // style={{ width: 100 }}
           options={[
             { key: null as any, title: "All pools" },
             ...POOLS.map((p) => ({ title: p.name, key: p.address }))
@@ -70,7 +99,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
           selected={vm.sort ?? undefined}
           onSelect={vm.setSort}
         />
-      </Row>
+      </RowSelect>
       <SizedBox height={16} />
       <UsersTable
         columns={[
