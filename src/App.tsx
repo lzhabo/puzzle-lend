@@ -36,6 +36,7 @@ const App: React.FC = () => {
       <Routes>
         {/*Account*/}
         <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
+
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
           {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (

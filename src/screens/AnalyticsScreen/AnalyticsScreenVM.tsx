@@ -30,7 +30,21 @@ type TStatisticItem = {
   address: string;
   asset: IToken;
   poolId: string;
+  amountTotal: number;
+  nBorrowed?: number;
+  nSupplied?: number;
 };
+
+interface ITStatisticItem extends TStatisticItem {}
+
+export type { ITStatisticItem };
+
+export enum SORT_TYPE {
+  mostBorrowed = "Most borrowed",
+  mostSupplied = "Most supplied",
+  leastBorrowed = "Least borrowed",
+  leastSupplied = "Least supplied"
+}
 
 class AnalyticsScreenVM {
   poolId: string | null = null;
@@ -45,19 +59,38 @@ class AnalyticsScreenVM {
   prices: TAssetPrices = {};
   setPrices = (p: TAssetPrices) => (this.prices = p);
 
+  sort: SORT_TYPE = SORT_TYPE.mostBorrowed;
+  setSort = (s: SORT_TYPE) => (this.sort = s);
+
+  sortOptions = Object.entries(SORT_TYPE);
+
   get tokens() {
-    return this.statistics.reduce(
-      (acc, { asset: { assetId } }) =>
-        acc.includes(assetId) ? acc : [...acc, assetId],
-      [] as string[]
-    );
+    return this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .reduce(
+        (acc, { asset: { assetId } }) =>
+          acc.includes(assetId) ? acc : [...acc, assetId],
+        [] as string[]
+      );
+  }
+
+  get priceForToken() {
+    return (token: TStatisticItem) => {
+      return (
+        this.prices[token.poolId]?.find(
+          ({ assetId }) => assetId === token.asset.assetId
+        )?.prices.min ?? BN.ZERO
+      );
+    };
   }
 
   get uniqueUsers() {
-    return this.statistics.reduce(
-      (acc, { address }) => (acc.includes(address) ? acc : [...acc, address]),
-      [] as string[]
-    );
+    return this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .reduce(
+        (acc, { address }) => (acc.includes(address) ? acc : [...acc, address]),
+        [] as string[]
+      );
   }
 
   get tableData() {
@@ -85,9 +118,71 @@ class AnalyticsScreenVM {
       .map((v) => ({
         ...v,
         borrowed: "$" + v.borrowed.toFormat(2),
-        supplied: "$" + v.supplied.toFormat(2)
-      }));
+        supplied: "$" + v.supplied.toFormat(2),
+        nBorrowed: v.borrowed.toNumber(),
+        nSupplied: v.supplied.toNumber()
+      }))
+      .sort((prev, curr) =>
+        this.sort === SORT_TYPE.mostBorrowed
+          ? curr.nBorrowed - prev.nBorrowed
+          : this.sort === SORT_TYPE.mostSupplied
+          ? curr.nSupplied - prev.nSupplied
+          : this.sort === SORT_TYPE.leastBorrowed
+          ? prev.nBorrowed - curr.nBorrowed
+          : prev.nSupplied - curr.nSupplied
+      );
   }
+
+  totalOf = (type: string) =>
+    this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .filter((v: TStatisticItem) => v.type === type)
+      .reduce((prev, { amount, poolId, asset }) => {
+        const rate = this.prices[poolId]?.find(
+          ({ assetId }) => assetId === asset.assetId
+        )?.prices.min;
+
+        return rate
+          ? prev.plus(BN.formatUnits(amount, asset.decimals).times(rate))
+          : prev;
+      }, BN.ZERO);
+
+  popularOf = (type: string) =>
+    this.statistics
+      .filter(
+        (v: TStatisticItem) =>
+          v.type === type && (this.poolId === null || this.poolId === v.poolId)
+      )
+      .reduce((prev, curr) => {
+        const rate = this.prices[curr.poolId]?.find(
+          ({ assetId }) => assetId === curr.asset.assetId
+        )?.prices.min;
+
+        const index = prev
+          .map((e: TStatisticItem) => (e.asset ? e.asset.assetId : null))
+          .indexOf(curr.asset.assetId);
+
+        const dataObj = index >= 0 ? prev[index] : curr;
+
+        const resultWithTotal = rate
+          ? {
+              ...dataObj,
+              amountTotal: dataObj.amountTotal
+                ? dataObj.amountTotal +
+                  BN.formatUnits(curr.amount, curr.asset.decimals)
+                    .times(rate)
+                    .toNumber()
+                : BN.formatUnits(curr.amount, curr.asset.decimals)
+                    .times(rate)
+                    .toNumber()
+            }
+          : curr;
+
+        if (index >= 0) prev[index] = resultWithTotal;
+
+        return index >= 0 ? prev : [...prev, resultWithTotal];
+      }, [] as TStatisticItem[])
+      .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
 
   syncPrices = async () => {
     const poolIds = POOLS.map((pool) => pool.address);
@@ -134,7 +229,6 @@ class AnalyticsScreenVM {
       )
     );
     this.setStatistics(res);
-    return res;
   };
 
   constructor(private rootStore: RootStore) {
