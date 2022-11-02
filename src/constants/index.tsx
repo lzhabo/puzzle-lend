@@ -39,6 +39,10 @@ export const POOLS_DEV = [
   {
     name: "Puzzle Pool",
     address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
+  },
+  {
+    name: "Waves DeFi pool",
+    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
   }
 ];
 
