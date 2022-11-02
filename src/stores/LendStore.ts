@@ -21,8 +21,11 @@ export type TPoolStats = {
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
-const calcApy = (i: BN) =>
-  i.plus(1).pow(365).minus(1).times(100).toDecimalPlaces(2);
+const calcApy = (i: BN) => {
+  if (!i.isInteger()) return BN.ZERO;
+
+  return i.plus(1).pow(365).minus(1).times(100).toDecimalPlaces(2);
+};
 
 class LendStore {
   public readonly rootStore: RootStore;
@@ -62,6 +65,9 @@ class LendStore {
 
   get poolId(): string {
     return this.pool.address;
+  }
+  get poolName(): string {
+    return this.pool.name;
   }
 
   constructor(rootStore: RootStore) {
@@ -110,7 +116,7 @@ class LendStore {
       const UR = totalBorrow.div(totalSupply);
       const supplyInterest = interests[index].times(UR).times(0.8);
 
-      const p = prices[index];
+      const p = prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO };
       const dailyIncome = selfSupply.times(supplyInterest);
       const dailyLoan = selfBorrow.times(interests[index]);
 

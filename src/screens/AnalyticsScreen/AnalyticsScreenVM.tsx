@@ -196,7 +196,10 @@ class AnalyticsScreenVM {
         const prices = await fetchService.getPrices();
         return (tokenSetups[0].value as string)
           .split(",")
-          .map((assetId, index) => ({ assetId, prices: prices[index] }));
+          .map((assetId, index) => ({
+            assetId,
+            prices: prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO }
+          }));
       })
     );
     const prices = res.reduce(
