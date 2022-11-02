@@ -6,10 +6,6 @@ a {
   text-decoration: none;
 }
 
-iframe {
-  display: none ;
-}
-
 #root {
   display: flex;
   flex-direction: column;
