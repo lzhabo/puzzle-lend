@@ -30,7 +30,8 @@ const UsersTable = styled(Table)`
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
 
   @media (max-width: 880px) {
-    max-width: calc(100vw - 38px);
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
     overflow-x: scroll;
     margin: auto;
   }
