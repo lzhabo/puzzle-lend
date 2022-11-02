@@ -45,7 +45,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
   const totalData = vm.popularOf("supply");
-
+  
   return (
     <TotalVal>
       <Title>
@@ -54,11 +54,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
       </Title>
       <Table>
         {totalData.map((s: ITStatisticItem) => (
-          <TableRow
-            key={s.address}
-            alignItems="center"
-            justifyContent="space-between"
-          >
+          <TableRow alignItems="center" justifyContent="space-between">
             <Row>
               <SquareTokenIcon
                 size="small"

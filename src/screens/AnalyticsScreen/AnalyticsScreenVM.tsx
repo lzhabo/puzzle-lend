@@ -71,16 +71,19 @@ class AnalyticsScreenVM {
   ];
 
   get tokens() {
-    return this.statistics.reduce(
-      (acc, { asset: { assetId } }) =>
-        acc.includes(assetId) ? acc : [...acc, assetId],
-      [] as string[]
-    );
+    return this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .reduce(
+        (acc, { asset: { assetId } }) =>
+          acc.includes(assetId) ? acc : [...acc, assetId],
+        [] as string[]
+      );
   }
 
   get totalOf() {
     return (type: string) =>
       this.statistics
+        .filter((v) => this.poolId == null || this.poolId === v.poolId)
         .filter((v: TStatisticItem) => v.type === type)
         .reduce((prev, { amount, poolId, asset }) => {
           const rate = this.prices[poolId]?.find(
@@ -106,7 +109,11 @@ class AnalyticsScreenVM {
   get popularOf() {
     return (type: string) =>
       this.statistics
-        .filter((v: TStatisticItem) => v.type === type)
+        .filter(
+          (v: TStatisticItem) =>
+            v.type === type &&
+            (this.poolId === null || this.poolId === v.poolId)
+        )
         .reduce((prev, curr) => {
           const rate = this.prices[curr.poolId]?.find(
             ({ assetId }) => assetId === curr.asset.assetId
@@ -132,6 +139,10 @@ class AnalyticsScreenVM {
               }
             : curr;
 
+          console.log(this.poolId);
+          console.log(curr.poolId);
+          console.log(this.poolId === curr.poolId);
+
           return index >= 0 ? prev : [...prev, resultWithTotal];
           //TODO убрать any
         }, [] as TStatisticItem[])
@@ -139,10 +150,12 @@ class AnalyticsScreenVM {
   }
 
   get uniqueUsers() {
-    return this.statistics.reduce(
-      (acc, { address }) => (acc.includes(address) ? acc : [...acc, address]),
-      [] as string[]
-    );
+    return this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .reduce(
+        (acc, { address }) => (acc.includes(address) ? acc : [...acc, address]),
+        [] as string[]
+      );
   }
 
   get tableData() {
