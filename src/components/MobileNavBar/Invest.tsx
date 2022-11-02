@@ -32,9 +32,9 @@ const Invest: React.FC<IProps> = ({ active, isBorrow }) => {
         <path
           d="M17.1318 7.78821L12.1318 2.78821L7.13184 7.78821"
           stroke={active ? theme.colors.primary800 : theme.colors.blue500}
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       ) : (
         <path
