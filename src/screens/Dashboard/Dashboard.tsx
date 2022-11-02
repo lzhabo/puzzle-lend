@@ -94,7 +94,7 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
             <Column crossAxisSize="max">
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>
-                  Total liquidity:
+                  {`Total liquidity of ${lendStore.poolName}: `}
                   <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
                 </Text>
               </TotalLiquidity>
