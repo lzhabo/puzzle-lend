@@ -63,6 +63,9 @@ class LendStore {
   get poolId(): string {
     return this.pool.address;
   }
+  get poolName(): string {
+    return this.pool.name;
+  }
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
