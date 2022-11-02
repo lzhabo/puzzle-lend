@@ -4,11 +4,15 @@ import Text from "@components/Text";
 import { Row } from "@src/components/Flex";
 import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
 import { observer } from "mobx-react-lite";
-import { useAnalyticsScreenVM } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
+import {
+  useAnalyticsScreenVM,
+  SORT_TYPE
+} from "@screens/AnalyticsScreen/AnalyticsScreenVM";
 import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import Table from "@components/Table";
 import Button from "@components/Button";
+import Dropdown from "@src/components/Dropdown";
 
 interface IProps {}
 
@@ -32,7 +36,6 @@ const UsersTable = styled(Table)`
   }
 `;
 
-//TODO пометка для себя я бы эти стили переписал без трех > div селекторов, а на классах
 const RowSelect = styled(Row)`
   @media (max-width: 880px) {
     flex-direction: column;
@@ -92,12 +95,12 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         <Select
           options={[
             ...vm.sortOptions.map((t) => ({
-              title: t,
-              key: t
+              key: t[1],
+              title: t[1]
             }))
           ]}
           selected={vm.sort ?? undefined}
-          onSelect={vm.setSort}
+          onSelect={(type) => vm.setSort(type as SORT_TYPE)}
         />
       </RowSelect>
       <SizedBox height={16} />

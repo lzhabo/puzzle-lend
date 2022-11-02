@@ -45,6 +45,13 @@ interface ITStatisticItem extends TStatisticItem {}
 
 export type { ITStatisticItem };
 
+export enum SORT_TYPE {
+  mostBorrowed = "Most borrowed",
+  mostSupplied = "Most supplied",
+  leastBorrowed = "Least borrowed",
+  leastSupplied = "Least supplied"
+}
+
 class AnalyticsScreenVM {
   poolId: string | null = null;
   setPoolId = (poolId: string | null) => (this.poolId = poolId);
@@ -58,17 +65,10 @@ class AnalyticsScreenVM {
   prices: TAssetPrices = {};
   setPrices = (p: TAssetPrices) => (this.prices = p);
 
-  sort: TSort = "Most borrowed";
-  setSort = (s: string) => (this.sort = s as TSort);
+  sort: SORT_TYPE = SORT_TYPE.mostBorrowed;
+  setSort = (s: SORT_TYPE) => (this.sort = s);
 
-  //TODO тут надо заменить string[] на Array<{keyName: string, text: string}>
-  //тк на 177 строке есть sortOptions и приходится юзать сами строки а не их ключи
-  sortOptions: TSort[] = [
-    "Most borrowed",
-    "Most supplied",
-    "Least borrowed",
-    "Least supplied"
-  ];
+  sortOptions = Object.entries(SORT_TYPE);
 
   get tokens() {
     return this.statistics
@@ -139,12 +139,7 @@ class AnalyticsScreenVM {
               }
             : curr;
 
-          console.log(this.poolId);
-          console.log(curr.poolId);
-          console.log(this.poolId === curr.poolId);
-
           return index >= 0 ? prev : [...prev, resultWithTotal];
-          //TODO убрать any
         }, [] as TStatisticItem[])
         .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
   }
@@ -188,11 +183,11 @@ class AnalyticsScreenVM {
         nSupplied: v.supplied.toNumber()
       }))
       .sort((prev, curr) =>
-        this.sort === "Most borrowed"
+        this.sort === SORT_TYPE.mostBorrowed
           ? curr.nBorrowed - prev.nBorrowed
-          : this.sort === "Most supplied"
+          : this.sort === SORT_TYPE.mostSupplied
           ? curr.nSupplied - prev.nSupplied
-          : this.sort === "Least borrowed"
+          : this.sort === SORT_TYPE.leastBorrowed
           ? prev.nBorrowed - curr.nBorrowed
           : prev.nSupplied - curr.nSupplied
       );

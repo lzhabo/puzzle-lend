@@ -20,7 +20,6 @@ export const ROUTES = {
   },
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
-  // TODO сделать спец линк без poolId для перехода на analytics по всем пулам
   ANALYTICS: "/analytics",
   NOT_FOUND: "/404"
 };
