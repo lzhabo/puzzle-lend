@@ -164,8 +164,6 @@ class AnalyticsScreenVM {
 
         const dataObj = index >= 0 ? prev[index] : curr;
 
-        if (!rate) console.log("ERR");
-
         const resultWithTotal = rate
           ? {
               ...dataObj,
