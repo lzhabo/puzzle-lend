@@ -35,12 +35,6 @@ type TStatisticItem = {
   nSupplied?: number;
 };
 
-type TSort =
-  | "Most borrowed"
-  | "Most supplied"
-  | "Least borrowed"
-  | "Least supplied";
-
 interface ITStatisticItem extends TStatisticItem {}
 
 export type { ITStatisticItem };
@@ -170,6 +164,8 @@ class AnalyticsScreenVM {
 
         const dataObj = index >= 0 ? prev[index] : curr;
 
+        if (!rate) console.log("ERR");
+
         const resultWithTotal = rate
           ? {
               ...dataObj,
@@ -183,6 +179,8 @@ class AnalyticsScreenVM {
                     .toNumber()
             }
           : curr;
+
+        if (index >= 0) prev[index] = resultWithTotal;
 
         return index >= 0 ? prev : [...prev, resultWithTotal];
       }, [] as TStatisticItem[])
@@ -230,7 +228,6 @@ class AnalyticsScreenVM {
       )
     );
     this.setStatistics(res);
-    return res;
   };
 
   constructor(private rootStore: RootStore) {

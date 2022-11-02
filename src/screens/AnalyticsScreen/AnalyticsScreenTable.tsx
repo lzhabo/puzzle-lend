@@ -115,9 +115,11 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
           data={vm.tableData.map((e: ITableData) => ({
             ...e,
             action: (
-              <Button size="medium" kind="secondary" fixed>
-                Check User
-              </Button>
+              <a href={`https://wavesexplorer.com/addresses/${e.user}`}>
+                <Button size="medium" kind="secondary" fixed>
+                  Check User
+                </Button>
+              </a>
             )
           }))}
         />

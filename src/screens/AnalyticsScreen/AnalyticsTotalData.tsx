@@ -47,7 +47,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
   const totalData = vm.popularOf("supply");
-
+  console.log(totalData);
   return (
     <TotalVal>
       <Title>
