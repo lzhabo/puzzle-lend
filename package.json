@@ -2,7 +2,6 @@
   "name": "puzzle-lend",
   "version": "1.0.0",
   "private": false,
-  "homepage": "https://lzhabo.github.io/puzzle-lend/",
   "dependencies": {
     "@babel/core": "7.12.3",
     "@emotion/core": "^11.0.0",

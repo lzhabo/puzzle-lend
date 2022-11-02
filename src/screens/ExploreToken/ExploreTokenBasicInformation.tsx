@@ -38,6 +38,14 @@ const StatsItem = styled(Column)`
   }
 `;
 
+const TokenStatsCol = styled(Column)`
+  max-width: 100%;
+
+  @media (min-width: 880px) {
+    max-width: 427px;
+  }
+`;
+
 const ExploreTokenBasicInformation = () => {
   const { width } = useWindowSize();
   const vm = useExploreTokenVM();
@@ -96,14 +104,14 @@ const ExploreTokenBasicInformation = () => {
           <ExploreTokenPriceChart />
         </>
       </Column>
-      <Column crossAxisSize="max">
+      <TokenStatsCol crossAxisSize="max">
         <ExploreTokenPriceStatistics />
         <SizedBox height={50} />
-      </Column>
+      </TokenStatsCol>
     </Root>
   ) : (
     <Root>
-      <Row alignItems="end" mainAxisSize="fit-content">
+      <Row style={{ flexWrap: "wrap" }}>
         {statistics.map((s, i) => (
           <StatsItem key={i}>
             <Text size="medium" type="secondary">
@@ -113,11 +121,11 @@ const ExploreTokenBasicInformation = () => {
           </StatsItem>
         ))}
       </Row>
-      <Column crossAxisSize="max">
+      <TokenStatsCol crossAxisSize="max">
         <ExploreTokenPriceChart />
         <SizedBox height={24} />
         <ExploreTokenPriceStatistics />
-      </Column>
+      </TokenStatsCol>
       <SizedBox height={50} />
     </Root>
   );

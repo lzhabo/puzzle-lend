@@ -8,12 +8,17 @@ const ExploreLayout = styled.div`
   padding: 0 16px;
   width: 100%;
   min-height: 100%;
-  max-width: calc(1160px + 32px);
-  margin-bottom: 24px;
+  max-width: calc(1328px + 32px);
+  margin-bottom: 72px;
   margin-top: 40px;
   text-align: left;
-  @media (min-width: 880px) {
+
+  @media (min-width: 560px) {
     margin-top: 56px;
+  }
+
+  @media (min-width: 880px) {
+    margin-bottom: 96px;
   }
 `;
 export default ExploreLayout;
