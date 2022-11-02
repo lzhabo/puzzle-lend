@@ -124,15 +124,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
           }))}
         />
       ) : (
-        <>
-          <Skeleton height={60} />
-          <SizedBox height={16} />
-          <Skeleton height={60} />
-          <SizedBox height={16} />
-          <Skeleton height={60} />
-          <SizedBox height={16} />
-          <Skeleton height={60} />
-        </>
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       )}
     </Root>
   );

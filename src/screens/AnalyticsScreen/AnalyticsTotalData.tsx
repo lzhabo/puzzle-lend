@@ -90,13 +90,7 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
           ))}
         </Table>
       ) : (
-        <>
-          <Skeleton height={30} />
-          <SizedBox height={8} />
-          <Skeleton height={30} />
-          <SizedBox height={8} />
-          <Skeleton height={30} />
-        </>
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       )}
     </TotalVal>
   );
