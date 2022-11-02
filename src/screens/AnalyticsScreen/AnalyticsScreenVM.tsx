@@ -80,22 +80,6 @@ class AnalyticsScreenVM {
       );
   }
 
-  get totalOf() {
-    return (type: string) =>
-      this.statistics
-        .filter((v) => this.poolId == null || this.poolId === v.poolId)
-        .filter((v: TStatisticItem) => v.type === type)
-        .reduce((prev, { amount, poolId, asset }) => {
-          const rate = this.prices[poolId]?.find(
-            ({ assetId }) => assetId === asset.assetId
-          )?.prices.min;
-
-          return rate
-            ? prev.plus(BN.formatUnits(amount, asset.decimals).times(rate))
-            : prev;
-        }, BN.ZERO);
-  }
-
   get priceForToken() {
     return (token: TStatisticItem) => {
       return (
@@ -104,44 +88,6 @@ class AnalyticsScreenVM {
         )?.prices.min ?? BN.ZERO
       );
     };
-  }
-
-  get popularOf() {
-    return (type: string) =>
-      this.statistics
-        .filter(
-          (v: TStatisticItem) =>
-            v.type === type &&
-            (this.poolId === null || this.poolId === v.poolId)
-        )
-        .reduce((prev, curr) => {
-          const rate = this.prices[curr.poolId]?.find(
-            ({ assetId }) => assetId === curr.asset.assetId
-          )?.prices.min;
-
-          const index = prev
-            .map((e: TStatisticItem) => (e.asset ? e.asset.assetId : null))
-            .indexOf(curr.asset.assetId);
-
-          const dataObj = index >= 0 ? prev[index] : curr;
-
-          const resultWithTotal = rate
-            ? {
-                ...dataObj,
-                amountTotal: dataObj.amountTotal
-                  ? dataObj.amountTotal +
-                    BN.formatUnits(curr.amount, curr.asset.decimals)
-                      .times(rate)
-                      .toNumber()
-                  : BN.formatUnits(curr.amount, curr.asset.decimals)
-                      .times(rate)
-                      .toNumber()
-              }
-            : curr;
-
-          return index >= 0 ? prev : [...prev, resultWithTotal];
-        }, [] as TStatisticItem[])
-        .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
   }
 
   get uniqueUsers() {
@@ -192,6 +138,55 @@ class AnalyticsScreenVM {
           : prev.nSupplied - curr.nSupplied
       );
   }
+
+  totalOf = (type: string) =>
+    this.statistics
+      .filter((v) => this.poolId == null || this.poolId === v.poolId)
+      .filter((v: TStatisticItem) => v.type === type)
+      .reduce((prev, { amount, poolId, asset }) => {
+        const rate = this.prices[poolId]?.find(
+          ({ assetId }) => assetId === asset.assetId
+        )?.prices.min;
+
+        return rate
+          ? prev.plus(BN.formatUnits(amount, asset.decimals).times(rate))
+          : prev;
+      }, BN.ZERO);
+
+  popularOf = (type: string) =>
+    this.statistics
+      .filter(
+        (v: TStatisticItem) =>
+          v.type === type && (this.poolId === null || this.poolId === v.poolId)
+      )
+      .reduce((prev, curr) => {
+        const rate = this.prices[curr.poolId]?.find(
+          ({ assetId }) => assetId === curr.asset.assetId
+        )?.prices.min;
+
+        const index = prev
+          .map((e: TStatisticItem) => (e.asset ? e.asset.assetId : null))
+          .indexOf(curr.asset.assetId);
+
+        const dataObj = index >= 0 ? prev[index] : curr;
+
+        const resultWithTotal = rate
+          ? {
+              ...dataObj,
+              amountTotal: dataObj.amountTotal
+                ? dataObj.amountTotal +
+                  BN.formatUnits(curr.amount, curr.asset.decimals)
+                    .times(rate)
+                    .toNumber()
+                : BN.formatUnits(curr.amount, curr.asset.decimals)
+                    .times(rate)
+                    .toNumber()
+            }
+          : curr;
+
+        return index >= 0 ? prev : [...prev, resultWithTotal];
+      }, [] as TStatisticItem[])
+      .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
 
   syncPrices = async () => {
     const poolIds = POOLS.map((pool) => pool.address);

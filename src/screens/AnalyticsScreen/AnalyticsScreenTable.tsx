@@ -12,7 +12,7 @@ import Select from "@components/Select";
 import SizedBox from "@components/SizedBox";
 import Table from "@components/Table";
 import Button from "@components/Button";
-import Dropdown from "@src/components/Dropdown";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -104,23 +104,34 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
         />
       </RowSelect>
       <SizedBox height={16} />
-      <UsersTable
-        columns={[
-          { Header: "User", accessor: "user" },
-          { Header: "Supplied", accessor: "supplied" },
-          { Header: "Borrowed", accessor: "borrowed" },
-          { Header: "", accessor: "action" }
-        ]}
-        data={vm.tableData.map((e: ITableData) => ({
-          ...e,
-          //TODO добавить онклик на кнопку для переброса на новую страницу
-          action: (
-            <Button size="medium" kind="secondary" fixed>
-              Check User
-            </Button>
-          )
-        }))}
-      ></UsersTable>
+      {vm.tableData[0] ? (
+        <UsersTable
+          columns={[
+            { Header: "User", accessor: "user" },
+            { Header: "Supplied", accessor: "supplied" },
+            { Header: "Borrowed", accessor: "borrowed" },
+            { Header: "", accessor: "action" }
+          ]}
+          data={vm.tableData.map((e: ITableData) => ({
+            ...e,
+            action: (
+              <Button size="medium" kind="secondary" fixed>
+                Check User
+              </Button>
+            )
+          }))}
+        />
+      ) : (
+        <>
+          <Skeleton height={60} />
+          <SizedBox height={16} />
+          <Skeleton height={60} />
+          <SizedBox height={16} />
+          <Skeleton height={60} />
+          <SizedBox height={16} />
+          <Skeleton height={60} />
+        </>
+      )}
     </Root>
   );
 };

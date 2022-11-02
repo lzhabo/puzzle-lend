@@ -4,6 +4,7 @@ import Text from "@components/Text";
 import { Column, Row } from "@components/Flex";
 import { observer } from "mobx-react-lite";
 import { useAnalyticsScreenVM } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -33,11 +34,11 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
     },
     {
       title: "Popular coin to supplie",
-      value: vm.popularOf("supply")[0]?.asset.name ?? "Loading..."
+      value: vm.popularOf("supply")[0]?.asset.name ?? null
     },
     {
       title: "Popular coin to borrow",
-      value: vm.popularOf("borrow")[0]?.asset.name ?? "Loading..."
+      value: vm.popularOf("borrow")[0]?.asset.name ?? null
     }
   ];
   return (
@@ -51,7 +52,7 @@ const AnalyticsScreenBaseInfo: React.FC<IProps> = () => {
           <Text size="medium" type="secondary">
             {s.title}
           </Text>
-          <Text>{s.value}</Text>
+          <Text>{s.value ?? <Skeleton height={20} width={140} />}</Text>
         </StatsItem>
       ))}
     </Row>

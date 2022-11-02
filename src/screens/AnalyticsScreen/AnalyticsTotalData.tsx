@@ -7,10 +7,12 @@ import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
+import BN from "@src/utils/BN";
 import {
   useAnalyticsScreenVM,
   ITStatisticItem
 } from "@screens/AnalyticsScreen/AnalyticsScreenVM";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -45,47 +47,57 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
   const vm = useAnalyticsScreenVM();
 
   const totalData = vm.popularOf("supply");
-  
+
   return (
     <TotalVal>
       <Title>
         Total value
         <SizedBox height={24} />
       </Title>
-      <Table>
-        {totalData.map((s: ITStatisticItem) => (
-          <TableRow alignItems="center" justifyContent="space-between">
-            <Row>
-              <SquareTokenIcon
-                size="small"
-                src={tokenLogos[s.asset.symbol]}
-                alt="logo"
-              />
-              <SizedBox width={16} />
-              <Column>
-                <Text size="small" fitContent>
-                  {s.asset.symbol}
-                </Text>
-                <Text type="secondary" size="small" fitContent>
-                  $ {vm.priceForToken(s).toNumber()}
-                </Text>
-              </Column>
-            </Row>
-            <Row justifyContent={"flex-end"}>
-              <Column>
-                <Text textAlign={"end"} size="small">
-                  {(s.amountTotal / vm.priceForToken(s).toNumber()).toFixed(2) +
-                    " " +
-                    s.asset.symbol}
-                </Text>
-                <Text textAlign={"end"} type="secondary" size="small">
-                  $ {s.amountTotal.toFixed(2)}
-                </Text>
-              </Column>
-            </Row>
-          </TableRow>
-        ))}
-      </Table>
+      {totalData[0] ? (
+        <Table>
+          {totalData.map((s: ITStatisticItem) => (
+            <TableRow alignItems="center" justifyContent="space-between">
+              <Row>
+                <SquareTokenIcon
+                  size="small"
+                  src={tokenLogos[s.asset.symbol]}
+                  alt="logo"
+                />
+                <SizedBox width={16} />
+                <Column>
+                  <Text size="small" fitContent>
+                    {s.asset.symbol}
+                  </Text>
+                  <Text type="secondary" size="small" fitContent>
+                    $ {vm.priceForToken(s).toNumber()}
+                  </Text>
+                </Column>
+              </Row>
+              <Row justifyContent={"flex-end"}>
+                <Column>
+                  <Text textAlign={"end"} size="small">
+                    {`${new BN(s.amountTotal)
+                      .div(vm.priceForToken(s))
+                      .toFixed(2)} ${s.asset.symbol}`}
+                  </Text>
+                  <Text textAlign={"end"} type="secondary" size="small">
+                    $ {s.amountTotal.toFixed(2)}
+                  </Text>
+                </Column>
+              </Row>
+            </TableRow>
+          ))}
+        </Table>
+      ) : (
+        <>
+          <Skeleton height={30} />
+          <SizedBox height={8} />
+          <Skeleton height={30} />
+          <SizedBox height={8} />
+          <Skeleton height={30} />
+        </>
+      )}
     </TotalVal>
   );
 };
