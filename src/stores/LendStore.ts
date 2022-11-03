@@ -18,6 +18,7 @@ export type TPoolStats = {
   selfBorrow: BN;
   dailyIncome: BN;
   dailyLoan: BN;
+  supplyLimit: BN;
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
@@ -69,7 +70,6 @@ class LendStore {
   get poolName(): string {
     return this.pool.name;
   }
-
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -83,6 +83,7 @@ class LendStore {
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
+        `setup_maxSupply_${assetId}`,
         `total_supplied_${assetId}`,
         `total_borrowed_${assetId}`,
         ...(address
@@ -104,6 +105,9 @@ class LendStore {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
 
+      const limit = getStateByKey(state, `setup_maxSupply_${token.assetId}`);
+      const assetMaxSupply = BN.formatUnits(limit ?? "0", 6);
+
       const sSup = getStateByKey(state, `${address}_supplied_${token.assetId}`);
       const selfSupply = new BN(sSup ?? "0").times(rates[index].supplyRate);
 
@@ -124,6 +128,7 @@ class LendStore {
         ...token,
         interest: interests[index],
         prices: p,
+        supplyLimit: assetMaxSupply,
         dailyIncome: dailyIncome.toDecimalPlaces(0),
         dailyLoan: dailyLoan.toDecimalPlaces(0),
         totalSupply: totalSupply.toDecimalPlaces(0),

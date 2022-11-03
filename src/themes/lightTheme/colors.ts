@@ -12,7 +12,7 @@ const colors = {
   success500: "#35A15A",
   success100: "#E6F3EB",
   error550: "#D66662",
-  error500: "#ED827E",
+  error500: "#EE505A",
   error100: "#FCF0EF",
   attention550: "#D9916E",
   attention500: "#EDAA8A",

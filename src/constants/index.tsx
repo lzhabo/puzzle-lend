@@ -1,5 +1,6 @@
 import tokens from "./tokens.json";
 import tokenLogos from "@src/constants/tokenLogos";
+import BN from "@src/utils/BN";
 
 export enum OPERATIONS_TYPE {
   WITHDRAW = "withdraw",
@@ -27,7 +28,8 @@ export const ROUTES = {
 export const POOLS_PROD = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    supplyLimit: BN.ZERO
   }
 ];
 
