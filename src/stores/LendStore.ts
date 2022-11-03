@@ -61,13 +61,17 @@ class LendStore {
     this.poolsStats.find((s) => s.assetId === assetId);
 
   pool = POOLS[0];
-  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+  setPool = (pool: { name: string; address: string; supplyLimit: BN }) =>
+    (this.pool = pool);
 
   get poolId(): string {
     return this.pool.address;
   }
   get poolName(): string {
     return this.pool.name;
+  }
+  get poolSupplyLimit(): BN {
+    return this.pool.supplyLimit;
   }
 
   constructor(rootStore: RootStore) {

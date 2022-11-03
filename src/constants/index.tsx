@@ -1,5 +1,6 @@
 import tokens from "./tokens.json";
 import tokenLogos from "@src/constants/tokenLogos";
+import BN from "@src/utils/BN";
 
 export enum OPERATIONS_TYPE {
   WITHDRAW = "withdraw",
@@ -27,22 +28,26 @@ export const ROUTES = {
 export const POOLS_PROD = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    supplyLimit: BN.ZERO
   }
 ];
 
 export const POOLS_DEV = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    supplyLimit: BN.ZERO
   },
   {
     name: "Puzzle Pool",
-    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
+    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU",
+    supplyLimit: BN.ZERO
   },
   {
     name: "Waves DeFi pool",
-    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
+    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X",
+    supplyLimit: new BN(50000)
   }
 ];
 
@@ -72,6 +77,7 @@ export const EXPLORER_URL = "https://new.wavesexplorer.com";
 export interface IPool {
   name: string;
   address: string;
+  supplyLimit: BN;
 }
 
 export interface IToken {

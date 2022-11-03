@@ -68,8 +68,8 @@ class DashboardModalVM {
     this.dashboardModalStep = step;
   };
 
-  modalErrorText = "";
-  setError = (error: string) => (this.modalErrorText = error);
+  modalBtnErrorText = "";
+  setError = (error: string) => (this.modalBtnErrorText = error);
 
   operationName: OPERATIONS_TYPE = OPERATIONS_TYPE.SUPPLY;
   setOperationName = (operation: OPERATIONS_TYPE) =>
@@ -77,6 +77,56 @@ class DashboardModalVM {
 
   accountHealth = 100;
   setAccountHealth = (health: number) => (this.accountHealth = health);
+
+  get modalWarningText(): string | null {
+    if (this.operationName === OPERATIONS_TYPE.BORROW) {
+      return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
+    }
+
+    if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
+      const currentVal = this.isDollar
+        ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
+            this.token?.prices?.min
+          )
+        : BN.formatUnits(this.modalFormattedVal, this.token?.decimals);
+
+      const reservesInDollars = this.isDollar
+        ? this.poolTotalReserves.times(this.token?.prices?.min)
+        : this.poolTotalReserves;
+
+      const dynamicLimit = this.currentPoolLimit
+        .minus(this.poolTotalReserves.plus(currentVal))
+        .toFixed(2);
+
+      if (reservesInDollars.lt(currentVal)) {
+        this.setError(
+          `Should be less than ${this.currentPoolLimit
+            .minus(this.poolTotalReserves)
+            .toFixed(2)} ${this.currentSymbol}`
+        );
+      }
+
+      if (
+        reservesInDollars.gt(this.currentPoolLimit.times(0.9)) &&
+        reservesInDollars.lt(this.currentPoolLimit)
+      ) {
+        return `There are ${dynamicLimit} ${this.currentSymbol} left to the limit. You can pay this amount or less`;
+      }
+
+      return null;
+    }
+
+    return null;
+  }
+
+  get currentPoolLimit() {
+    const limit = this.rootStore?.lendStore?.pool?.supplyLimit;
+    return this.isDollar ? limit : limit.div(this.token?.prices?.min);
+  }
+
+  get currentSymbol() {
+    return this.isDollar ? "$" : this.token?.symbol;
+  }
 
   get currentPoolId() {
     return this.rootStore.lendStore.poolId;
@@ -168,33 +218,18 @@ class DashboardModalVM {
       : this.tokenBalance.times(this.token?.prices?.min);
   }
 
+  get poolTotalReserves(): BN {
+    if (!this.token?.totalSupply || !this.token?.totalBorrow) return BN.ZERO;
+    const reserves = this.token?.totalSupply?.minus(this.token?.totalBorrow);
+
+    return this.isDollar
+      ? BN.formatUnits(reserves, this.token?.decimals)
+      : BN.formatUnits(reserves, this.token?.decimals).times(
+          this.token?.prices?.min
+        );
+  }
+
   // BORROW MODAL
-  // counting maximum after USER INPUT
-  get userMaximumToBorrow(): BN {
-    const maximum = this.staticMaximum;
-
-    const totalReserves = BN.formatUnits(
-      this.token?.totalSupply,
-      this.token?.decimals
-    ).minus(BN.formatUnits(this.token?.totalBorrow, this.token?.decimals));
-
-    // cause if market liquidity lower, asset cant provide requested amount of money to user
-    if (totalReserves.lt(maximum)) {
-      return totalReserves.minus(
-        BN.formatUnits(this.modalAmount, this.token?.decimals)
-      );
-    }
-
-    return maximum.minus(
-      BN.formatUnits(this.modalAmount, this.token?.decimals)
-    );
-  }
-
-  get tokenReserves(): string {
-    const reserves = this.token?.totalSupply.minus(this.token?.totalBorrow);
-    return BN.formatUnits(reserves, this.token?.decimals).toFormat(2);
-  }
-
   get countUserBalance(): string {
     return (
       BN.formatUnits(this.staticTokenAmount, this.token?.decimals).toFormat(
@@ -206,6 +241,7 @@ class DashboardModalVM {
   get userDailyIncome(): BN {
     const UR = this.token?.totalBorrow.div(this.token?.totalSupply);
     const supplyInterest = this.token?.interest.times(UR).times(0.8);
+    if (supplyInterest.isNaN()) return BN.ZERO;
     return BN.formatUnits(this.modalAmount, this.token?.decimals).times(
       supplyInterest
     );
@@ -282,25 +318,22 @@ class DashboardModalVM {
 
   // counting maximum amount for MAX btn
   userMaximumToBorrowBN = () => {
-    const totalReserves = this.token?.totalSupply.minus(
-      this.token?.totalBorrow
-    );
     const maximum = this.isDollar
       ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
       : BN.formatUnits(this.userCollateral, 6)
           .times(this.token?.lt)
           .div(this.token?.prices.max);
+    // current recommended maximum borrow, no more than 80% of health
+    const val = maximum.times(10 ** this.token.decimals).times(0.8);
+
     let isError = false;
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
-    if (BN.formatUnits(totalReserves, 6).lt(maximum)) {
+    if (BN.formatUnits(this.poolTotalReserves, 6).lt(maximum)) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
-      return totalReserves.times(0.8);
+      return val;
     }
-
-    // current recommended maximum borrow, no more than 80% of health
-    const val = maximum.times(10 ** this.token.decimals).times(0.8);
 
     if (this.countBorrowAccountHealth(val) < 1) {
       this.setError(`Account health less than 1%, risk of liquidation`);
@@ -319,13 +352,6 @@ class DashboardModalVM {
       ? BN.formatUnits(this.userCollateral, 6)
       : BN.formatUnits(this.userCollateral, 6).div(this.token?.prices?.min);
 
-    // reserves in crypto amount by default
-    const totalReserves = this.isDollar
-      ? this.token?.totalSupply.minus(this.token?.totalBorrow)
-      : this.token?.totalSupply
-          .minus(this.token?.totalBorrow)
-          .times(this.token?.prices?.min);
-
     let isError = false;
 
     if (maxCollateral.isLessThanOrEqualTo(formattedVal)) {
@@ -333,7 +359,11 @@ class DashboardModalVM {
       isError = true;
     }
 
-    if (BN.formatUnits(totalReserves, 6).isLessThanOrEqualTo(formattedVal)) {
+    if (
+      BN.formatUnits(this.poolTotalReserves, 6).isLessThanOrEqualTo(
+        formattedVal
+      )
+    ) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
     }

@@ -4,7 +4,9 @@ import Text from "@components/Text";
 import { Anchor } from "@components/Anchor";
 import { ReactComponent as Warn } from "@src/assets/icons/warning.svg";
 
-interface IProps {}
+interface IProps {
+  text: string;
+}
 
 const Warning = styled(Warn)`
   min-width: 24px;
@@ -19,15 +21,12 @@ const RowWarning = styled.div`
   background-color: ${({ theme }) => theme.colors.error100};
 `;
 
-const WarningError: React.FC<IProps> = () => {
+const WarningError: React.FC<IProps> = ({ text }) => {
   return (
     <RowWarning>
       <Warning />
       <Column>
-        <Text size="medium">
-          In case of market insolvency borrow limit of assets may decrease which
-          may cause liquidation of your assets
-        </Text>
+        <Text size="medium">{text}</Text>
         <Anchor href="https://puzzle-lend.gitbook.io/guidebook/suppliers-guide/safety-features">
           <Text weight={500} type="error">
             Learn more

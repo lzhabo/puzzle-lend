@@ -14,21 +14,16 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
+import { useSupplyAndBorrowVM } from "./SupplyAndBorrowVM";
 
 interface IProps {}
 
-type ISortTypes =
-  | "borrowAPY"
-  | "supplyAPY"
-  | "selfSupply"
-  | "selfBorrow"
-  | "dailyIncome"
-  | "dailyLoan";
-
-const Root = styled.div<{ sort?: boolean }>`
+const Root = styled.div`
   display: flex;
   flex-direction: column;
+`;
 
+const TableWrap = styled.div<{ sort?: boolean }>`
   .sort-icon {
     width: 20px;
     height: 20px;
@@ -42,78 +37,14 @@ const Root = styled.div<{ sort?: boolean }>`
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
-//fixme replace sort logic to VM
-// divide to components, 500 lines is too much
+
 const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
-  const navigate = useNavigate();
-  const theme = useTheme();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const [filteredBorrows, setFilteredBorrows] = useState<any[]>([]);
-  const [sort, setActiveSort] = useState<ISortTypes>("selfSupply");
-  const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
-    "descending"
-  );
-  const selectSort = useCallback(
-    (v: ISortTypes) => {
-      if (sort === v) {
-        setActiveSortMode(
-          sortMode === "ascending" ? "descending" : "ascending"
-        );
-      } else {
-        setActiveSort(v);
-        setActiveSortMode("descending");
-      }
-    },
-    [sortMode, sort]
-  );
-  const sortData = useCallback(
-    (poolsData: TPoolStats[]) => {
-      return poolsData.slice().sort((a, b) => {
-        const stats1: TPoolStats = a;
-        const stats2: TPoolStats = b;
-        let key: keyof TPoolStats | undefined;
-        if (sort === "borrowAPY") key = "borrowAPY";
-        if (sort === "supplyAPY") key = "supplyAPY";
-        if (sort === "selfSupply") key = "selfSupply";
-        if (sort === "selfBorrow") key = "selfBorrow";
-        if (sort === "dailyIncome") key = "dailyIncome";
-        if (sort === "dailyLoan") key = "dailyLoan";
-        if (key == null) return 0;
-
-        if (stats1 == null || stats2 == null) return 0;
-        if (stats1[key] == null && stats2[key] != null)
-          return sortMode === "descending" ? 1 : -1;
-        if (stats1[key] == null && stats2[key] == null)
-          return sortMode === "descending" ? -1 : 1;
-
-        const stat1 = stats1[key] as keyof TPoolStats;
-        const stat2 = stats2[key] as keyof TPoolStats;
-
-        // if filtering in $ equivalent
-        if (
-          ["selfSupply", "selfBorrow", "dailyIncome", "dailyLoan"].includes(
-            sort
-          )
-        ) {
-          const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
-            .times(stats1?.prices.min)
-            .toDecimalPlaces(0);
-          const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
-            .times(stats2?.prices.min)
-            .toDecimalPlaces(0);
-
-          if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
-          else return val1.lt(val2) ? -1 : 1;
-        }
-
-        if (sortMode === "descending") {
-          return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
-        } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
-      });
-    },
-    [sort, sortMode]
-  );
+  const theme = useTheme();
+  const vm = useSupplyAndBorrowVM();
+  const navigate = useNavigate();
 
   const supplyColumns = useMemo(
     () => [
@@ -125,7 +56,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             style={{ cursor: "pointer" }}
             onClick={() =>
               lendStore.accountSupply.length > 1
-                ? selectSort("selfSupply")
+                ? vm.selectSort("selfSupply", true)
                 : null
             }
             justifyContent="flex-end"
@@ -133,14 +64,18 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Supplied
             </Text>
-            {lendStore.accountSupply.length > 1 && (
+            {lendStore.accountSupply.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "selfSupply" ? "sort-icon-active" : "sort-icon"
+                  vm.sortSupply === "selfSupply"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -152,7 +87,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             style={{ cursor: "pointer" }}
             onClick={() =>
               lendStore.accountSupply.length > 1
-                ? selectSort("supplyAPY")
+                ? vm.selectSort("supplyAPY", true)
                 : null
             }
             justifyContent="flex-end"
@@ -174,14 +109,18 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 Supply APY
               </Text>
             </Tooltip>
-            {lendStore.accountSupply.length > 1 && (
+            {lendStore.accountSupply.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "supplyAPY" ? "sort-icon-active" : "sort-icon"
+                  vm.sortSupply === "supplyAPY"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -191,20 +130,24 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() => selectSort("dailyIncome")}
+            onClick={() => vm.selectSort("dailyIncome", true)}
             justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Daily income
             </Text>
-            {lendStore.accountSupply.length > 1 && (
+            {lendStore.accountSupply.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "dailyIncome" ? "sort-icon-active" : "sort-icon"
+                  vm.sortSupply === "dailyIncome"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -213,7 +156,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" }
     ],
-    [selectSort, sort, theme.images.icons.group, lendStore.accountSupply.length]
+    [vm, theme.images.icons.group, lendStore.accountSupply.length]
   );
 
   const openModal = useCallback(
@@ -230,84 +173,108 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
   );
 
   useMemo(() => {
-    const data = sortData(lendStore.accountSupply).map((s: TPoolStats) => ({
-      onClick: () =>
-        navigate(
-          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-            ":poolId",
-            lendStore.pool.address
-          ).replace(":assetId", s.assetId)
+    const data = vm
+      .sortData(lendStore.accountSupply, true)
+      .map((s: TPoolStats) => ({
+        onClick: () =>
+          navigate(
+            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+              ":poolId",
+              lendStore.pool.address
+            ).replace(":assetId", s.assetId)
+          ),
+        asset: (
+          <Row alignItems="center">
+            <SquareTokenIcon size="small" src={s.logo} alt="logo" />
+            <SizedBox width={16} />
+            <Column>
+              <Text size="small" fitContent>
+                {s.symbol}
+              </Text>
+              <Text type="secondary" size="small" fitContent>
+                $ {s.prices.max.toBigFormat(2)}
+              </Text>
+            </Column>
+          </Row>
         ),
-      asset: (
-        <Row alignItems="center">
-          <SquareTokenIcon size="small" src={s.logo} alt="logo" />
-          <SizedBox width={16} />
-          <Column>
-            <Text size="small" fitContent>
-              {s.symbol}
+        emptyCell: <SizedBox width={140} />,
+        supplied: (
+          <Column crossAxisSize="max">
+            <Text weight={500} textAlign="right" size="medium">
+              {BN.formatUnits(s.selfSupply, s.decimals).toBigFormat(2) +
+                ` ${s.symbol}`}
             </Text>
-            <Text type="secondary" size="small" fitContent>
-              $ {s.prices.max.toBigFormat(2)}
+            <Text textAlign="right" size="small" type="secondary">
+              ${" "}
+              {BN.formatUnits(s.selfSupply, s.decimals)
+                .times(s.prices.min)
+                .toBigFormat(2)}
             </Text>
           </Column>
-        </Row>
-      ),
-      emptyCell: <SizedBox width={160} />,
-      supplied: (
-        <Column crossAxisSize="max">
-          <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.selfSupply, s.decimals).toBigFormat(2) +
-              ` ${s.symbol}`}
-          </Text>
-          <Text textAlign="right" size="small" type="secondary">
-            ${" "}
-            {BN.formatUnits(s.selfSupply, s.decimals)
-              .times(s.prices.min)
-              .toBigFormat(2)}
-          </Text>
-        </Column>
-      ),
-      supplyApy: s.supplyAPY.toBigFormat(2) + "%",
-      dailyIncome: (
-        <Column crossAxisSize="max">
-          <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.dailyIncome, s.decimals).toBigFormat(6) +
-              ` ${s.symbol}`}
-          </Text>
-          <Text textAlign="right" size="small" type="secondary">
-            ${" "}
-            {BN.formatUnits(s.dailyIncome, s.decimals)
-              .times(s.prices.min)
-              .toBigFormat(6)}
-          </Text>
-        </Column>
-      ),
-      supplyBtn: (
-        <Button
-          kind="secondary"
-          size="medium"
-          fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
-          style={{ width: "100px", margin: "0 auto" }}
-        >
-          Supply
-        </Button>
-      ),
-      withdrawBtn: (
-        <Button
-          kind="secondary"
-          size="medium"
-          fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "withdraw", s.assetId)}
-          style={{ width: "100px", margin: "0 auto" }}
-        >
-          Withdraw
-        </Button>
-      )
-    }));
+        ),
+        supplyApy: s.supplyAPY.toBigFormat(2) + "%",
+        dailyIncome: (
+          <Column crossAxisSize="max">
+            <Text weight={500} textAlign="right" size="medium">
+              {BN.formatUnits(s.dailyIncome, s.decimals).toBigFormat(6) +
+                ` ${s.symbol}`}
+            </Text>
+            <Text textAlign="right" size="small" type="secondary">
+              ${" "}
+              {BN.formatUnits(s.dailyIncome, s.decimals)
+                .times(s.prices.min)
+                .toBigFormat(6)}
+            </Text>
+          </Column>
+        ),
+        supplyBtn: vm.isSupplyDisabled(s) ? (
+          <Tooltip
+            content={
+              <Text textAlign="left">Maximum total supply is reached</Text>
+            }
+          >
+            <Button
+              kind="secondary"
+              size="medium"
+              fixed
+              disabled={true}
+              onClick={(e) =>
+                openModal(e, lendStore.poolId, "supply", s.assetId)
+              }
+              style={{ width: "100px", margin: "0 auto" }}
+            >
+              Supply
+            </Button>
+          </Tooltip>
+        ) : (
+          <Button
+            kind="secondary"
+            size="medium"
+            fixed
+            onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+            style={{ width: "100px", margin: "0 auto" }}
+          >
+            Supply
+          </Button>
+        ),
+        withdrawBtn: (
+          <Button
+            kind="secondary"
+            size="medium"
+            fixed
+            onClick={(e) =>
+              openModal(e, lendStore.poolId, "withdraw", s.assetId)
+            }
+            style={{ width: "100px", margin: "0 auto" }}
+          >
+            Withdraw
+          </Button>
+        )
+      }));
     setFilteredSupplies(data);
   }, [
-    sortData,
+    vm.sortModeSupply,
+    vm.sortSupply,
     lendStore.pool.address,
     lendStore.accountSupply,
     lendStore.poolId,
@@ -326,7 +293,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             style={{ cursor: "pointer" }}
             onClick={() =>
               lendStore.accountBorrow.length > 1
-                ? selectSort("selfBorrow")
+                ? vm.selectSort("selfBorrow", false)
                 : null
             }
             justifyContent="flex-end"
@@ -334,14 +301,18 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               To be repaid
             </Text>
-            {lendStore.accountBorrow.length > 1 && (
+            {lendStore.accountBorrow.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "selfBorrow" ? "sort-icon-active" : "sort-icon"
+                  vm.sortBorrow === "selfBorrow"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -353,7 +324,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             style={{ cursor: "pointer" }}
             onClick={() =>
               lendStore.accountBorrow.length > 1
-                ? selectSort("borrowAPY")
+                ? vm.selectSort("borrowAPY", false)
                 : null
             }
             justifyContent="flex-end"
@@ -375,14 +346,18 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
                 Borrow APY
               </Text>
             </Tooltip>
-            {lendStore.accountBorrow.length > 1 && (
+            {lendStore.accountBorrow.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "borrowAPY" ? "sort-icon-active" : "sort-icon"
+                  vm.sortBorrow === "borrowAPY"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -394,7 +369,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             style={{ cursor: "pointer" }}
             onClick={() =>
               lendStore.accountBorrow.length > 1
-                ? selectSort("dailyLoan")
+                ? vm.selectSort("dailyLoan", false)
                 : null
             }
             justifyContent="flex-end"
@@ -402,14 +377,18 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Daily loan interest
             </Text>
-            {lendStore.accountBorrow.length > 1 && (
+            {lendStore.accountBorrow.length > 1 ? (
               <img
                 src={theme.images.icons.group}
                 alt="group"
                 className={
-                  sort === "dailyLoan" ? "sort-icon-active" : "sort-icon"
+                  vm.sortBorrow === "dailyLoan"
+                    ? "sort-icon-active"
+                    : "sort-icon"
                 }
               />
+            ) : (
+              <SizedBox width={24} />
             )}
           </Row>
         ),
@@ -418,88 +397,91 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
       { Header: "", accessor: "borrowBtn" },
       { Header: "", accessor: "repayBtn" }
     ],
-    [lendStore.accountBorrow.length, selectSort, sort, theme.images.icons.group]
+    [vm, lendStore.accountBorrow.length, theme.images.icons.group]
   );
   useMemo(() => {
-    const data = sortData(lendStore.accountBorrow).map((s: TPoolStats) => ({
-      onClick: () =>
-        navigate(
-          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-            ":poolId",
-            lendStore.pool.address
-          ).replace(":assetId", s.assetId)
-        ),
+    const data = vm
+      .sortData(lendStore.accountBorrow, false)
+      .map((s: TPoolStats) => ({
+        onClick: () =>
+          navigate(
+            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+              ":poolId",
+              lendStore.pool.address
+            ).replace(":assetId", s.assetId)
+          ),
 
-      asset: (
-        <Row alignItems="center">
-          <SquareTokenIcon size="small" src={s.logo} alt="logo" />
-          <SizedBox width={16} />
-          <Column>
-            <Text size="small" fitContent>
-              {s.symbol}
+        asset: (
+          <Row alignItems="center">
+            <SquareTokenIcon size="small" src={s.logo} alt="logo" />
+            <SizedBox width={16} />
+            <Column>
+              <Text size="small" fitContent>
+                {s.symbol}
+              </Text>
+              <Text type="secondary" size="small" fitContent>
+                $ {s.prices.max.toBigFormat(2)}
+              </Text>
+            </Column>
+          </Row>
+        ),
+        emptyCell: <SizedBox width={80} />,
+        toRepay: (
+          <Column crossAxisSize="max">
+            <Text weight={500} textAlign="right" size="medium">
+              {BN.formatUnits(s.selfBorrow, s.decimals).toBigFormat(2) +
+                ` ${s.symbol}`}
             </Text>
-            <Text type="secondary" size="small" fitContent>
-              $ {s.prices.max.toBigFormat(2)}
+            <Text textAlign="right" size="small" type="secondary">
+              ${" "}
+              {BN.formatUnits(s.selfBorrow, s.decimals)
+                .times(s.prices.min)
+                .toBigFormat(2)}
             </Text>
           </Column>
-        </Row>
-      ),
-      emptyCell: <SizedBox width={140} />,
-      toRepay: (
-        <Column crossAxisSize="max">
-          <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.selfBorrow, s.decimals).toBigFormat(2) +
-              ` ${s.symbol}`}
-          </Text>
-          <Text textAlign="right" size="small" type="secondary">
-            ${" "}
-            {BN.formatUnits(s.selfBorrow, s.decimals)
-              .times(s.prices.min)
-              .toBigFormat(2)}
-          </Text>
-        </Column>
-      ),
-      borrowAPY: s.borrowAPY.toBigFormat(2) + " %",
-      dailyLoan: (
-        <Column crossAxisSize="max">
-          <Text weight={500} textAlign="right" size="medium">
-            {BN.formatUnits(s.dailyLoan, s.decimals).toBigFormat(6) +
-              ` ${s.symbol}`}
-          </Text>
-          <Text textAlign="right" size="small" type="secondary">
-            ${" "}
-            {BN.formatUnits(s.dailyLoan, s.decimals)
-              .times(s.prices.min)
-              .toBigFormat(6)}
-          </Text>
-        </Column>
-      ),
-      borrowBtn: (
-        <Button
-          kind="secondary"
-          size="medium"
-          fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
-          style={{ width: "100px", margin: "0 auto" }}
-        >
-          Borrow
-        </Button>
-      ),
-      repayBtn: (
-        <Button
-          kind="secondary"
-          size="medium"
-          fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "repay", s.assetId)}
-          style={{ width: "100px", margin: "0 auto" }}
-        >
-          Repay
-        </Button>
-      )
-    }));
+        ),
+        borrowAPY: s.borrowAPY.toBigFormat(2) + " %",
+        dailyLoan: (
+          <Column crossAxisSize="max">
+            <Text weight={500} textAlign="right" size="medium">
+              {BN.formatUnits(s.dailyLoan, s.decimals).toBigFormat(6) +
+                ` ${s.symbol}`}
+            </Text>
+            <Text textAlign="right" size="small" type="secondary">
+              ${" "}
+              {BN.formatUnits(s.dailyLoan, s.decimals)
+                .times(s.prices.min)
+                .toBigFormat(6)}
+            </Text>
+          </Column>
+        ),
+        borrowBtn: (
+          <Button
+            kind="secondary"
+            size="medium"
+            fixed
+            onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+            style={{ width: "100px", margin: "0 auto" }}
+          >
+            Borrow
+          </Button>
+        ),
+        repayBtn: (
+          <Button
+            kind="secondary"
+            size="medium"
+            fixed
+            onClick={(e) => openModal(e, lendStore.poolId, "repay", s.assetId)}
+            style={{ width: "100px", margin: "0 auto" }}
+          >
+            Repay
+          </Button>
+        )
+      }));
     setFilteredBorrows(data);
   }, [
-    sortData,
+    vm.sortModeBorrow,
+    vm.sortBorrow,
     lendStore.pool.address,
     lendStore.poolId,
     lendStore.accountBorrow,
@@ -507,9 +489,9 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
     navigate
   ]);
   return (
-    <Root sort={sortMode === "descending"}>
+    <Root>
       {lendStore.accountSupply.length > 0 && (
-        <>
+        <TableWrap sort={vm.sortModeSupply === "descending"}>
           <Text weight={500} type="secondary">
             My supply
           </Text>
@@ -520,10 +502,10 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             data={filteredSupplies}
           />
           <SizedBox height={24} />
-        </>
+        </TableWrap>
       )}
       {lendStore.accountBorrow.length > 0 && (
-        <>
+        <TableWrap sort={vm.sortModeBorrow === "descending"}>
           <Text weight={500} type="secondary">
             My borrow
           </Text>
@@ -534,7 +516,7 @@ const DesktopAccountSupplyAndBorrow: React.FC<IProps> = () => {
             data={filteredBorrows}
           />
           <SizedBox height={24} />
-        </>
+        </TableWrap>
       )}
     </Root>
   );

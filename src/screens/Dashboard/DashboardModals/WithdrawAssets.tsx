@@ -10,6 +10,7 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
 import { TPoolStats } from "@src/stores/LendStore";
 import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
@@ -49,7 +50,7 @@ const WithdrawAssets: React.FC<IProps> = ({
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const { accountStore } = useStores();
+  const { accountStore, lendStore } = useStores();
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
@@ -102,7 +103,14 @@ const WithdrawAssets: React.FC<IProps> = ({
       <Row>
         <Row
           alignItems="center"
-          onClick={() => navigate(`/dashboard/token/${token?.assetId}`)}
+          onClick={() =>
+            navigate(
+              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                ":poolId",
+                lendStore.pool.address
+              ).replace(":assetId", token?.assetId)
+            )
+          }
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -121,7 +129,7 @@ const WithdrawAssets: React.FC<IProps> = ({
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
               {vm.countUserBalance ?? 0}
               &nbsp;
-              {vm.isDollar ? "$" : token?.symbol}
+              {vm.currentSymbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
@@ -144,6 +152,7 @@ const WithdrawAssets: React.FC<IProps> = ({
         isDollar={vm.isDollar}
         focused={focused}
         amount={amount}
+        error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
         onMaxClick={() => onMaxClick(maxWithdraw())}
         handleChangeAmount={handleChangeAmount}
@@ -155,7 +164,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           {token?.name} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {vm.tokenReserves} {token?.symbol}
+          {vm.poolTotalReserves.toFormat(2)} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -224,18 +233,14 @@ const WithdrawAssets: React.FC<IProps> = ({
       <SizedBox height={16} />
       {/* if NO liquidity show ERROR, else withdraw or login */}
       <Footer>
-        {token?.totalSupply && token?.totalBorrow && +vm.tokenReserves === 0 ? (
-          <Button fixed disabled size="large">
-            Not Enough liquidity to Withdraw
-          </Button>
-        ) : accountStore && accountStore.address ? (
+        {accountStore && accountStore.address ? (
           <Button
-            disabled={amount.eq(0) || vm.modalErrorText !== ""}
+            disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {vm.modalErrorText !== "" ? vm.modalErrorText : "Withdraw"}
+            {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Withdraw"}
           </Button>
         ) : (
           <Button
