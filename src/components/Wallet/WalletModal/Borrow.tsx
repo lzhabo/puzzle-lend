@@ -49,9 +49,9 @@ const Borrow: React.FC<IProps> = () => {
               rateChange={BN.ZERO}
               key={b.assetId}
               logo={b.logo}
-              topLeftInfo={"My borrow"}
+              topLeftInfo="My borrow"
               topRightInfo={borrow}
-              bottomLeftInfo={"Borrow APY"}
+              bottomLeftInfo="Borrow APY"
               bottomRightInfo={`${stats?.borrowAPY.toFormat(2)}%` ?? "0"}
               withClickLogic
               onClick={() => {

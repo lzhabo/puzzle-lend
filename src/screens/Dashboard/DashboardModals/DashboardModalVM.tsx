@@ -86,37 +86,49 @@ class DashboardModalVM {
     if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
       const currentVal = this.isDollar
         ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
-            this.token?.prices?.min
+            this.token?.prices.min
           )
         : BN.formatUnits(this.modalFormattedVal, this.token?.decimals);
 
-      const reservesInDollars = this.isDollar
-        ? this.poolTotalReserves.times(this.token?.prices?.min)
-        : this.poolTotalReserves;
+      const reservesConverted = this.isDollar
+        ? this.poolTotalReserves.times(this.token?.prices.min)
+        : this.poolTotalReserves.div(this.token?.prices.min);
 
-      const dynamicLimit = this.token?.supplyLimit
-        .minus(this.poolTotalReserves.plus(currentVal))
-        .toFixed(2);
+      const limitConverted = this.isDollar
+        ? this.token?.supplyLimit
+        : this.token?.supplyLimit.div(this.token?.prices.min);
+      const staticLimit = limitConverted.minus(reservesConverted);
 
-      if (reservesInDollars.lt(currentVal)) {
+      const dynamicLimit = limitConverted.minus(
+        reservesConverted.plus(currentVal)
+      );
+
+      if (dynamicLimit.lt(0)) {
         this.setError(
-          `Should be less than ${this.token?.supplyLimit
-            .minus(this.poolTotalReserves)
-            .toFixed(2)} ${this.currentSymbol}`
+          `Should be less than ${staticLimit.toFixed(2)} ${this.currentSymbol}`
         );
       }
 
       if (
-        reservesInDollars.gt(this.token?.supplyLimit.times(0.9)) &&
-        reservesInDollars.lt(this.token?.supplyLimit)
+        reservesConverted.gt(limitConverted.times(0.5)) &&
+        reservesConverted.lt(limitConverted)
       ) {
-        return `There are ${dynamicLimit} ${this.currentSymbol} left to the limit. You can pay this amount or less`;
+        return `There are ${dynamicLimit.toFixed(2)} ${
+          this.currentSymbol
+        } left to the limit. You can pay this amount or less`;
       }
 
       return null;
     }
 
     return null;
+  }
+
+  get borrowLink() {
+    return {
+      href: "https://puzzle-lend.gitbook.io/guidebook/suppliers-guide/safety-features",
+      text: "Learn more"
+    };
   }
 
   get currentSymbol() {

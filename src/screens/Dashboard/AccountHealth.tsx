@@ -119,7 +119,9 @@ const AccountHealth: React.FC<IProps> = () => {
                     {title}
                   </Title>
                 </Tooltip>
-                <Text fitContent>{value}</Text>
+                <Text nowrap fitContent>
+                  {value}
+                </Text>
               </Row>
             ))}
           </Column>

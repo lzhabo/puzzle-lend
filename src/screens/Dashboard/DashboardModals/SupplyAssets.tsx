@@ -203,7 +203,10 @@ const SupplyAssets: React.FC<IProps> = ({
       <SizedBox height={24} />
       {vm.modalWarningText && (
         <>
-          <Warning text={vm.modalWarningText} />
+          <Warning
+            text={vm.modalWarningText}
+            accentText="Supply max to limit"
+          />
           <SizedBox height={24} />
         </>
       )}

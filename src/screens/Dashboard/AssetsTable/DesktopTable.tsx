@@ -64,7 +64,7 @@ const DesktopTable: React.FC<IProps> = () => {
       token?.decimals
     );
 
-    return reserves.gt(token?.supplyLimit);
+    return reserves.gt(token?.supplyLimit.div(token.prices.min));
   }, []);
 
   const columns = useMemo(
