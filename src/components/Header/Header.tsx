@@ -124,6 +124,16 @@ const Header: React.FC<IProps> = () => {
       name: "Guidebook",
       link: "https://puzzle-lend.gitbook.io/guidebook/",
       isExternalLink: true
+    },
+    {
+      name: "Trade",
+      link: "https://puzzleswap.org/",
+      isExternalLink: true
+    },
+    {
+      name: "NFT",
+      link: "https://puzzlemarket.org/",
+      isExternalLink: true
     }
   ];
 
