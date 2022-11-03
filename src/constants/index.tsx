@@ -68,7 +68,7 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
   {}
 );
 
-export const NODE_URL = "https://nodes.wavesnodes.com";
+export const NODE_URL = "https://nodes-puzzle.wavesnodes.com";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";
 
 export interface IPool {
