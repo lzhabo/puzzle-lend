@@ -4,7 +4,6 @@ import useWindowSize from "@src/hooks/useWindowSize";
 import { observer } from "mobx-react-lite";
 import MobileAccountSupplyAndBorrow from "./MobileAccountSupplyAndBorrow";
 import DesktopAccountSupplyAndBorrow from "./DesktopAccountSupplyAndBorrow";
-import { SupplyAndBorrowVMProvider } from ".//SupplyAndBorrowVM";
 
 interface IProps {}
 
@@ -17,15 +16,13 @@ const Root = styled.div`
 const AccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { width } = useWindowSize();
   return (
-    <SupplyAndBorrowVMProvider>
-      <Root>
-        {width && width >= 880 ? (
-          <DesktopAccountSupplyAndBorrow />
-        ) : (
-          <MobileAccountSupplyAndBorrow />
-        )}
-      </Root>
-    </SupplyAndBorrowVMProvider>
+    <Root>
+      {width && width >= 880 ? (
+        <DesktopAccountSupplyAndBorrow />
+      ) : (
+        <MobileAccountSupplyAndBorrow />
+      )}
+    </Root>
   );
 };
 export default observer(AccountSupplyAndBorrow);

@@ -49,8 +49,6 @@ class SupplyAndBorrowVM {
     const sort = isSupply ? this.sortSupply : this.sortBorrow;
     const sortMode = isSupply ? this.sortModeSupply : this.sortModeBorrow;
     return poolsData.slice().sort((a, b) => {
-      const stats1: TPoolStats = a;
-      const stats2: TPoolStats = b;
       let key: keyof TPoolStats | undefined;
       if (sort === "borrowAPY") key = "borrowAPY";
       if (sort === "supplyAPY") key = "supplyAPY";
@@ -60,24 +58,24 @@ class SupplyAndBorrowVM {
       if (sort === "dailyLoan") key = "dailyLoan";
       if (key == null) return 0;
 
-      if (stats1 == null || stats2 == null) return 0;
-      if (stats1[key] == null && stats2[key] != null)
+      if (a == null || b == null) return 0;
+      if (a[key] == null && b[key] != null)
         return sortMode === "descending" ? 1 : -1;
-      if (stats1[key] == null && stats2[key] == null)
+      if (a[key] == null && b[key] == null)
         return sortMode === "descending" ? -1 : 1;
 
-      const stat1 = stats1[key] as keyof TPoolStats;
-      const stat2 = stats2[key] as keyof TPoolStats;
+      const stat1 = a[key] as keyof TPoolStats;
+      const stat2 = b[key] as keyof TPoolStats;
 
       // if filtering in $ equivalent
       if (
         ["selfSupply", "selfBorrow", "dailyIncome", "dailyLoan"].includes(sort)
       ) {
-        const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
-          .times(stats1?.prices.min)
+        const val1 = (BN.formatUnits(stat1, a.decimals) as BN)
+          .times(a?.prices.min)
           .toDecimalPlaces(0);
-        const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
-          .times(stats2?.prices.min)
+        const val2 = (BN.formatUnits(stat2, b.decimals) as BN)
+          .times(b?.prices.min)
           .toDecimalPlaces(0);
 
         if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
