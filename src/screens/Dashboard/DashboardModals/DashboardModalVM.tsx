@@ -353,11 +353,6 @@ class DashboardModalVM {
       this.setError("Borrow amount less than your Collateral");
       isError = true;
     }
-    console.log(
-      +this.poolTotalReserves,
-      +formattedVal,
-      ".poolTotalReserves, +formattedVa"
-    );
 
     if (this.poolTotalReserves.isLessThanOrEqualTo(formattedVal)) {
       this.setError("Not enough Reserves in Pool");
