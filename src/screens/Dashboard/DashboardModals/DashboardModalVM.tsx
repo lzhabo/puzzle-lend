@@ -79,7 +79,6 @@ class DashboardModalVM {
   setAccountHealth = (health: number) => (this.accountHealth = health);
 
   get modalWarningText(): string | null {
-    console.log(+this.token?.supplyLimit, "this.token?.supplyLimit");
     if (this.operationName === OPERATIONS_TYPE.BORROW) {
       return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
     }
