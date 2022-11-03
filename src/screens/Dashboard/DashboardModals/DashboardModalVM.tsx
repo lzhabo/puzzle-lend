@@ -83,7 +83,10 @@ class DashboardModalVM {
       return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
     }
 
-    if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
+    if (
+      this.operationName === OPERATIONS_TYPE.SUPPLY &&
+      !this.token?.supplyLimit.eq(0)
+    ) {
       const currentVal = this.isDollar
         ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
             this.token?.prices.min
