@@ -324,7 +324,7 @@ class DashboardModalVM {
     let isError = false;
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
-    if (BN.formatUnits(this.poolTotalReserves, 6).lt(maximum)) {
+    if (this.poolTotalReserves.lt(maximum)) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
       return val;
@@ -353,12 +353,13 @@ class DashboardModalVM {
       this.setError("Borrow amount less than your Collateral");
       isError = true;
     }
+    console.log(
+      +this.poolTotalReserves,
+      +formattedVal,
+      ".poolTotalReserves, +formattedVa"
+    );
 
-    if (
-      BN.formatUnits(this.poolTotalReserves, 6).isLessThanOrEqualTo(
-        formattedVal
-      )
-    ) {
+    if (this.poolTotalReserves.isLessThanOrEqualTo(formattedVal)) {
       this.setError("Not enough Reserves in Pool");
       isError = true;
     }
