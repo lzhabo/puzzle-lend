@@ -8,6 +8,7 @@ import Button from "@components/Button";
 import { Column, Row } from "@components/Flex";
 import { TPoolStats } from "@src/stores/LendStore";
 import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
@@ -50,7 +51,7 @@ const BorrowAssets: React.FC<IProps> = ({
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const { accountStore } = useStores();
+  const { accountStore, lendStore } = useStores();
   const vm = DashboardUseVM();
 
   useEffect(() => {
@@ -99,7 +100,14 @@ const BorrowAssets: React.FC<IProps> = ({
       <Row>
         <Row
           alignItems="center"
-          onClick={() => navigate(`/dashboard/token/${token?.assetId}`)}
+          onClick={() =>
+            navigate(
+              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                ":poolId",
+                lendStore.pool.address
+              ).replace(":assetId", token?.assetId)
+            )
+          }
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -115,10 +123,10 @@ const BorrowAssets: React.FC<IProps> = ({
         </Row>
         <Column alignItems="flex-end" justifyContent="flex-end">
           <Row alignItems="center">
-            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
+            <Text size="medium" fitContent>
               {vm.countUserBalance ?? 0}
               &nbsp;
-              {vm.isDollar ? "$" : token?.symbol}
+              {vm.currentSymbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
@@ -141,6 +149,7 @@ const BorrowAssets: React.FC<IProps> = ({
         isDollar={vm.isDollar}
         focused={focused}
         amount={amount}
+        error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
         onMaxClick={() => onMaxClick(vm.userMaximumToBorrowBN())}
         handleChangeAmount={handleChangeAmount}
@@ -152,7 +161,7 @@ const BorrowAssets: React.FC<IProps> = ({
           {token?.symbol} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {vm.tokenReserves} {token?.symbol}
+          {vm.poolTotalReserves.toFormat(2)} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -184,7 +193,7 @@ const BorrowAssets: React.FC<IProps> = ({
         <Text size="medium" fitContent>
           {vm.staticMaximum.toFormat(2) ?? 0}
           <>&nbsp;</>
-          {vm.isDollar ? "$" : token?.symbol}
+          {vm.currentSymbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -221,9 +230,9 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
       </Row>
       <SizedBox height={24} />
-      {vm.modalErrorText && (
+      {vm.modalBtnErrorText && vm.modalWarningText && (
         <>
-          <Warning />
+          <Warning text={vm.modalWarningText} link={vm.borrowLink} />
           <SizedBox height={24} />
         </>
       )}
@@ -243,12 +252,12 @@ const BorrowAssets: React.FC<IProps> = ({
           accountStore &&
           accountStore.address && (
             <Button
-              disabled={amount.eq(0) || vm.modalErrorText !== ""}
+              disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
               fixed
               onClick={() => submitForm()}
               size="large"
             >
-              {vm.modalErrorText !== "" ? vm.modalErrorText : "Borrow"}
+              {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Borrow"}
             </Button>
           )
         )}

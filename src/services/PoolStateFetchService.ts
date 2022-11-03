@@ -61,6 +61,8 @@ class PoolStateFetchService {
     const response = await nodeService.evaluate(this.pool, "getPrices(false)");
     const value = response?.result?.value?._2?.value as string;
 
+    if (!value) return null;
+
     return value
       .split("|")
       .filter((str: string) => str !== "")
@@ -77,7 +79,7 @@ class PoolStateFetchService {
 
     const userCollateral = response?.result?.value?._2?.value;
 
-    return userCollateral || 0;
+    return userCollateral ?? 0;
   };
   calculateTokenRates = async () => {
     const response = await nodeService.evaluate(

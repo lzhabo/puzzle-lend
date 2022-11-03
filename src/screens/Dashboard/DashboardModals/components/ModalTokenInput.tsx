@@ -16,6 +16,7 @@ interface IProps {
   isDollar: boolean;
   focused: boolean;
   amount: BN;
+  error?: string;
   setFocused: (isFocus: boolean) => void;
   handleChangeAmount: (amount: BN) => void;
   onMaxClick: () => void;
@@ -24,7 +25,7 @@ interface IProps {
 
 const ModalInputContainer = styled.div<{
   focused?: boolean;
-  error?: boolean;
+  error?: string;
   invalid?: boolean;
   readOnly?: boolean;
 }>`
@@ -47,8 +48,11 @@ const ModalInputContainer = styled.div<{
   }
 
   border: 1px solid
-    ${({ focused, readOnly, theme }) =>
-      focused && !readOnly ? theme.colors.blue500 : theme.colors.primary100};
+    ${({ focused, error, theme }) => {
+      if (error) return theme.colors.error500;
+      if (focused) return theme.colors.blue500;
+      return theme.colors.primary100;
+    }};
 
   :hover {
     border-color: ${({ readOnly, focused, theme }) =>
@@ -69,6 +73,7 @@ const ModalInputContainer = styled.div<{
 const ModalTokenInput: React.FC<IProps> = ({
   isDollar,
   focused,
+  error,
   amount,
   token,
   setFocused,
@@ -91,56 +96,61 @@ const ModalTokenInput: React.FC<IProps> = ({
   };
 
   return (
-    <ModalInputContainer focused={focused} readOnly={!amount}>
-      {isDollar && <DollarSymbol />}
-      {onMaxClick && (
-        <MaxButton
-          onClick={() => {
-            setFocused(true);
-            onMaxClick();
-          }}
-        />
-      )}
-      <BigNumberInput
-        renderInput={(inputProps, ref) => (
-          <AmountInput
-            {...inputProps}
-            onFocus={(e) => {
-              inputProps.onFocus && inputProps.onFocus(e);
-              !inputProps.readOnly && setFocused(true);
+    <>
+      <ModalInputContainer error={error} focused={focused} readOnly={!amount}>
+        {isDollar && <DollarSymbol />}
+        {onMaxClick && (
+          <MaxButton
+            onClick={() => {
+              setFocused(true);
+              onMaxClick();
             }}
-            onBlur={(e) => {
-              inputProps.onBlur && inputProps.onBlur(e);
-              setFocused(false);
-            }}
-            ref={ref}
           />
         )}
-        autofocus={focused}
-        decimals={token?.decimals}
-        value={amount}
-        onChange={handleChangeAmount}
-        placeholder="0.00"
-        readOnly={!amount}
-      />
-      {isDollar ? (
-        <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
-          <Text size="small" type="secondary">
-            ~{token?.symbol}
-            {tokenPriceInDollar()}
-          </Text>
-          <Swap />
-        </TokenToDollar>
-      ) : (
-        <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
-          <Text size="small" type="secondary">
-            ~$
-            {tokenPriceNative()}
-          </Text>
-          <Swap />
-        </TokenToDollar>
-      )}
-    </ModalInputContainer>
+        <BigNumberInput
+          renderInput={(inputProps, ref) => (
+            <AmountInput
+              {...inputProps}
+              onFocus={(e) => {
+                inputProps.onFocus && inputProps.onFocus(e);
+                !inputProps.readOnly && setFocused(true);
+              }}
+              onBlur={(e) => {
+                inputProps.onBlur && inputProps.onBlur(e);
+                setFocused(false);
+              }}
+              ref={ref}
+            />
+          )}
+          autofocus={focused}
+          decimals={token?.decimals}
+          value={amount}
+          onChange={handleChangeAmount}
+          placeholder="0.00"
+          readOnly={!amount}
+        />
+        {isDollar ? (
+          <TokenToDollar onClick={() => setInputAmountMeasure(false)}>
+            <Text size="small" type="secondary">
+              ~{token?.symbol}
+              {tokenPriceInDollar()}
+            </Text>
+            <Swap />
+          </TokenToDollar>
+        ) : (
+          <TokenToDollar onClick={() => setInputAmountMeasure(true)}>
+            <Text size="small" type="secondary">
+              ~$
+              {tokenPriceNative()}
+            </Text>
+            <Swap />
+          </TokenToDollar>
+        )}
+      </ModalInputContainer>
+      <Text type="error" size="small">
+        {error}
+      </Text>
+    </>
   );
 };
 export default ModalTokenInput;

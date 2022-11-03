@@ -55,6 +55,18 @@ const DesktopTable: React.FC<IProps> = () => {
     [sortMode, sort]
   );
   const navigate = useNavigate();
+
+  const isSupplyDisabled = useCallback((token: TPoolStats) => {
+    if (token?.supplyLimit.eq(0)) return false;
+    if (!token?.totalSupply || !token?.totalBorrow) return false;
+    const reserves = BN.formatUnits(
+      token?.totalSupply?.minus(token?.totalBorrow),
+      token?.decimals
+    );
+
+    return reserves.gt(token?.supplyLimit.div(token.prices.min));
+  }, []);
+
   const columns = useMemo(
     () => [
       { Header: "Asset", accessor: "asset" },
@@ -243,6 +255,7 @@ const DesktopTable: React.FC<IProps> = () => {
         return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
       } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
     });
+
     data = data.map((s: TPoolStats) => ({
       onClick: () => {
         navigate(
@@ -307,7 +320,24 @@ const DesktopTable: React.FC<IProps> = () => {
           Borrow
         </Button>
       ),
-      supplyBtn: (
+      supplyBtn: isSupplyDisabled(s) ? (
+        <Tooltip
+          content={
+            <Text textAlign="left">Maximum total supply is reached</Text>
+          }
+        >
+          <Button
+            kind="secondary"
+            size="medium"
+            fixed
+            disabled={true}
+            onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+            style={{ width: "100px", margin: "0 auto" }}
+          >
+            Supply
+          </Button>
+        </Tooltip>
+      ) : (
         <Button
           kind="secondary"
           size="medium"
@@ -323,6 +353,7 @@ const DesktopTable: React.FC<IProps> = () => {
   }, [
     sort,
     sortMode,
+    isSupplyDisabled,
     lendStore.pool.address,
     lendStore.poolsStats,
     lendStore.poolId,

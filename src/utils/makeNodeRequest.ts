@@ -4,9 +4,9 @@ const testnetNodes = ["https://nodes-testnet.wavesnodes.com"];
 
 const mainnetNodes = [
   "https://nodes-puzzle.wavesnodes.com",
+  "https://nodes.wavesnodes.com",
   "https://wavesducks.wavesnodes.com",
-  "https://nodes.swop.fi",
-  "https://nodes.wavesnodes.com"
+  "https://nodes.swop.fi"
 ];
 
 interface IParams {

@@ -11,6 +11,8 @@ import BN from "@src/utils/BN";
 import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import { ASSETS_TYPE } from "@src/constants";
+import Tooltip from "@components/Tooltip";
+import { TPoolStats } from "@src/stores/LendStore";
 
 interface IProps {}
 
@@ -65,6 +67,16 @@ const Data = styled(Column)`
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+
+  const isSupplyDisabled = (token: TPoolStats): boolean => {
+    if (token?.supplyLimit.eq(0)) return false;
+    if (!token?.totalSupply || !token?.totalBorrow) return false;
+    const reserves = BN.formatUnits(
+      token?.totalSupply?.minus(token?.totalBorrow),
+      token?.decimals
+    );
+    return reserves.gt(token?.supplyLimit.div(token.prices.min));
+  };
 
   const openModal = useCallback(
     (
@@ -150,16 +162,44 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
                     </Data>
                     <SizedBox height={16} />
                     <Row>
-                      <Button
-                        size="medium"
-                        kind="secondary"
-                        fixed
-                        onClick={(e) =>
-                          openModal(e, lendStore.poolId, "supply", s.assetId)
-                        }
-                      >
-                        Supply
-                      </Button>
+                      {isSupplyDisabled(s) ? (
+                        <Tooltip
+                          fixed
+                          content={
+                            <Text textAlign="left">
+                              Maximum total supply is reached
+                            </Text>
+                          }
+                        >
+                          <Button
+                            size="medium"
+                            kind="secondary"
+                            fixed
+                            disabled={true}
+                            onClick={(e) =>
+                              openModal(
+                                e,
+                                lendStore.poolId,
+                                "supply",
+                                s.assetId
+                              )
+                            }
+                          >
+                            Supply
+                          </Button>
+                        </Tooltip>
+                      ) : (
+                        <Button
+                          size="medium"
+                          kind="secondary"
+                          fixed
+                          onClick={(e) =>
+                            openModal(e, lendStore.poolId, "supply", s.assetId)
+                          }
+                        >
+                          Supply
+                        </Button>
+                      )}
                       <SizedBox width={8} />
                       <Button
                         size="medium"

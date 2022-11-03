@@ -10,6 +10,7 @@ import { observer } from "mobx-react-lite";
 import { Column, Row } from "@components/Flex";
 import { TPoolStats } from "@src/stores/LendStore";
 import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
@@ -17,6 +18,7 @@ import {
   Footer,
   Root
 } from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
+import Warning from "@src/screens/Dashboard/DashboardModals/components/Warning";
 import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
 import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
 
@@ -47,7 +49,7 @@ const SupplyAssets: React.FC<IProps> = ({
   const [focused, setFocused] = useState(false);
   const vm = DashboardUseVM();
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const { accountStore } = useStores();
+  const { accountStore, lendStore } = useStores();
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
@@ -99,7 +101,14 @@ const SupplyAssets: React.FC<IProps> = ({
       <Row>
         <Row
           alignItems="center"
-          onClick={() => navigate(`/dashboard/token/${token?.assetId}`)}
+          onClick={() =>
+            navigate(
+              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
+                ":poolId",
+                lendStore.pool.address
+              ).replace(":assetId", token?.assetId)
+            )
+          }
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -118,7 +127,7 @@ const SupplyAssets: React.FC<IProps> = ({
             <Text size="medium" fitContent style={{ cursor: "pointer" }}>
               {vm.countUserBalance ?? 0}
               &nbsp;
-              {vm.isDollar ? "$" : token?.symbol}
+              {vm.currentSymbol}
             </Text>
             <BackIcon />
             <Text size="medium" type="secondary" fitContent>
@@ -141,6 +150,7 @@ const SupplyAssets: React.FC<IProps> = ({
         isDollar={vm.isDollar}
         focused={focused}
         amount={amount}
+        error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
         onMaxClick={() => onMaxClick(getMaxSupply())}
         handleChangeAmount={handleChangeAmount}
@@ -160,7 +170,7 @@ const SupplyAssets: React.FC<IProps> = ({
           type={vm.userDailyIncome.gt(0) ? "success" : "primary"}
           fitContent
         >
-          $ {token?.interest ? vm.userDailyIncome.toFormat(6) : 0}
+          $ {vm.userDailyIncome?.toFormat(6)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -169,7 +179,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Supply APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.supplyAPY.toFormat(2) ?? 0}%
+          {token?.supplyAPY.toFormat(2)}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -178,7 +188,7 @@ const SupplyAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2) ?? 0}
+          {BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -191,15 +201,24 @@ const SupplyAssets: React.FC<IProps> = ({
         </Text>
       </Row>
       <SizedBox height={24} />
+      {vm.modalWarningText && (
+        <>
+          <Warning
+            text={vm.modalWarningText}
+            accentText="Supply max to limit"
+          />
+          <SizedBox height={24} />
+        </>
+      )}
       <Footer>
         {accountStore && accountStore.address ? (
           <Button
-            disabled={amount.eq(0) || vm.modalErrorText !== ""}
+            disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {vm.modalErrorText !== "" ? vm.modalErrorText : "Supply"}
+            {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Supply"}
           </Button>
         ) : (
           <Button

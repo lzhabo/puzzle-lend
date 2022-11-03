@@ -1,5 +1,6 @@
 import tokens from "./tokens.json";
 import tokenLogos from "@src/constants/tokenLogos";
+import BN from "@src/utils/BN";
 
 export enum OPERATIONS_TYPE {
   WITHDRAW = "withdraw",
@@ -20,14 +21,15 @@ export const ROUTES = {
   },
   DASHBOARD_POOL: "/:poolId",
   DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
-  ANALYTICS: "/:poolId/analytics",
+  ANALYTICS: "/analytics",
   NOT_FOUND: "/404"
 };
 
 export const POOLS_PROD = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
+    supplyLimit: BN.ZERO
   }
 ];
 
@@ -39,6 +41,10 @@ export const POOLS_DEV = [
   {
     name: "Puzzle Pool",
     address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
+  },
+  {
+    name: "Waves DeFi pool",
+    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
   }
 ];
 

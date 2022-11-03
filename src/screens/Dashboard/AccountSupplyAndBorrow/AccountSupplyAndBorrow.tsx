@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import useWindowSize from "@src/hooks/useWindowSize";
+import { observer } from "mobx-react-lite";
 import MobileAccountSupplyAndBorrow from "./MobileAccountSupplyAndBorrow";
 import DesktopAccountSupplyAndBorrow from "./DesktopAccountSupplyAndBorrow";
 
@@ -24,4 +25,4 @@ const AccountSupplyAndBorrow: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default AccountSupplyAndBorrow;
+export default observer(AccountSupplyAndBorrow);
