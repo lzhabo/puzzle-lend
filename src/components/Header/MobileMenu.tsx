@@ -63,6 +63,16 @@ const MobileMenu: React.FC<IProps> = ({
       name: "Guidebook",
       link: "https://puzzle-lend.gitbook.io/guidebook/",
       outer: true
+    },
+    {
+      name: "Trade",
+      link: "https://puzzleswap.org/",
+      outer: true
+    },
+    {
+      name: "NFT",
+      link: "https://puzzlemarket.org/",
+      outer: true
     }
   ];
   return (
