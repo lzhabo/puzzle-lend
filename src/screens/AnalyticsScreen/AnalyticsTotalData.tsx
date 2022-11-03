@@ -74,14 +74,14 @@ const AnalyticsTotalData: React.FC<IProps> = () => {
                   </Text>
                 </Column>
               </Row>
-              <Row justifyContent={"flex-end"}>
+              <Row justifyContent="flex-end">
                 <Column>
-                  <Text textAlign={"end"} size="small">
+                  <Text textAlign="end" size="small">
                     {`${new BN(s.amountTotal)
                       .div(vm.priceForToken(s))
                       .toFixed(2)} ${s.asset.symbol}`}
                   </Text>
-                  <Text textAlign={"end"} type="secondary" size="small">
+                  <Text textAlign="end" type="secondary" size="small">
                     $ {s.amountTotal.toFixed(2)}
                   </Text>
                 </Column>
