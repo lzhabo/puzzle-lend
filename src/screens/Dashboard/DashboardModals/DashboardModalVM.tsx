@@ -124,6 +124,13 @@ class DashboardModalVM {
     return null;
   }
 
+  get borrowLink() {
+    return {
+      href: "https://puzzle-lend.gitbook.io/guidebook/suppliers-guide/safety-features",
+      text: "Learn more"
+    };
+  }
+
   get currentSymbol() {
     return this.isDollar ? "$" : this.token?.symbol;
   }

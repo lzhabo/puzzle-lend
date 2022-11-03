@@ -123,7 +123,6 @@ class LendStore {
 
       const limit = getStateByKey(state, `setup_maxSupply_${token.assetId}`);
       const assetMaxSupply = BN.formatUnits(limit ?? "0", 6);
-      console.log(+assetMaxSupply, token.symbol, "assetMaxSupply");
 
       return {
         ...token,

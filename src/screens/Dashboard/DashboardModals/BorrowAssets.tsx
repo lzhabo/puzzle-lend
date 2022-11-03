@@ -232,7 +232,7 @@ const BorrowAssets: React.FC<IProps> = ({
       <SizedBox height={24} />
       {vm.modalWarningText && (
         <>
-          <Warning text={vm.modalWarningText} />
+          <Warning text={vm.modalWarningText} link={vm.borrowLink} />
           <SizedBox height={24} />
         </>
       )}
