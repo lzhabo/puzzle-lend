@@ -56,19 +56,16 @@ const DesktopTable: React.FC<IProps> = () => {
   );
   const navigate = useNavigate();
 
-  const isSupplyDisabled = useCallback(
-    (token: TPoolStats) => {
-      if (lendStore?.pool?.supplyLimit.eq(0)) return false;
-      if (!token?.totalSupply || !token?.totalBorrow) return false;
-      const reserves = BN.formatUnits(
-        token?.totalSupply?.minus(token?.totalBorrow),
-        token?.decimals
-      );
+  const isSupplyDisabled = useCallback((token: TPoolStats) => {
+    if (token?.supplyLimit.eq(0)) return false;
+    if (!token?.totalSupply || !token?.totalBorrow) return false;
+    const reserves = BN.formatUnits(
+      token?.totalSupply?.minus(token?.totalBorrow),
+      token?.decimals
+    );
 
-      return reserves.gt(lendStore?.pool?.supplyLimit);
-    },
-    [lendStore?.pool?.supplyLimit]
-  );
+    return reserves.gt(token?.supplyLimit);
+  }, []);
 
   const columns = useMemo(
     () => [

@@ -94,21 +94,21 @@ class DashboardModalVM {
         ? this.poolTotalReserves.times(this.token?.prices?.min)
         : this.poolTotalReserves;
 
-      const dynamicLimit = this.currentPoolLimit
+      const dynamicLimit = this.token?.supplyLimit
         .minus(this.poolTotalReserves.plus(currentVal))
         .toFixed(2);
 
       if (reservesInDollars.lt(currentVal)) {
         this.setError(
-          `Should be less than ${this.currentPoolLimit
+          `Should be less than ${this.token?.supplyLimit
             .minus(this.poolTotalReserves)
             .toFixed(2)} ${this.currentSymbol}`
         );
       }
 
       if (
-        reservesInDollars.gt(this.currentPoolLimit.times(0.9)) &&
-        reservesInDollars.lt(this.currentPoolLimit)
+        reservesInDollars.gt(this.token?.supplyLimit.times(0.9)) &&
+        reservesInDollars.lt(this.token?.supplyLimit)
       ) {
         return `There are ${dynamicLimit} ${this.currentSymbol} left to the limit. You can pay this amount or less`;
       }
@@ -117,11 +117,6 @@ class DashboardModalVM {
     }
 
     return null;
-  }
-
-  get currentPoolLimit() {
-    const limit = this.rootStore?.lendStore?.pool?.supplyLimit;
-    return this.isDollar ? limit : limit.div(this.token?.prices?.min);
   }
 
   get currentSymbol() {

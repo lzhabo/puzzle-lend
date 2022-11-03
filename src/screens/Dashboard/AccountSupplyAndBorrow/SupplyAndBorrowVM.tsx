@@ -106,13 +106,13 @@ class SupplyAndBorrowVM {
   };
 
   isSupplyDisabled = (token: TPoolStats): boolean => {
-    if (this.rootStore?.lendStore?.pool?.supplyLimit.eq(0)) return false;
+    if (token?.supplyLimit.eq(0)) return false;
     if (!token?.totalSupply || !token?.totalBorrow) return false;
     const reserves = BN.formatUnits(
       token?.totalSupply?.minus(token?.totalBorrow),
       token?.decimals
     );
-    return reserves.gt(this.rootStore?.lendStore?.pool?.supplyLimit);
+    return reserves.gt(token?.supplyLimit);
   };
 
   constructor(rootStore: RootStore) {

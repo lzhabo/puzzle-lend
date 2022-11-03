@@ -36,18 +36,15 @@ export const POOLS_PROD = [
 export const POOLS_DEV = [
   {
     name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH",
-    supplyLimit: BN.ZERO
+    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
   },
   {
     name: "Puzzle Pool",
-    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU",
-    supplyLimit: BN.ZERO
+    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
   },
   {
     name: "Waves DeFi pool",
-    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X",
-    supplyLimit: new BN(50000)
+    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
   }
 ];
 
@@ -77,7 +74,6 @@ export const EXPLORER_URL = "https://new.wavesexplorer.com";
 export interface IPool {
   name: string;
   address: string;
-  supplyLimit: BN;
 }
 
 export interface IToken {
