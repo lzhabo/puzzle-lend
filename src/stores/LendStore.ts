@@ -105,9 +105,6 @@ class LendStore {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
 
-      const limit = getStateByKey(state, `setup_maxSupply_${token.assetId}`);
-      const assetMaxSupply = BN.formatUnits(limit ?? "0", 6);
-
       const sSup = getStateByKey(state, `${address}_supplied_${token.assetId}`);
       const selfSupply = new BN(sSup ?? "0").times(rates[index].supplyRate);
 
@@ -123,6 +120,10 @@ class LendStore {
       const p = prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO };
       const dailyIncome = selfSupply.times(supplyInterest);
       const dailyLoan = selfBorrow.times(interests[index]);
+
+      const limit = getStateByKey(state, `setup_maxSupply_${token.assetId}`);
+      const assetMaxSupply = BN.formatUnits(limit ?? "0", 6);
+      console.log(+assetMaxSupply, token.symbol, "assetMaxSupply");
 
       return {
         ...token,

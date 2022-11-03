@@ -227,6 +227,7 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         ),
         supplyBtn: vm.isSupplyDisabled(s) ? (
           <Tooltip
+            fixed
             content={
               <Text textAlign="left">Maximum total supply is reached</Text>
             }

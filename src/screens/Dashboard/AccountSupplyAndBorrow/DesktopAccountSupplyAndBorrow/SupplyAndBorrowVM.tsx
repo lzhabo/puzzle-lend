@@ -110,7 +110,7 @@ class SupplyAndBorrowVM {
       token?.totalSupply?.minus(token?.totalBorrow),
       token?.decimals
     );
-    return reserves.gt(token?.supplyLimit);
+    return reserves.gt(token?.supplyLimit.div(token.prices.min));
   };
 
   constructor(rootStore: RootStore) {
