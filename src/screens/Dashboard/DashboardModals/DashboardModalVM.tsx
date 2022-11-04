@@ -209,11 +209,15 @@ class DashboardModalVM {
       : this.token?.supplyLimit.div(this.token?.prices.min);
 
     const dynamicLimit = limitConverted.minus(reservesConverted);
+    const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
 
     const countVal = !this.isDollar
-      ? !isWavesPool
-        ? selfVal
-        : BN.min(dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)))
+      ? !isWavesPool || isUSDN
+        ? selfVal.times(this.token?.prices?.min)
+        : BN.min(
+            dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
+            selfVal.times(this.token?.prices?.min)
+          )
       : selfValUsd;
 
     return countVal.toDecimalPlaces(0, 2);
