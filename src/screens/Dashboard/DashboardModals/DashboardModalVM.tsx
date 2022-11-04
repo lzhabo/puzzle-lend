@@ -211,7 +211,7 @@ class DashboardModalVM {
     const dynamicLimit = limitConverted.minus(reservesConverted);
     const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
     const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
-    
+
     const countVal = !this.isDollar
       ? !isWavesPool || isUSDN || isWAVES
         ? selfVal.times(this.token?.prices?.min)
@@ -222,54 +222,6 @@ class DashboardModalVM {
       : selfValUsd;
 
     return countVal.toDecimalPlaces(0, 2);
-  }
-
-  get modalaWarningText(): string | null {
-    if (this.operationName === OPERATIONS_TYPE.BORROW) {
-      return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
-    }
-
-    if (
-      this.operationName === OPERATIONS_TYPE.SUPPLY &&
-      !this.token?.supplyLimit.eq(0)
-    ) {
-      const currentVal = this.isDollar
-        ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
-            this.token?.prices.min
-          )
-        : BN.formatUnits(this.modalFormattedVal, this.token?.decimals);
-
-      const reservesConverted = this.isDollar
-        ? this.poolTotalReserves.times(this.token?.prices.min)
-        : this.poolTotalReserves.div(this.token?.prices.min);
-
-      const limitConverted = this.isDollar
-        ? this.token?.supplyLimit
-        : this.token?.supplyLimit.div(this.token?.prices.min);
-      const staticLimit = limitConverted.minus(reservesConverted);
-
-      const dynamicLimit = limitConverted.minus(
-        reservesConverted.plus(currentVal)
-      );
-
-      if (dynamicLimit.lt(0)) {
-        this.setError(
-          `Should be less than ${staticLimit.toFixed(2)} ${this.currentSymbol}`
-        );
-      }
-      if (
-        reservesConverted.gt(limitConverted.times(0.5)) &&
-        reservesConverted.lt(limitConverted)
-      ) {
-        return `There are ${dynamicLimit.toFixed(2)} ${
-          this.currentSymbol
-        } left to the limit. You can provide this amount or less`;
-      }
-
-      return null;
-    }
-
-    return null;
   }
 
   get modalFormattedVal() {

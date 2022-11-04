@@ -94,7 +94,7 @@ const ModalTokenInput: React.FC<IProps> = ({
       token?.decimals
     ).toFixed(4);
   };
-  console.log(amount.toFixed(4));
+
   return (
     <>
       <ModalInputContainer error={error} focused={focused} readOnly={!amount}>
