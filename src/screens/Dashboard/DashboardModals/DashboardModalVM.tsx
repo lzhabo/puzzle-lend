@@ -210,9 +210,10 @@ class DashboardModalVM {
 
     const dynamicLimit = limitConverted.minus(reservesConverted);
     const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
-
+    const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.waves.assetId;
+    
     const countVal = !this.isDollar
-      ? !isWavesPool || isUSDN
+      ? !isWavesPool || isUSDN || isWAVES
         ? selfVal.times(this.token?.prices?.min)
         : BN.min(
             dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
