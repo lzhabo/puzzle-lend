@@ -198,21 +198,73 @@ class DashboardModalVM {
       this.rootStore.lendStore.poolId ===
       POOLS.find((e) => e.name === "Waves DeFi pool")?.address;
 
-    const maxPoolLimit =
-      this.token.assetId === TOKENS_BY_SYMBOL.WX.assetId
-        ? new BN(100000, 10)
-        : new BN(50000, 10);
-
     const selfValUsd = selfVal.times(this.token?.prices?.min);
+
+    const reservesConverted = this.isDollar
+      ? this.poolTotalReserves.times(this.token?.prices.min)
+      : this.poolTotalReserves.div(this.token?.prices.min);
+
+    const limitConverted = this.isDollar
+      ? this.token?.supplyLimit
+      : this.token?.supplyLimit.div(this.token?.prices.min);
+
+    const dynamicLimit = limitConverted.minus(reservesConverted);
 
     const countVal = !this.isDollar
       ? !isWavesPool
         ? selfVal
-        : maxPoolLimit
-      : // : BN.min(maxPoolLimit, selfVal)
-        selfValUsd;
+        : BN.min(dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)))
+      : selfValUsd;
 
     return countVal.toDecimalPlaces(0, 2);
+  }
+
+  get modalaWarningText(): string | null {
+    if (this.operationName === OPERATIONS_TYPE.BORROW) {
+      return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
+    }
+
+    if (
+      this.operationName === OPERATIONS_TYPE.SUPPLY &&
+      !this.token?.supplyLimit.eq(0)
+    ) {
+      const currentVal = this.isDollar
+        ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
+            this.token?.prices.min
+          )
+        : BN.formatUnits(this.modalFormattedVal, this.token?.decimals);
+
+      const reservesConverted = this.isDollar
+        ? this.poolTotalReserves.times(this.token?.prices.min)
+        : this.poolTotalReserves.div(this.token?.prices.min);
+
+      const limitConverted = this.isDollar
+        ? this.token?.supplyLimit
+        : this.token?.supplyLimit.div(this.token?.prices.min);
+      const staticLimit = limitConverted.minus(reservesConverted);
+
+      const dynamicLimit = limitConverted.minus(
+        reservesConverted.plus(currentVal)
+      );
+
+      if (dynamicLimit.lt(0)) {
+        this.setError(
+          `Should be less than ${staticLimit.toFixed(2)} ${this.currentSymbol}`
+        );
+      }
+      if (
+        reservesConverted.gt(limitConverted.times(0.5)) &&
+        reservesConverted.lt(limitConverted)
+      ) {
+        return `There are ${dynamicLimit.toFixed(2)} ${
+          this.currentSymbol
+        } left to the limit. You can provide this amount or less`;
+      }
+
+      return null;
+    }
+
+    return null;
   }
 
   get modalFormattedVal() {
