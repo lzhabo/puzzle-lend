@@ -210,7 +210,7 @@ class DashboardModalVM {
 
     const dynamicLimit = limitConverted.minus(reservesConverted);
     const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
-    const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.waves.assetId;
+    const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
     
     const countVal = !this.isDollar
       ? !isWavesPool || isUSDN || isWAVES
