@@ -5,6 +5,8 @@ import { RootStore, useStores } from "@stores";
 import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
+import { POOLS, IPool } from "@src/constants";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 const notifications = {
   [OPERATIONS_TYPE.WITHDRAW]: `The withdrawal is successful! You can view the transaction on Waves Explorer`,
@@ -111,14 +113,13 @@ class DashboardModalVM {
           `Should be less than ${staticLimit.toFixed(2)} ${this.currentSymbol}`
         );
       }
-
       if (
         reservesConverted.gt(limitConverted.times(0.5)) &&
         reservesConverted.lt(limitConverted)
       ) {
         return `There are ${dynamicLimit.toFixed(2)} ${
           this.currentSymbol
-        } left to the limit. You can pay this amount or less`;
+        } left to the limit. You can provide this amount or less`;
       }
 
       return null;
@@ -193,9 +194,23 @@ class DashboardModalVM {
       selfVal = this.tokenBalance;
     }
 
+    const isWavesPool =
+      this.rootStore.lendStore.poolId ===
+      POOLS.find((e) => e.name === "Waves DeFi pool")?.address;
+
+    const maxPoolLimit =
+      this.token.assetId === TOKENS_BY_SYMBOL.WX.assetId
+        ? new BN(100000, 10)
+        : new BN(50000, 10);
+
+    const selfValUsd = selfVal.times(this.token?.prices?.min);
+
     const countVal = !this.isDollar
-      ? selfVal
-      : selfVal.times(this.token?.prices?.min);
+      ? !isWavesPool
+        ? selfVal
+        : maxPoolLimit
+      : // : BN.min(maxPoolLimit, selfVal)
+        selfValUsd;
 
     return countVal.toDecimalPlaces(0, 2);
   }
@@ -374,8 +389,8 @@ class DashboardModalVM {
       isError = true;
     }
 
-    if (this.countBorrowAccountHealth(v) < 1) {
-      this.setError(`Account health less than 1%, risk of liquidation`);
+    if (this.countBorrowAccountHealth(v) < 30) {
+      this.setError(`Account health less than 30%, risk of liquidation`);
       isError = true;
     }
 
