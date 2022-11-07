@@ -230,12 +230,14 @@ const BorrowAssets: React.FC<IProps> = ({
         </Text>
       </Row>
       <SizedBox height={24} />
-      {vm.modalBtnErrorText && vm.modalWarningText && (
+
+      {vm.modalWarningText && (
         <>
           <Warning text={vm.modalWarningText} link={vm.borrowLink} />
           <SizedBox height={24} />
         </>
       )}
+
       {/* if NO liquidity show ERROR, else borrow or login */}
       <Footer>
         {accountStore && !accountStore.address ? (

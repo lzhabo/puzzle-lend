@@ -70,6 +70,9 @@ class DashboardModalVM {
     this.dashboardModalStep = step;
   };
 
+  borrowAmount = BN.ZERO;
+  setBorrowAmount = (amount: BN) => (this.borrowAmount = amount);
+
   modalBtnErrorText = "";
   setError = (error: string) => (this.modalBtnErrorText = error);
 
@@ -81,7 +84,10 @@ class DashboardModalVM {
   setAccountHealth = (health: number) => (this.accountHealth = health);
 
   get modalWarningText(): string | null {
-    if (this.operationName === OPERATIONS_TYPE.BORROW) {
+    if (
+      this.operationName === OPERATIONS_TYPE.BORROW &&
+      this.countBorrowAccountHealth(this.borrowAmount) < 30
+    ) {
       return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
     }
 
@@ -379,6 +385,8 @@ class DashboardModalVM {
   };
 
   borrowChangeAmount = (v: BN) => {
+    this.setBorrowAmount(v);
+
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
 
     // if !isNative, show maximum in dollars, collateral in dollars by default
@@ -398,8 +406,8 @@ class DashboardModalVM {
       isError = true;
     }
 
-    if (this.countBorrowAccountHealth(v) < 30) {
-      this.setError(`Account health less than 30%, risk of liquidation`);
+    if (this.countBorrowAccountHealth(v) < 1) {
+      this.setError(`Account health less than 1%, risk of liquidation`);
       isError = true;
     }
 
