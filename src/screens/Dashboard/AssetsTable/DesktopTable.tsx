@@ -321,11 +321,13 @@ const DesktopTable: React.FC<IProps> = () => {
               </TooltipText>
             }
           >
-            <img
-              src={theme.images.icons.autostaking}
-              alt="autostaking"
-              className="autostaking-icon"
-            />
+            {s.isAutostakeAvl && (
+              <img
+                src={theme.images.icons.autostaking}
+                alt="autostaking"
+                className="autostaking-icon"
+              />
+            )}
           </Tooltip>
           {s.supplyAPY.toBigFormat(2) + " %"}
         </SupplyApy>
