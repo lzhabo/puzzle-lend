@@ -216,13 +216,12 @@ class DashboardModalVM {
     const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
     const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
 
-    const countVal =
-      !isWavesPool || isUSDN || isWAVES
-        ? selfVal
-        : BN.min(
-            dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
-            selfVal
-          );
+    let countVal = BN.min(
+      dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
+      selfVal
+    );
+
+    if (!isWavesPool || isUSDN || isWAVES) countVal = selfVal;
 
     return countVal.toDecimalPlaces(0, 2);
   }

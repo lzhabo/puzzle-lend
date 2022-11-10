@@ -19,7 +19,7 @@ export type TPoolStats = {
   dailyIncome: BN;
   dailyLoan: BN;
   supplyLimit: BN;
-  isAutostakeAvl: boolean;
+  isAutostakeAvl: number | null;
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
@@ -211,7 +211,7 @@ class LendStore {
               ASlastBlock
             )
           : calcApy(supplyInterest),
-        isAutostakeAvl: !!ASlastBlockNum,
+        isAutostakeAvl: ASlastBlockNum ?? null,
         borrowAPY: calcApy(interests[index])
       };
     });
