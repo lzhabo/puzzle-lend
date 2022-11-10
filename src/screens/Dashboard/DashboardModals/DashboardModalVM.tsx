@@ -254,6 +254,15 @@ class DashboardModalVM {
       : this.tokenBalance.times(this.token?.prices?.min);
   }
 
+  //in native token
+  get poolTotalReservesInToken(): BN {
+    if (!this.token?.totalSupply || !this.token?.totalBorrow) return BN.ZERO;
+    const reserves = this.token?.totalSupply?.minus(this.token?.totalBorrow);
+
+    return BN.formatUnits(reserves, this.token?.decimals);
+  }
+
+  //in USD
   get poolTotalReserves(): BN {
     if (!this.token?.totalSupply || !this.token?.totalBorrow) return BN.ZERO;
     const reserves = this.token?.totalSupply?.minus(this.token?.totalBorrow);
