@@ -19,7 +19,7 @@ export type TPoolStats = {
   dailyIncome: BN;
   dailyLoan: BN;
   supplyLimit: BN;
-  isAutostakeAvl: number | null;
+  isAutostakeAvl?: boolean;
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
@@ -89,9 +89,11 @@ class LendStore {
   get poolId(): string {
     return this.pool.address;
   }
+
   get poolName(): string {
     return this.pool.name;
   }
+
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -211,7 +213,7 @@ class LendStore {
               ASlastBlock
             )
           : calcApy(supplyInterest),
-        isAutostakeAvl: ASlastBlockNum ?? null,
+        isAutostakeAvl: !!ASlastBlockNum,
         borrowAPY: calcApy(interests[index])
       };
     });

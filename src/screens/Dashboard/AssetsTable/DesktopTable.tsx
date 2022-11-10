@@ -36,6 +36,7 @@ const Root = styled.div<{ sort?: boolean }>`
 const SupplyApy = styled.div`
   display: flex;
   white-space: nowrap;
+
   img {
     margin: 1px 4px 0 -1px;
   }
@@ -389,6 +390,7 @@ const DesktopTable: React.FC<IProps> = () => {
     }));
     setFilteredAssets(data);
   }, [
+    theme.images.icons.autostaking,
     sort,
     sortMode,
     isSupplyDisabled,

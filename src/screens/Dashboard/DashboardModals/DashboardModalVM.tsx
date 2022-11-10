@@ -2,11 +2,14 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
+import {
+  EXPLORER_URL,
+  OPERATIONS_TYPE,
+  POOLS,
+  TOKENS_BY_SYMBOL
+} from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
-import { POOLS, IPool } from "@src/constants";
-import { TOKENS_BY_SYMBOL } from "@src/constants";
 
 const notifications = {
   [OPERATIONS_TYPE.WITHDRAW]: `The withdrawal is successful! You can view the transaction on Waves Explorer`,

@@ -1,6 +1,5 @@
 import tokens from "./tokens.json";
 import tokenLogos from "@src/constants/tokenLogos";
-import BN from "@src/utils/BN";
 
 export enum OPERATIONS_TYPE {
   WITHDRAW = "withdraw",
