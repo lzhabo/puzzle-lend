@@ -31,6 +31,7 @@ const calcApy = (i: BN) => {
 };
 
 const calcAutostakeApy = (
+  totalSupply: BN,
   interest: BN,
   ASpreLastEarned: BN,
   ASlastEarned: BN,
@@ -38,10 +39,9 @@ const calcAutostakeApy = (
   ASlastBlock: BN
 ) => {
   if (!interest || interest.isNaN()) return BN.ZERO;
-
   const lastBlockStakingRewards = ASlastEarned.minus(ASpreLastEarned).div(ASlastBlock.minus(ASpreLastBlock))
-  
-  return lastBlockStakingRewards.times(60).times(12).plus(interest).plus(1).pow(365).minus(1)
+  const fStaked = lastBlockStakingRewards.div(totalSupply).times(60).times(12).times(0.8)
+  return fStaked.plus(interest).plus(1).pow(365).minus(1)
 };
 
 class LendStore {
@@ -143,10 +143,25 @@ class LendStore {
         TOKENS_BY_SYMBOL.USDN.decimals
       );
 
-      const ASpreLastEarned = getStateByKey(state, `autostake_preLastEarned_${token.assetId}`);
-      const ASlastEarned = getStateByKey(state, `autostake_lastEarned_${token.assetId}`);
-      const ASpreLastBlock = getStateByKey(state, `autostake_preLastBlock_${token.assetId}`);
-      const ASlastBlock = getStateByKey(state, `autostake_lastBlock_${token.assetId}`);
+      const ASpreLastEarnedNum = getStateByKey(state, `autostake_preLastEarned_${token.assetId}`);
+      const ASpreLastEarned = BN.formatUnits(
+        ASpreLastEarnedNum ?? "0",
+        TOKENS_BY_SYMBOL.USDN.decimals
+      );
+      const ASlastEarnedNum = getStateByKey(state, `autostake_lastEarned_${token.assetId}`);
+      const ASlastEarned = BN.formatUnits(
+        ASlastEarnedNum ?? "0",
+        TOKENS_BY_SYMBOL.USDN.decimals
+      );
+      const ASpreLastBlockNum = getStateByKey(state, `autostake_preLastBlock_${token.assetId}`);
+      const ASpreLastBlock = new BN(ASpreLastBlockNum ?? 0, 10)
+      const ASlastBlockNum= getStateByKey(state, `autostake_lastBlock_${token.assetId}`);
+      const ASlastBlock = new BN(ASlastBlockNum ?? 0, 10)
+
+      console.log(this.pool.name);
+      console.log(token.assetId);
+      console.log(ASlastBlockNum);
+      console.log(calcAutostakeApy(totalSupply, supplyInterest, ASpreLastEarned, ASlastEarned, ASpreLastBlock, ASlastBlock).toNumber());
 
       return {
         ...token,
@@ -159,8 +174,8 @@ class LendStore {
         selfSupply: selfSupply.toDecimalPlaces(0),
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         selfBorrow: selfBorrow.toDecimalPlaces(0),
-        supplyAPY: ASlastBlock ? calcAutostakeApy(supplyInterest, ASpreLastEarned, ASlastEarned, ASpreLastBlock, ASlastBlock) : calcApy(supplyInterest),
-        isAutostakeAvl: !!ASlastBlock,
+        supplyAPY: ASlastBlockNum ? calcAutostakeApy(totalSupply, supplyInterest, ASpreLastEarned, ASlastEarned, ASpreLastBlock, ASlastBlock) : calcApy(supplyInterest),
+        isAutostakeAvl: !!ASlastBlockNum,
         borrowAPY: calcApy(interests[index])
       };
     });
