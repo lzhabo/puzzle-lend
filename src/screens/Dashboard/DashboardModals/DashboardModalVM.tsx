@@ -194,7 +194,7 @@ class DashboardModalVM {
       selfVal = this.token?.selfSupply;
     }
     if (this.operationName === OPERATIONS_TYPE.REPAY) {
-      selfVal = this.token?.selfBorrow;
+      selfVal = BN.min(this.tokenBalance, this.token?.selfBorrow);
     }
     if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
       selfVal = this.tokenBalance;
@@ -203,8 +203,6 @@ class DashboardModalVM {
     const isWavesPool =
       this.rootStore.lendStore.poolId ===
       POOLS.find((e) => e.name === "Waves DeFi pool")?.address;
-
-    const selfValUsd = selfVal.times(this.token?.prices?.min);
 
     const reservesConverted = this.isDollar
       ? this.poolTotalReserves.times(this.token?.prices.min)
@@ -218,14 +216,12 @@ class DashboardModalVM {
     const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
     const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
 
-    const countVal = !this.isDollar
-      ? !isWavesPool || isUSDN || isWAVES
-        ? selfVal.times(this.token?.prices?.min)
-        : BN.min(
-            dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
-            selfVal.times(this.token?.prices?.min)
-          )
-      : selfValUsd;
+    let countVal = BN.min(
+      dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
+      selfVal
+    );
+
+    if (!isWavesPool || isUSDN || isWAVES) countVal = selfVal;
 
     return countVal.toDecimalPlaces(0, 2);
   }

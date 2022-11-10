@@ -19,6 +19,7 @@ export type TPoolStats = {
   dailyIncome: BN;
   dailyLoan: BN;
   supplyLimit: BN;
+  isAutostakeAvl: number | null;
   prices: { min: BN; max: BN };
 } & TPoolToken;
 
@@ -27,6 +28,26 @@ const calcApy = (i: BN) => {
   if (!i || i.isNaN()) return BN.ZERO;
 
   return i.plus(1).pow(365).minus(1).times(100).toDecimalPlaces(2);
+};
+
+const calcAutostakeApy = (
+  totalSupply: BN,
+  interest: BN,
+  ASpreLastEarned: BN,
+  ASlastEarned: BN,
+  ASpreLastBlock: BN,
+  ASlastBlock: BN
+) => {
+  if (!interest || interest.isNaN()) return BN.ZERO;
+  const lastBlockStakingRewards = ASlastEarned.minus(ASpreLastEarned).div(
+    ASlastBlock.minus(ASpreLastBlock)
+  );
+  const fStaked = lastBlockStakingRewards
+    .div(totalSupply)
+    .times(60)
+    .times(12)
+    .times(0.8);
+  return fStaked.plus(interest).plus(1).pow(365).minus(1);
 };
 
 class LendStore {
@@ -81,7 +102,8 @@ class LendStore {
 
   syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
-    const keys = this.tokensSetups.reduce(
+
+    const keysFirstBatch = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
         `setup_maxSupply_${assetId}`,
@@ -93,15 +115,28 @@ class LendStore {
       ],
       [] as string[]
     );
-    const [state, rates, prices, interests, userCollateral] = await Promise.all(
-      [
-        nodeService.nodeKeysRequest(this.poolId, keys),
+
+    const keysSecBatch = this.tokensSetups.reduce(
+      (acc, { assetId }) => [
+        ...acc,
+        `autostake_preLastEarned_${assetId}`,
+        `autostake_lastEarned_${assetId}`,
+        `autostake_preLastBlock_${assetId}`,
+        `autostake_lastBlock_${assetId}`
+      ],
+      [] as string[]
+    );
+
+    const [state, stateSecBatch, rates, prices, interests, userCollateral] =
+      await Promise.all([
+        nodeService.nodeKeysRequest(this.poolId, keysFirstBatch),
+        nodeService.nodeKeysRequest(this.poolId, keysSecBatch),
         this.fetchService.calculateTokenRates(),
         this.fetchService.getPrices(),
         this.fetchService.calculateTokensInterest(),
         this.fetchService.getUserCollateral(address || "")
-      ]
-    );
+      ]);
+
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
@@ -128,6 +163,33 @@ class LendStore {
         TOKENS_BY_SYMBOL.USDN.decimals
       );
 
+      const ASpreLastEarnedNum = getStateByKey(
+        stateSecBatch,
+        `autostake_preLastEarned_${token.assetId}`
+      );
+      const ASpreLastEarned = BN.formatUnits(
+        ASpreLastEarnedNum ?? "0",
+        TOKENS_BY_SYMBOL.USDN.decimals
+      );
+      const ASlastEarnedNum = getStateByKey(
+        stateSecBatch,
+        `autostake_lastEarned_${token.assetId}`
+      );
+      const ASlastEarned = BN.formatUnits(
+        ASlastEarnedNum ?? "0",
+        TOKENS_BY_SYMBOL.USDN.decimals
+      );
+      const ASpreLastBlockNum = getStateByKey(
+        stateSecBatch,
+        `autostake_preLastBlock_${token.assetId}`
+      );
+      const ASpreLastBlock = new BN(ASpreLastBlockNum ?? 0, 10);
+      const ASlastBlockNum = getStateByKey(
+        stateSecBatch,
+        `autostake_lastBlock_${token.assetId}`
+      );
+      const ASlastBlock = new BN(ASlastBlockNum ?? 0, 10);
+
       return {
         ...token,
         interest: interests[index],
@@ -139,7 +201,17 @@ class LendStore {
         selfSupply: selfSupply.toDecimalPlaces(0),
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         selfBorrow: selfBorrow.toDecimalPlaces(0),
-        supplyAPY: calcApy(supplyInterest),
+        supplyAPY: ASlastBlockNum
+          ? calcAutostakeApy(
+              totalSupply,
+              supplyInterest,
+              ASpreLastEarned,
+              ASlastEarned,
+              ASpreLastBlock,
+              ASlastBlock
+            )
+          : calcApy(supplyInterest),
+        isAutostakeAvl: ASlastBlockNum ?? null,
         borrowAPY: calcApy(interests[index])
       };
     });

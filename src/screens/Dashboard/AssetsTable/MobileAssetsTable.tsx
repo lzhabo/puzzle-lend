@@ -13,6 +13,7 @@ import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "@components/Tooltip";
 import { TPoolStats } from "@src/stores/LendStore";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -23,6 +24,27 @@ const Root = styled.div`
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
   }
+`;
+
+const SupplyApy = styled.div`
+  display: flex;
+  justify-content: flex-end;
+
+  > div {
+    white-space: nowrap;
+    display: flex;
+    img {
+      margin: 1px 4px 0 -1px;
+    }
+  }
+`;
+
+const TooltipText = styled(Text)`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  max-width: 180px;
+  white-space: normal;
 `;
 
 const Asset = styled.div`
@@ -63,6 +85,7 @@ const Data = styled(Column)`
 const MobileAssetsTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const openModal = useCallback(
     (
@@ -105,7 +128,30 @@ const MobileAssetsTable: React.FC<IProps> = () => {
               },
               {
                 title: "Supply APY",
-                value: `${s.supplyAPY.toFormat(2)} %`
+                value: (
+                  <SupplyApy>
+                    <div>
+                      <Tooltip
+                        config={{ placement: "top-start" }}
+                        content={
+                          <TooltipText textAlign="left">
+                            Non-borrowed tokens are automatically staked within
+                            native protocol to generate additional interest
+                          </TooltipText>
+                        }
+                      >
+                        {s.isAutostakeAvl && (
+                          <img
+                            src={theme.images.icons.autostaking}
+                            alt="autostaking"
+                            className="autostaking-icon"
+                          />
+                        )}
+                      </Tooltip>
+                      {s.supplyAPY.toBigFormat(2) + " %"}
+                    </div>
+                  </SupplyApy>
+                )
               },
               {
                 title: "Total borrow",
