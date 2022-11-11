@@ -329,7 +329,7 @@ const DesktopTable: React.FC<IProps> = () => {
               />
             )}
           </Tooltip>
-          {s.supplyAPY.toBigFormat(2) + " %"}
+          {s.supplyAPY.toFormat(2) + " %"}
         </SupplyApy>
       ),
       borrow: (
