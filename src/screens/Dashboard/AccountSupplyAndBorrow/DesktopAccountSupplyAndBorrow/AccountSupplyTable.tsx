@@ -210,7 +210,7 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             </Text>
           </Column>
         ),
-        supplyApy: s.supplyAPY.toBigFormat(2) + "%",
+        supplyApy: s.supplyAPY.toFormat(2) + "%",
         dailyIncome: (
           <Column crossAxisSize="max">
             <Text weight={500} textAlign="right" size="medium">

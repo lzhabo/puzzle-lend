@@ -169,18 +169,12 @@ class LendStore {
         stateSecBatch,
         `autostake_preLastEarned_${token.assetId}`
       );
-      const ASpreLastEarned = BN.formatUnits(
-        ASpreLastEarnedNum ?? "0",
-        TOKENS_BY_SYMBOL.USDN.decimals
-      );
+      const ASpreLastEarned = new BN(ASpreLastEarnedNum ?? 0, 10);
       const ASlastEarnedNum = getStateByKey(
         stateSecBatch,
         `autostake_lastEarned_${token.assetId}`
       );
-      const ASlastEarned = BN.formatUnits(
-        ASlastEarnedNum ?? "0",
-        TOKENS_BY_SYMBOL.USDN.decimals
-      );
+      const ASlastEarned = new BN(ASlastEarnedNum ?? 0, 10);
       const ASpreLastBlockNum = getStateByKey(
         stateSecBatch,
         `autostake_preLastBlock_${token.assetId}`
