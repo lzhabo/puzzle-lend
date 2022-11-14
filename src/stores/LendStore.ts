@@ -8,7 +8,6 @@ import nodeService from "@src/services/nodeService";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
 import { POOLS } from "@src/constants";
-import BigNumber from "bignumber.js";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -88,11 +87,11 @@ class LendStore {
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
   supplyAndBorrowRates: Array<{
-    borrowRate: BigNumber;
-    supplyRate: BigNumber;
+    borrowRate: BN;
+    supplyRate: BN;
   }> = [];
   setSupplyAndBorrowRates = (
-    pool: Array<{ borrowRate: BigNumber; supplyRate: BigNumber }>
+    pool: Array<{ borrowRate: BN; supplyRate: BN }>
   ) => (this.supplyAndBorrowRates = pool);
 
   get poolId(): string {
