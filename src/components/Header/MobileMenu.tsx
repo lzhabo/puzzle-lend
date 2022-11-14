@@ -58,21 +58,21 @@ const MobileMenu: React.FC<IProps> = ({
   onClose
 }) => {
   const mainFunctional = [
-    { name: "Dashboard", link: ROUTES.DASHBOARD, outer: false },
+    { name: "Dashboard", link: ROUTES.DASHBOARD, isExternalLink: false },
     {
       name: "Guidebook",
       link: "https://puzzle-lend.gitbook.io/guidebook/",
-      outer: true
+      isExternalLink: true
     },
     {
       name: "Trade",
       link: "https://puzzleswap.org/",
-      outer: true
+      isExternalLink: true
     },
     {
       name: "NFT",
       link: "https://puzzlemarket.org/",
-      outer: true
+      isExternalLink: true
     }
   ];
   return (
