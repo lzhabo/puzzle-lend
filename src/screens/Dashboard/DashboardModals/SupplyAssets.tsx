@@ -205,7 +205,14 @@ const SupplyAssets: React.FC<IProps> = ({
         <>
           <Warning
             text={vm.modalWarningText}
-            accentText="Supply max to limit"
+            accentText={
+              <div
+                onClick={() => onMaxClick(getMaxSupply())}
+                style={{ cursor: "pointer" }}
+              >
+                Supply max to limit
+              </div>
+            }
           />
           <SizedBox height={24} />
         </>

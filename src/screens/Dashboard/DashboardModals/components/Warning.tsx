@@ -11,7 +11,7 @@ type TLink = {
 
 interface IProps {
   text: string;
-  accentText?: string;
+  accentText?: React.ReactElement | string;
   link?: TLink;
 }
 

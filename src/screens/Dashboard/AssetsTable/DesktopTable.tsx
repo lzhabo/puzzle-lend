@@ -32,6 +32,24 @@ const Root = styled.div<{ sort?: boolean }>`
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
   }
 `;
+
+const SupplyApy = styled.div`
+  display: flex;
+  white-space: nowrap;
+
+  img {
+    margin: 1px 4px 0 -1px;
+  }
+`;
+
+const TooltipText = styled(Text)`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  max-width: 180px;
+  white-space: normal;
+`;
+
 const DesktopTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const theme = useTheme();
@@ -293,7 +311,28 @@ const DesktopTable: React.FC<IProps> = () => {
           </Text>
         </Column>
       ),
-      supplyApy: s.supplyAPY.toBigFormat(2) + " %",
+      supplyApy: (
+        <SupplyApy>
+          <Tooltip
+            config={{ placement: "top-start" }}
+            content={
+              <TooltipText textAlign="left">
+                Non-borrowed tokens are automatically staked within native
+                protocol to generate additional interest
+              </TooltipText>
+            }
+          >
+            {s.isAutostakeAvl && (
+              <img
+                src={theme.images.icons.autostaking}
+                alt="autostaking"
+                className="autostaking-icon"
+              />
+            )}
+          </Tooltip>
+          {s.supplyAPY.toFormat(2) + " %"}
+        </SupplyApy>
+      ),
       borrow: (
         <Column crossAxisSize="max">
           <Text weight={500} textAlign="right" size="medium">
@@ -351,6 +390,7 @@ const DesktopTable: React.FC<IProps> = () => {
     }));
     setFilteredAssets(data);
   }, [
+    theme.images.icons.autostaking,
     sort,
     sortMode,
     isSupplyDisabled,

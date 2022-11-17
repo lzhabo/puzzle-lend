@@ -164,7 +164,7 @@ const WithdrawAssets: React.FC<IProps> = ({
           {token?.name} liquidity
         </Text>
         <Text size="medium" fitContent>
-          {vm.poolTotalReserves.toFormat(2)} {token?.symbol}
+          {vm.poolTotalReservesInToken.toFormat(2)} {token?.symbol}
         </Text>
       </Row>
       <SizedBox height={14} />

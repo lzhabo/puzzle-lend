@@ -121,11 +121,6 @@ const Header: React.FC<IProps> = () => {
   const menuItems = [
     { name: "Dashboard", link: ROUTES.DASHBOARD },
     {
-      name: "Guidebook",
-      link: "https://puzzle-lend.gitbook.io/guidebook/",
-      isExternalLink: true
-    },
-    {
       name: "Trade",
       link: "https://puzzleswap.org/",
       isExternalLink: true
@@ -133,6 +128,11 @@ const Header: React.FC<IProps> = () => {
     {
       name: "NFT",
       link: "https://puzzlemarket.org/",
+      isExternalLink: true
+    },
+    {
+      name: "Guidebook",
+      link: "https://puzzle-lend.gitbook.io/guidebook/",
       isExternalLink: true
     }
   ];

@@ -2,7 +2,12 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { EXPLORER_URL, OPERATIONS_TYPE } from "@src/constants";
+import {
+  EXPLORER_URL,
+  OPERATIONS_TYPE,
+  POOLS,
+  TOKENS_BY_SYMBOL
+} from "@src/constants";
 import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
 
@@ -68,6 +73,9 @@ class DashboardModalVM {
     this.dashboardModalStep = step;
   };
 
+  borrowAmount = BN.ZERO;
+  setBorrowAmount = (amount: BN) => (this.borrowAmount = amount);
+
   modalBtnErrorText = "";
   setError = (error: string) => (this.modalBtnErrorText = error);
 
@@ -79,7 +87,10 @@ class DashboardModalVM {
   setAccountHealth = (health: number) => (this.accountHealth = health);
 
   get modalWarningText(): string | null {
-    if (this.operationName === OPERATIONS_TYPE.BORROW) {
+    if (
+      this.operationName === OPERATIONS_TYPE.BORROW &&
+      this.countBorrowAccountHealth(this.borrowAmount) < 30
+    ) {
       return "In case of market insolvency borrow limit of assets may decrease which may cause liquidation of your assets";
     }
 
@@ -111,14 +122,13 @@ class DashboardModalVM {
           `Should be less than ${staticLimit.toFixed(2)} ${this.currentSymbol}`
         );
       }
-
       if (
         reservesConverted.gt(limitConverted.times(0.5)) &&
         reservesConverted.lt(limitConverted)
       ) {
         return `There are ${dynamicLimit.toFixed(2)} ${
           this.currentSymbol
-        } left to the limit. You can pay this amount or less`;
+        } left to the limit. You can provide this amount or less`;
       }
 
       return null;
@@ -187,15 +197,34 @@ class DashboardModalVM {
       selfVal = this.token?.selfSupply;
     }
     if (this.operationName === OPERATIONS_TYPE.REPAY) {
-      selfVal = this.token?.selfBorrow;
+      selfVal = BN.min(this.tokenBalance, this.token?.selfBorrow);
     }
     if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
       selfVal = this.tokenBalance;
     }
 
-    const countVal = !this.isDollar
-      ? selfVal
-      : selfVal.times(this.token?.prices?.min);
+    const isWavesPool =
+      this.rootStore.lendStore.poolId ===
+      POOLS.find((e) => e.name === "Waves DeFi pool")?.address;
+
+    const reservesConverted = this.isDollar
+      ? this.poolTotalReserves.times(this.token?.prices.min)
+      : this.poolTotalReserves.div(this.token?.prices.min);
+
+    const limitConverted = this.isDollar
+      ? this.token?.supplyLimit
+      : this.token?.supplyLimit.div(this.token?.prices.min);
+
+    const dynamicLimit = limitConverted.minus(reservesConverted);
+    const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
+    const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
+
+    let countVal = BN.min(
+      dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
+      selfVal
+    );
+
+    if (!isWavesPool || isUSDN || isWAVES) countVal = selfVal;
 
     return countVal.toDecimalPlaces(0, 2);
   }
@@ -228,6 +257,15 @@ class DashboardModalVM {
       : this.tokenBalance.times(this.token?.prices?.min);
   }
 
+  //in native token
+  get poolTotalReservesInToken(): BN {
+    if (!this.token?.totalSupply || !this.token?.totalBorrow) return BN.ZERO;
+    const reserves = this.token?.totalSupply?.minus(this.token?.totalBorrow);
+
+    return BN.formatUnits(reserves, this.token?.decimals);
+  }
+
+  //in USD
   get poolTotalReserves(): BN {
     if (!this.token?.totalSupply || !this.token?.totalBorrow) return BN.ZERO;
     const reserves = this.token?.totalSupply?.minus(this.token?.totalBorrow);
@@ -355,6 +393,8 @@ class DashboardModalVM {
   };
 
   borrowChangeAmount = (v: BN) => {
+    this.setBorrowAmount(v);
+
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
 
     // if !isNative, show maximum in dollars, collateral in dollars by default
