@@ -6,7 +6,6 @@ import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
 import Card from "@components/Card";
 import SquareTokenIcon from "@components/SquareTokenIcon";
-
 import tokenLogos from "@src/constants/tokenLogos";
 import BN from "@src/utils/BN";
 import {

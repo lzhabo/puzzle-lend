@@ -18,6 +18,8 @@ import { POOLS, ROUTES } from "@src/constants";
 import Card from "@components/Card";
 import { ReactComponent as WidgetIcoBorrowed } from "@src/assets/icons/totalBorrowed.svg";
 import { ReactComponent as WidgetIcoSupplied } from "@src/assets/icons/totalSupplied.svg";
+import RoundTokenIcon from "@components/RoundTokenIcon";
+import tokenLogos from "@src/constants/tokenLogos";
 
 import bg from "@src/assets/dashboard/main_bg.png";
 import PoolStateFetchService from "@src/services/PoolStateFetchService";
@@ -141,6 +143,8 @@ const PoolButton = styled.button`
   padding: 8px;
 `;
 
+const RoundTokenIconStyled = styled(RoundTokenIcon)``;
+
 const MarketsImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
   const { accountStore, lendStore } = useStores();
@@ -186,7 +190,15 @@ const MarketsImpl: React.FC<IProps> = observer(() => {
                       assets
                     </PoolCardSubTitle>
                   </PoolCardText>
-                  <PoolCardTokens>tokens</PoolCardTokens>
+                  <PoolCardTokens>
+                    {["USDT", "USDN", "WAVES"].map((e) => (
+                      <RoundTokenIconStyled
+                        size="small"
+                        src={tokenLogos[e]}
+                        alt="logo"
+                      />
+                    ))}
+                  </PoolCardTokens>
                 </PoolCardHeaderContainer>
                 <SizedBox height={16} />
                 <PoolCardInfo>
