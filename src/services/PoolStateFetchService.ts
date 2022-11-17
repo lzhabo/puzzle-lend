@@ -99,7 +99,7 @@ class PoolStateFetchService {
         };
       });
   };
-  
+
   calculateTokensInterest = async () => {
     const response = await nodeService.evaluate(
       this.pool,

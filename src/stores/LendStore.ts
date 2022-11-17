@@ -90,9 +90,8 @@ class LendStore {
     borrowRate: BN;
     supplyRate: BN;
   }> = [];
-  setSupplyAndBorrowRates = (
-    pool: Array<{ borrowRate: BN; supplyRate: BN }>
-  ) => (this.supplyAndBorrowRates = pool);
+  setSupplyAndBorrowRates = (pool: Array<{ borrowRate: BN; supplyRate: BN }>) =>
+    (this.supplyAndBorrowRates = pool);
 
   get poolId(): string {
     return this.pool.address;
