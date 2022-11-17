@@ -3,7 +3,7 @@ import React from "react";
 import { useStores } from "@stores";
 import { Column, Row } from "@components/Flex";
 import Text from "@components/Text";
-import { POOLS, IPool } from "@src/constants";
+import { ROUTES, POOLS, IPool } from "@src/constants";
 import { useLocation, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 
@@ -81,6 +81,8 @@ const Header: React.FC<IProps> = () => {
 
     return navigate(`/${pool.address}`);
   };
+
+  if (location.pathname === ROUTES.MARKETS) return null;
 
   return (
     <Root>

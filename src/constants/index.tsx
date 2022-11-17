@@ -10,7 +10,8 @@ export enum OPERATIONS_TYPE {
 
 export const ROUTES = {
   ROOT: "/",
-  DASHBOARD: "/",
+  MARKETS: "/",
+  DASHBOARD: "/dashboard",
   DASHBOARD_MODAL_WITHDRAW: "",
   DASHBOARD_MODALS: {
     [OPERATIONS_TYPE.SUPPLY]: ":poolId/supply/:tokenId",
