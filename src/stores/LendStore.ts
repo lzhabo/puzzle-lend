@@ -86,13 +86,6 @@ class LendStore {
   pool = POOLS[0];
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
-  supplyAndBorrowRates: Array<{
-    borrowRate: BN;
-    supplyRate: BN;
-  }> = [];
-  setSupplyAndBorrowRates = (pool: Array<{ borrowRate: BN; supplyRate: BN }>) =>
-    (this.supplyAndBorrowRates = pool);
-
   get poolId(): string {
     return this.pool.address;
   }
@@ -220,7 +213,6 @@ class LendStore {
     });
     this.setPoolsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
-    this.setSupplyAndBorrowRates(rates);
   };
 
   get health() {
@@ -229,18 +221,14 @@ class LendStore {
       const cf = this.tokensSetups[index]?.cf;
       if (deposit.eq(0) || !cf) return acc;
       const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-      return acc
-        .plus(assetBc)
-        .times(this.supplyAndBorrowRates[index]?.supplyRate);
+      return acc.plus(assetBc);
     }, BN.ZERO);
     const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = this.tokensSetups[index]?.lt;
       if (borrow.eq(0) || !lt) return acc;
       const assetBcu = borrow.times(stat.prices.max).div(lt);
-      return acc
-        .plus(assetBcu)
-        .times(this.supplyAndBorrowRates[index]?.borrowRate);
+      return acc.plus(assetBcu);
     }, BN.ZERO);
     const health = new BN(1).minus(bcu.div(bc)).times(100);
     if (health.isNaN() || health.gt(100)) return new BN(100);
