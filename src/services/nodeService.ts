@@ -145,14 +145,17 @@ const nodeKeysRequest = async (
   contract: string,
   keys: string[] | string
 ): Promise<INodeData[]> => {
-  const searchKeys = typeof keys === "string" ? [keys] : keys;
-  const search = new URLSearchParams(searchKeys?.map((s) => ["key", s]));
-  const keysArray = search.toString();
-  const response = await makeNodeRequest(
-    `/addresses/data/${contract}?${keysArray}`
-  );
-  if (response.data) {
-    return response.data;
+  if (keys.length === 0) return [];
+  const req = `/addresses/data/${contract}`;
+  const postData = { keys: typeof keys === "string" ? [keys] : keys };
+  const response = await makeNodeRequest(req, { postData })
+    .then(({ data }) => data)
+    .catch((e) => {
+      console.error(e);
+      return [];
+    });
+  if (response) {
+    return response;
   } else {
     return [];
   }
