@@ -4,24 +4,24 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { IToken, POOLS, TOKENS_LIST } from "@src/constants";
 
-const ctx = React.createContext<MarketsVM | null>(null);
+const ctx = React.createContext<PoolCardsVM | null>(null);
 
 interface IProps {
   poolId?: string;
 }
 
-export const MarketsVmProvider: React.FC<IProps> = ({ children, poolId }) => {
+export const PoolCardsVmProvider: React.FC<IProps> = ({ children, poolId }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new MarketsVM(rootStore, poolId),
+    () => new PoolCardsVM(rootStore, poolId),
     [poolId, rootStore]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
-export const useMarketsVM = () => useVM(ctx);
+export const usePoolCardsVM = () => useVM(ctx);
 
-class MarketsVM {
+class PoolCardsVM {
   public readonly poolId: string;
   public rootStore: RootStore;
   searchValue = "";
