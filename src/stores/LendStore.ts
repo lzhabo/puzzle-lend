@@ -3,11 +3,10 @@ import PoolStateFetchService, {
   TPoolToken
 } from "@src/services/PoolStateFetchService";
 import BN from "@src/utils/BN";
-import { ASSETS_TYPE, TOKENS_BY_SYMBOL } from "@src/constants";
-import nodeService from "@src/services/nodeService";
+import { ASSETS_TYPE, POOLS, TOKENS_BY_SYMBOL } from "@src/constants";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
-import { POOLS } from "@src/constants";
+import nodeService from "@src/services/nodeService";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -62,7 +61,10 @@ class LendStore {
     return await this._fetchService
       .fetchSetups()
       .then(this.setTokensSetups)
-      .then(() => this.syncPoolsStats());
+      .then(() => this.syncPoolsStats())
+      .catch((e) =>
+        this.rootStore.notificationStore.notify(e.message, { type: "error" })
+      );
   };
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
@@ -86,14 +88,6 @@ class LendStore {
   pool = POOLS[0];
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
-  supplyAndBorrowRates: Array<{
-    borrowRate: BN;
-    supplyRate: BN;
-  }> = [];
-  setSupplyAndBorrowRates = (
-    pool: Array<{ borrowRate: BN; supplyRate: BN }>
-  ) => (this.supplyAndBorrowRates = pool);
-
   get poolId(): string {
     return this.pool.address;
   }
@@ -113,12 +107,16 @@ class LendStore {
   syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
 
-    const keysFirstBatch = this.tokensSetups.reduce(
+    const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
         `setup_maxSupply_${assetId}`,
         `total_supplied_${assetId}`,
         `total_borrowed_${assetId}`,
+        `autostake_preLastEarned_${assetId}`,
+        `autostake_lastEarned_${assetId}`,
+        `autostake_preLastBlock_${assetId}`,
+        `autostake_lastBlock_${assetId}`,
         ...(address
           ? [`${address}_supplied_${assetId}`, `${address}_borrowed_${assetId}`]
           : [])
@@ -126,26 +124,15 @@ class LendStore {
       [] as string[]
     );
 
-    const keysSecBatch = this.tokensSetups.reduce(
-      (acc, { assetId }) => [
-        ...acc,
-        `autostake_preLastEarned_${assetId}`,
-        `autostake_lastEarned_${assetId}`,
-        `autostake_preLastBlock_${assetId}`,
-        `autostake_lastBlock_${assetId}`
-      ],
-      [] as string[]
-    );
-
-    const [state, stateSecBatch, rates, prices, interests, userCollateral] =
-      await Promise.all([
-        nodeService.nodeKeysRequest(this.poolId, keysFirstBatch),
-        nodeService.nodeKeysRequest(this.poolId, keysSecBatch),
+    const [state, rates, prices, interests, userCollateral] = await Promise.all(
+      [
+        nodeService.nodeKeysRequest(this.poolId, keys),
         this.fetchService.calculateTokenRates(),
         this.fetchService.getPrices(),
         this.fetchService.calculateTokensInterest(),
         this.fetchService.getUserCollateral(address || "")
-      ]);
+      ]
+    );
 
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
@@ -174,22 +161,22 @@ class LendStore {
       );
 
       const ASpreLastEarnedNum = getStateByKey(
-        stateSecBatch,
+        state,
         `autostake_preLastEarned_${token.assetId}`
       );
       const ASpreLastEarned = new BN(ASpreLastEarnedNum ?? 0);
       const ASlastEarnedNum = getStateByKey(
-        stateSecBatch,
+        state,
         `autostake_lastEarned_${token.assetId}`
       );
       const ASlastEarned = new BN(ASlastEarnedNum ?? 0);
       const ASpreLastBlockNum = getStateByKey(
-        stateSecBatch,
+        state,
         `autostake_preLastBlock_${token.assetId}`
       );
       const ASpreLastBlock = new BN(ASpreLastBlockNum ?? 0);
       const ASlastBlockNum = getStateByKey(
-        stateSecBatch,
+        state,
         `autostake_lastBlock_${token.assetId}`
       );
       const ASlastBlock = new BN(ASlastBlockNum ?? 0);
@@ -221,7 +208,6 @@ class LendStore {
     });
     this.setPoolsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
-    this.setSupplyAndBorrowRates(rates);
   };
 
   get health() {
@@ -230,18 +216,14 @@ class LendStore {
       const cf = this.tokensSetups[index]?.cf;
       if (deposit.eq(0) || !cf) return acc;
       const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-      return acc
-        .plus(assetBc)
-        .times(this.supplyAndBorrowRates[index]?.supplyRate);
+      return acc.plus(assetBc);
     }, BN.ZERO);
     const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = this.tokensSetups[index]?.lt;
       if (borrow.eq(0) || !lt) return acc;
       const assetBcu = borrow.times(stat.prices.max).div(lt);
-      return acc
-        .plus(assetBcu)
-        .times(this.supplyAndBorrowRates[index]?.borrowRate);
+      return acc.plus(assetBcu);
     }, BN.ZERO);
     const health = new BN(1).minus(bcu.div(bc)).times(100);
     if (health.isNaN() || health.gt(100)) return new BN(100);
