@@ -18,7 +18,7 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding: 0 16px;
+  /* padding: 0 16px; */
   width: 100%;
   min-height: 100%;
   max-width: calc(1328px + 32px);
@@ -48,6 +48,7 @@ const PoolCardBody = styled.div`
 const PoolCardHeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
 `;
 const PoolCardText = styled.div``;
 const PoolCardTitle = styled(Text)`
@@ -55,13 +56,27 @@ const PoolCardTitle = styled(Text)`
   line-height: 32px;
 `;
 const PoolCardSubTitle = styled(Text)``;
-const PoolCardTokens = styled.div``;
+const PoolCardTokens = styled.div`
+  flex-grow: 1;
+  display: flex;
+  margin: 0 0 0 16px;
+  justify-content: flex-end;
+`;
 const PoolCardInfo = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  @media (min-width: 560px) {
+    flex-wrap: nowrap;
+  }
 `;
 const PoolCardInfoItem = styled.div`
-  width: 180px;
+  width: 140px;
+  margin: 4px 0;
+  @media (min-width: 560px) {
+    margin: 0;
+    width: 180px;
+  }
 `;
 const PoolCardInfoItemTitle = styled(Text)``;
 const PoolCardInfoItemValue = styled(Text)``;

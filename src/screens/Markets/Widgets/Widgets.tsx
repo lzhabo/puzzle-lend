@@ -17,7 +17,7 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  padding: 0 16px;
+  /* padding: 0 16px; */
   width: 100%;
   min-height: 100%;
   max-width: calc(1328px + 32px);
@@ -26,6 +26,10 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
 
 const WidgetsContainer = styled.div`
   display: flex;
+  flex-direction: column;
+  @media (min-width: 560px) {
+    flex-direction: row;
+  }
 `;
 const Widget = styled(Card)`
   margin: 0 24px 0 0;
@@ -34,8 +38,12 @@ const Widget = styled(Card)`
   justify-content: space-between;
   align-items: center;
 `;
+
 const WidgetRight = styled(Widget)`
-  margin: 0;
+  margin: 8px 0 0 0;
+  @media (min-width: 560px) {
+    margin: 0;
+  }
 `;
 const WidgetInfo = styled.div``;
 const WidgetTitle = styled(Text)``;
