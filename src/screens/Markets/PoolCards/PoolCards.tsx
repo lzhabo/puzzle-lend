@@ -57,7 +57,6 @@ const PoolCardTitle = styled(Text)`
   line-height: 32px;
   color: white;
 `;
-const PoolCardSubTitle = styled(Text)``;
 const PoolCardTokens = styled.div`
   flex-grow: 1;
   display: flex;
@@ -80,7 +79,6 @@ const PoolCardInfoItem = styled.div`
     width: 180px;
   }
 `;
-const PoolCardInfoItemTitle = styled(Text)``;
 const PoolCardInfoItemValue = styled(Text)`
   color: white;
 `;
@@ -96,6 +94,17 @@ const RoundTokenIconStyled = styled(RoundTokenIcon)`
 const PoolCardsImpl: React.FC<IProps> = observer(() => {
   const vm = usePoolCardsVM();
 
+  const poolStats = [
+    { title: "Total supplied", value: "000" },
+    { title: "Total borrowed", value: "000" },
+    { title: "NET PAY", value: "000" }
+  ];
+  const accountStats = [
+    { title: "My supply balance", value: "000" },
+    { title: "My borrow balance", value: "000" },
+    { title: "Account health", value: "000" }
+  ];
+
   return (
     <Layout>
       <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
@@ -108,10 +117,10 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                     <PoolCardTitle size="big" type="light">
                       Main pool
                     </PoolCardTitle>
-                    <PoolCardSubTitle size="medium" type="secondary">
+                    <Text size="medium" type="secondary">
                       Rapidly growing market with great liquidity and reliable
                       assets
-                    </PoolCardSubTitle>
+                    </Text>
                   </PoolCardText>
                   <PoolCardTokens>
                     {["USDT", "USDN", "WAVES"].map((e) => (
@@ -121,52 +130,28 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                 </PoolCardHeaderContainer>
                 <SizedBox height={16} />
                 <PoolCardInfo>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      Total supplied
-                    </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="light">
-                      000
-                    </PoolCardInfoItemValue>
-                  </PoolCardInfoItem>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      Total borrowed
-                    </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="light">
-                      000
-                    </PoolCardInfoItemValue>
-                  </PoolCardInfoItem>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      NET APY
-                    </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="light">
-                      000
-                    </PoolCardInfoItemValue>
-                  </PoolCardInfoItem>
+                  {poolStats.map((e) => (
+                    <PoolCardInfoItem>
+                      <Text size="medium" type="secondary">
+                        {e.title}
+                      </Text>
+                      <PoolCardInfoItemValue type="light">
+                        {e.value}
+                      </PoolCardInfoItemValue>
+                    </PoolCardInfoItem>
+                  ))}
                 </PoolCardInfo>
               </PoolCardHeader>
               <PoolCardBody>
                 <PoolCardInfo>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      My supply balance
-                    </PoolCardInfoItemTitle>
-                    <Text type="primary">0</Text>
-                  </PoolCardInfoItem>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      My borrow balance
-                    </PoolCardInfoItemTitle>
-                    <Text type="primary">0</Text>
-                  </PoolCardInfoItem>
-                  <PoolCardInfoItem>
-                    <PoolCardInfoItemTitle size="medium" type="secondary">
-                      Account health
-                    </PoolCardInfoItemTitle>
-                    <Text type="primary">0</Text>
-                  </PoolCardInfoItem>
+                  {accountStats.map((e) => (
+                    <PoolCardInfoItem>
+                      <Text size="medium" type="secondary">
+                        {e.title}
+                      </Text>
+                      <Text type="primary">{e.value}</Text>
+                    </PoolCardInfoItem>
+                  ))}
                 </PoolCardInfo>
                 <SizedBox height={16} />
                 <PoolButton kind={"secondary"} fixed size={"medium"}>

@@ -46,7 +46,6 @@ const WidgetRight = styled(Widget)`
   }
 `;
 const WidgetInfo = styled.div``;
-const WidgetTitle = styled(Text)``;
 const WidgetValue = styled(Text)`
   font-size: 24px;
   line-height: 32px;
@@ -61,18 +60,18 @@ const WidgetsImpl: React.FC<IProps> = observer(() => {
         <WidgetsContainer>
           <Widget>
             <WidgetInfo>
-              <WidgetTitle size="big" type="secondary">
+              <Text size="big" type="secondary">
                 Total supplied
-              </WidgetTitle>
+              </Text>
               <WidgetValue>10000$</WidgetValue>
             </WidgetInfo>
             <WidgetIcoSupplied />
           </Widget>
           <WidgetRight>
             <WidgetInfo>
-              <WidgetTitle size="big" type="secondary">
+              <Text size="big" type="secondary">
                 Total borrowed
-              </WidgetTitle>
+              </Text>
               <WidgetValue>1000$</WidgetValue>
             </WidgetInfo>
             <WidgetIcoBorrowed />

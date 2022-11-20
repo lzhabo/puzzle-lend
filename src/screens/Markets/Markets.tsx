@@ -38,7 +38,7 @@ const MarketsImpl: React.FC<IProps> = observer(() => {
 
   return (
     <Layout>
-      <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
+      <Root>
         <Text weight={500} size="large">
           Markets on Puzzle Lend
         </Text>
