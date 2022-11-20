@@ -19,7 +19,6 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  /* padding: 0 16px; */
   width: 100%;
   min-height: 100%;
   max-width: calc(1328px + 32px);
@@ -51,7 +50,6 @@ const PoolCardHeaderContainer = styled.div`
   justify-content: space-between;
   width: 100%;
 `;
-const PoolCardText = styled.div``;
 const PoolCardTitle = styled(Text)`
   font-size: 24px;
   line-height: 32px;
@@ -78,12 +76,6 @@ const PoolCardInfoItem = styled.div`
     margin: 0;
     width: 180px;
   }
-`;
-const PoolCardInfoItemValue = styled(Text)`
-  color: white;
-`;
-const PoolButton = styled(Button)`
-  font-weight: 700;
 `;
 
 const RoundTokenIconStyled = styled(RoundTokenIcon)`
@@ -113,7 +105,7 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
             <PoolCard>
               <PoolCardHeader>
                 <PoolCardHeaderContainer>
-                  <PoolCardText>
+                  <div>
                     <PoolCardTitle size="big" type="light">
                       Main pool
                     </PoolCardTitle>
@@ -121,7 +113,7 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                       Rapidly growing market with great liquidity and reliable
                       assets
                     </Text>
-                  </PoolCardText>
+                  </div>
                   <PoolCardTokens>
                     {["USDT", "USDN", "WAVES"].map((e) => (
                       <RoundTokenIconStyled src={tokenLogos[e]} alt="logo" />
@@ -135,9 +127,7 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                       <Text size="medium" type="secondary">
                         {e.title}
                       </Text>
-                      <PoolCardInfoItemValue type="light">
-                        {e.value}
-                      </PoolCardInfoItemValue>
+                      <Text type="white">{e.value}</Text>
                     </PoolCardInfoItem>
                   ))}
                 </PoolCardInfo>
@@ -154,9 +144,9 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                   ))}
                 </PoolCardInfo>
                 <SizedBox height={16} />
-                <PoolButton kind={"secondary"} fixed size={"medium"}>
+                <Button kind={"secondary"} weight={"fat"} fixed size={"medium"}>
                   Go to market
-                </PoolButton>
+                </Button>
               </PoolCardBody>
             </PoolCard>
           ))}

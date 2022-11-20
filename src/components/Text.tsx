@@ -7,6 +7,7 @@ type TTextType =
   | "blue500"
   | "error"
   | "success"
+  | "white"
   | "purple300";
 type TTextSize = "small" | "medium" | "large" | "big";
 type TTextAlign = "center" | "left" | "right" | "justify" | "end";
@@ -38,6 +39,8 @@ const Text = styled.p<{
           return `color: ${theme.colors?.blue500};`;
         case "light":
           return `color: ${theme.colors?.white};`;
+        case "white":
+          return `color: ${theme.colors?.alwaysWhite};`;
         case "error":
           return `color: ${theme.colors?.error500};`;
         case "success":

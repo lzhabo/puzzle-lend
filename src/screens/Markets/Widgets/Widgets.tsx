@@ -17,7 +17,6 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  /* padding: 0 16px; */
   width: 100%;
   min-height: 100%;
   max-width: calc(1328px + 32px);
@@ -45,7 +44,6 @@ const WidgetRight = styled(Widget)`
     margin: 0;
   }
 `;
-const WidgetInfo = styled.div``;
 const WidgetValue = styled(Text)`
   font-size: 24px;
   line-height: 32px;
@@ -59,21 +57,21 @@ const WidgetsImpl: React.FC<IProps> = observer(() => {
       <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
         <WidgetsContainer>
           <Widget>
-            <WidgetInfo>
+            <div>
               <Text size="big" type="secondary">
                 Total supplied
               </Text>
               <WidgetValue>10000$</WidgetValue>
-            </WidgetInfo>
+            </div>
             <WidgetIcoSupplied />
           </Widget>
           <WidgetRight>
-            <WidgetInfo>
+            <div>
               <Text size="big" type="secondary">
                 Total borrowed
               </Text>
               <WidgetValue>1000$</WidgetValue>
-            </WidgetInfo>
+            </div>
             <WidgetIcoBorrowed />
           </WidgetRight>
         </WidgetsContainer>
