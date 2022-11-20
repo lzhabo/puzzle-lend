@@ -30,8 +30,6 @@ class MarketsVM {
   constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.poolId = poolId ?? POOLS[0].address;
-    const pool = POOLS.find((pool) => pool.address === this.poolId)!;
-    this.rootStore.lendStore.setPool(pool);
+    this.rootStore.lendStore.setPool(POOLS);
   }
 }
