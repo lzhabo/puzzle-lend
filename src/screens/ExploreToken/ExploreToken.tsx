@@ -39,7 +39,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   const { lendStore } = useStores();
   const vm = useExploreTokenVM();
   const theme = useTheme();
-  if (lendStore.poolsStats.length === 0) return <SpinnerComponent />;
+  if (lendStore.poolStats.length === 0) return <SpinnerComponent />;
   else if (!vm.isAssetOk) return <Navigate to={ROUTES.ROOT} />;
   if (vm.statistics == null) return <Navigate to={ROUTES.ROOT} />;
 

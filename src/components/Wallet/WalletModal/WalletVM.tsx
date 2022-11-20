@@ -66,7 +66,7 @@ class WalletVM {
       return balance ?? new Balance(t);
     })
       .filter((balance) =>
-        lendStore.poolsStats.find((item) => item.assetId === balance.assetId)
+        lendStore.poolStats.find((item) => item.assetId === balance.assetId)
       )
       .filter(({ balance }) => balance && !balance.eq(0))
       .sort((a, b) => {
@@ -88,12 +88,12 @@ class WalletVM {
   }
 
   tokenStats = (tokenAssetId: string): TPoolStats | null => {
-    const tokenIndex = this.rootStore.lendStore.poolsStats
+    const tokenIndex = this.rootStore.lendStore.poolStats
       .map((item: TPoolStats) => item.assetId)
       .indexOf(tokenAssetId);
 
     return tokenIndex !== -1
-      ? this.rootStore.lendStore.poolsStats[tokenIndex]
+      ? this.rootStore.lendStore.poolStats[tokenIndex]
       : null;
   };
 }

@@ -113,7 +113,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
   return (
     <Root>
       {lendStore.initialized
-        ? lendStore.poolsStats.map((s) => {
+        ? lendStore.poolStats.map((s) => {
             const data = [
               {
                 title: "Total supply",

@@ -49,11 +49,6 @@ const calcAutostakeApy = (
   return fStaked.plus(interest).plus(1).pow(365).minus(1);
 };
 
-export interface IPool extends TPoolStats {
-  name: string;
-  address: string;
-}
-
 class LendStore {
   public readonly rootStore: RootStore;
   private _fetchService?: PoolStateFetchService;
@@ -82,10 +77,7 @@ class LendStore {
   private setTokensSetups = (v: Array<TPoolToken>) => (this.tokensSetups = v);
 
   poolStats: Array<TPoolStats> = [];
-  private setPoolStats = (v: Array<TPoolStats>) => (this.poolStats = v);
-
-  poolsStats: Array<IPool> = [];
-  private setPoolsStats = (v: Array<IPool>) => (this.poolsStats = v);
+  private setPoolsStats = (v: Array<TPoolStats>) => (this.poolStats = v);
 
   userCollateral: BN = BN.ZERO;
   private setUserCollateral = (v: BN) => (this.userCollateral = v);
@@ -214,7 +206,6 @@ class LendStore {
         borrowAPY: calcApy(interests[index])
       };
     });
-    this.setPoolStats(stats);
     this.setPoolsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
   };

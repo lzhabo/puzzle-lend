@@ -237,7 +237,7 @@ const DesktopTable: React.FC<IProps> = () => {
   );
 
   useMemo(() => {
-    let data: any = lendStore.poolsStats.slice().sort((a, b) => {
+    let data: any = lendStore.poolStats.slice().sort((a, b) => {
       const stats1: TPoolStats = a;
       const stats2: TPoolStats = b;
       let key: keyof TPoolStats | undefined;
@@ -395,7 +395,7 @@ const DesktopTable: React.FC<IProps> = () => {
     sortMode,
     isSupplyDisabled,
     lendStore.pool.address,
-    lendStore.poolsStats,
+    lendStore.poolStats,
     lendStore.poolId,
     openModal,
     navigate

@@ -169,7 +169,7 @@ class DashboardModalVM {
   }
 
   get token(): TPoolStats {
-    return this.rootStore.lendStore.poolsStats.find(
+    return this.rootStore.lendStore.poolStats.find(
       (_) => _.assetId === this.urlParams.tokenId
     )!;
   }
@@ -322,7 +322,7 @@ class DashboardModalVM {
           this.token?.prices?.min
         );
 
-    const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    const bc = lendStore.poolStats.reduce((acc: BN, stat: TPoolStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
       const cf = stat.cf;
@@ -330,7 +330,7 @@ class DashboardModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    let bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    let bcu = lendStore.poolStats.reduce((acc: BN, stat: TPoolStats) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = stat.lt;
       let assetBcu = borrow.times(stat.prices.max).div(lt);
@@ -430,7 +430,7 @@ class DashboardModalVM {
       ? currentWithdraw
       : currentWithdraw.div(this.token?.prices?.min);
 
-    const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    const bc = lendStore.poolStats.reduce((acc: BN, stat: TPoolStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
       const cf = stat.cf;
@@ -448,7 +448,7 @@ class DashboardModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    const bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    const bcu = lendStore.poolStats.reduce((acc: BN, stat: TPoolStats) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = stat.lt;
       let assetBcu = borrow.times(stat.prices.max).div(lt);

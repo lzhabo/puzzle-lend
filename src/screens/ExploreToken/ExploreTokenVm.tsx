@@ -141,7 +141,7 @@ class ExploreTokenVM {
   };
 
   get isAssetOk() {
-    return this.rootStore.lendStore.poolsStats.some(
+    return this.rootStore.lendStore.poolStats.some(
       (t) => t.assetId === this.assetId
     );
   }
