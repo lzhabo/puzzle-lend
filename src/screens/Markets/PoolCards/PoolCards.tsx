@@ -153,25 +153,19 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                     <PoolCardInfoItemTitle size="medium" type="secondary">
                       My supply balance
                     </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="primary">
-                      0
-                    </PoolCardInfoItemValue>
+                    <Text type="primary">0</Text>
                   </PoolCardInfoItem>
                   <PoolCardInfoItem>
                     <PoolCardInfoItemTitle size="medium" type="secondary">
                       My borrow balance
                     </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="primary">
-                      0
-                    </PoolCardInfoItemValue>
+                    <Text type="primary">0</Text>
                   </PoolCardInfoItem>
                   <PoolCardInfoItem>
                     <PoolCardInfoItemTitle size="medium" type="secondary">
                       Account health
                     </PoolCardInfoItemTitle>
-                    <PoolCardInfoItemValue type="primary">
-                      0
-                    </PoolCardInfoItemValue>
+                    <Text type="primary">0</Text>
                   </PoolCardInfoItem>
                 </PoolCardInfo>
                 <SizedBox height={16} />
