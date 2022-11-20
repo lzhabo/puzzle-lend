@@ -24,22 +24,8 @@ export const useMarketsVM = () => useVM(ctx);
 class MarketsVM {
   public readonly poolId: string;
   public rootStore: RootStore;
-  searchValue = "";
-  setSearchValue = (v: string) => (this.searchValue = v);
 
   tokens: IToken[] = TOKENS_LIST.slice(0, 5);
-
-  sortApy = true;
-  setSortApy = (v: boolean) => (this.sortApy = v);
-
-  sortLiquidity = true;
-  setSortLiquidity = (v: boolean) => (this.sortLiquidity = v);
-
-  poolCategoryFilter = 0;
-  setPoolCategoryFilter = (v: number) => (this.poolCategoryFilter = v);
-
-  customPoolFilter = 0;
-  setCustomPoolFilter = (v: number) => (this.customPoolFilter = v);
 
   constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;

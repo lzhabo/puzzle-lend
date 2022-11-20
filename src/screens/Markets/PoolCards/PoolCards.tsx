@@ -10,6 +10,7 @@ import { POOLS, ROUTES } from "@src/constants";
 import Card from "@components/Card";
 import RoundTokenIcon from "@components/RoundTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
+import Button from "@components/Button";
 
 interface IProps {}
 
@@ -54,6 +55,7 @@ const PoolCardText = styled.div``;
 const PoolCardTitle = styled(Text)`
   font-size: 24px;
   line-height: 32px;
+  color: white;
 `;
 const PoolCardSubTitle = styled(Text)``;
 const PoolCardTokens = styled.div`
@@ -79,17 +81,11 @@ const PoolCardInfoItem = styled.div`
   }
 `;
 const PoolCardInfoItemTitle = styled(Text)``;
-const PoolCardInfoItemValue = styled(Text)``;
-const PoolButton = styled.button`
-  border: 1px solid #f1f2fe;
-  border-radius: 10px;
-  color: #7075e9;
-  font-size: 16px;
-  line-height: 24px;
+const PoolCardInfoItemValue = styled(Text)`
+  color: white;
+`;
+const PoolButton = styled(Button)`
   font-weight: 700;
-  background: none;
-  width: 100%;
-  padding: 8px;
 `;
 
 const RoundTokenIconStyled = styled(RoundTokenIcon)`
@@ -179,7 +175,9 @@ const PoolCardsImpl: React.FC<IProps> = observer(() => {
                   </PoolCardInfoItem>
                 </PoolCardInfo>
                 <SizedBox height={16} />
-                <PoolButton>Go to market</PoolButton>
+                <PoolButton kind={"secondary"} fixed size={"medium"}>
+                  Go to market
+                </PoolButton>
               </PoolCardBody>
             </PoolCard>
           ))}
