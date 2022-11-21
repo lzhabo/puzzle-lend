@@ -215,7 +215,6 @@ class LendStore {
       };
     });
     this.setPoolStats(stats);
-    this.setPoolsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
   };
 

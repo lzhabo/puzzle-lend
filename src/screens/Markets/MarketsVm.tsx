@@ -30,6 +30,6 @@ class MarketsVM {
   constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.rootStore.lendStore.setPool(POOLS);
+    console.log(this.rootStore.marketsStore.accountSupply(POOLS[0].address));
   }
 }

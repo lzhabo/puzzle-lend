@@ -7,6 +7,7 @@ import { ASSETS_TYPE, POOLS, TOKENS_BY_SYMBOL } from "@src/constants";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
 import nodeService from "@src/services/nodeService";
+import { em } from "polished";
 
 export type TPoolStats = {
   totalSupply: BN;
@@ -21,6 +22,12 @@ export type TPoolStats = {
   isAutostakeAvl?: boolean;
   prices: { min: BN; max: BN };
 } & TPoolToken;
+
+export type TPoolsStats = {
+  name?: string;
+  address?: string;
+  tokensSetups: TPoolStats[];
+};
 
 // fixme
 const calcApy = (i: BN) => {
@@ -49,28 +56,35 @@ const calcAutostakeApy = (
   return fStaked.plus(interest).plus(1).pow(365).minus(1);
 };
 
-class Markets {
+class MarketsStore {
   public readonly rootStore: RootStore;
   private _fetchService?: PoolStateFetchService;
   get fetchService() {
     return this._fetchService!;
   }
 
-  setFetchService = (pools: [string]) =>
-    pools.forEach((e) => {
-      this._fetchService = new PoolStateFetchService(e);
-      this._fetchService
-        .fetchSetups()
-        .then(this.setTokensSetups)
-        .then(() => this.syncPoolsStats())
-        .catch((e) =>
-          this.rootStore.notificationStore.notify(e.message, {
-            type: "error"
+  setFetchService = (pools: string[]) =>
+    new Promise((res, rej) => {
+      let num = pools.length;
+      pools.forEach((e) => {
+        this._fetchService = new PoolStateFetchService(e);
+        this._fetchService
+          .fetchSetups()
+          .then(this.setTokensSetups)
+          .then(() => this.syncPoolsStats(e))
+          .then(() => {
+            num--;
+            if (num === 0) res(true);
           })
-        );
+          .catch((e) =>
+            this.rootStore.notificationStore.notify(e.message, {
+              type: "error"
+            })
+          );
+      });
     });
 
-initialized = false;
+  initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
 
   //fixme make scroll to borrow/supply block
@@ -83,35 +97,42 @@ initialized = false;
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
 
-  userCollateral: BN = BN.ZERO;
-  private setUserCollateral = (v: BN) => (this.userCollateral = v);
-
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
 
-  pool = POOLS[0];
-  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+  pools = [...POOLS] as TPoolsStats[];
+  setPools = (pool: TPoolsStats[]) => (this.pools = pool);
 
-  get poolId(): string {
-    return this.pool.address;
-  }
+  userCollateralPerPool: BN[] = Array.from({ length: this.pools.length }).map(
+    (e) => BN.ZERO
+  );
+  private setUserCollateralPerPool = (v: BN[]) =>
+    (this.userCollateralPerPool = v);
 
-  get poolName(): string {
-    return this.pool.name;
-  }
+  poolsId = POOLS.map((e) => e.address);
+
+  // get poolsId(): string {
+  //   return this.pool.address;
+  // }
+
+  // get poolName(): string {
+  //   return this.pool.name;
+  // }
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.setFetchService(this.poolId).then(() => this.setInitialized(true));
-    reaction(() => this.poolId, this.setFetchService);
-    setInterval(this.syncPoolsStats, 60 * 1000);
+    this.setFetchService(this.poolsId).then(() => this.setInitialized(true));
+    // reaction(() => this.poolsId, this.setFetchService);
+    setInterval(() => {
+      this.poolsId.forEach((e) => this.syncPoolsStats(e));
+    }, 60 * 1000);
   }
 
-  syncPoolsStats = async () => {
+  syncPoolsStats = async (poolId: string) => {
     const address = this.rootStore.accountStore.address;
-
-    const keys = this.tokensSetups.reduce(
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+    const keys = this.pools[poolNum].tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
         `setup_maxSupply_${assetId}`,
@@ -130,7 +151,7 @@ initialized = false;
 
     const [state, rates, prices, interests, userCollateral] = await Promise.all(
       [
-        nodeService.nodeKeysRequest(this.poolId, keys),
+        nodeService.nodeKeysRequest(poolId, keys),
         this.fetchService.calculateTokenRates(),
         this.fetchService.getPrices(),
         this.fetchService.calculateTokensInterest(),
@@ -138,7 +159,7 @@ initialized = false;
       ]
     );
 
-    const stats = this.tokensSetups.map((token, index) => {
+    const stats = this.pools[poolNum].tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
 
@@ -210,34 +231,49 @@ initialized = false;
         borrowAPY: calcApy(interests[index])
       };
     });
-    this.setPoolsStats(stats);
-    this.setUserCollateral(new BN(userCollateral));
+    const pools = this.pools;
+    pools[poolNum].tokensSetups = stats;
+
+    const userCollateralPerPool = this.userCollateralPerPool;
+    userCollateralPerPool[poolNum] = new BN(userCollateral);
+    this.setPools(pools);
+    this.setUserCollateralPerPool(userCollateralPerPool);
   };
 
-  get health() {
-    const bc = this.poolsStats.reduce((acc: BN, stat, index) => {
-      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
-      const cf = this.tokensSetups[index]?.cf;
-      if (deposit.eq(0) || !cf) return acc;
-      const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-      return acc.plus(assetBc);
-    }, BN.ZERO);
-    const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
-      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-      const lt = this.tokensSetups[index]?.lt;
-      if (borrow.eq(0) || !lt) return acc;
-      const assetBcu = borrow.times(stat.prices.max).div(lt);
-      return acc.plus(assetBcu);
-    }, BN.ZERO);
+  health = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+
+    const bc = this.pools[poolNum].tokensSetups.reduce(
+      (acc: BN, stat, index) => {
+        const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
+        const cf = this.tokensSetups[index]?.cf;
+        if (deposit.eq(0) || !cf) return acc;
+        const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+        return acc.plus(assetBc);
+      },
+      BN.ZERO
+    );
+    const bcu = this.pools[poolNum].tokensSetups.reduce(
+      (acc: BN, stat, index) => {
+        const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+        const lt = this.tokensSetups[index]?.lt;
+        if (borrow.eq(0) || !lt) return acc;
+        const assetBcu = borrow.times(stat.prices.max).div(lt);
+        return acc.plus(assetBcu);
+      },
+      BN.ZERO
+    );
     const health = new BN(1).minus(bcu.div(bc)).times(100);
     if (health.isNaN() || health.gt(100)) return new BN(100);
     if (health.lte(0)) return BN.ZERO;
     else return health;
-  }
+  };
 
-  get accountSupplyBalance() {
+  accountSupplyBalance = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.poolsStats
+    return this.pools[poolNum].tokensSetups
       .filter(({ selfSupply }) => selfSupply.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -245,11 +281,12 @@ initialized = false;
         );
         return acc.plus(balance);
       }, BN.ZERO);
-  }
+  };
 
-  get accountBorrowBalance() {
+  accountBorrowBalance = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.poolsStats
+    return this.pools[poolNum].tokensSetups
       .filter(({ selfBorrow }) => selfBorrow.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -257,20 +294,22 @@ initialized = false;
         );
         return acc.plus(balance);
       }, BN.ZERO);
-  }
+  };
 
-  get totalLiquidity() {
-    return this.poolsStats.reduce(
+  totalLiquidity = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+    return this.pools[poolNum].tokensSetups.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.totalSupply, stat.decimals)
           .times(stat.prices.min)
           .plus(acc),
       BN.ZERO
     );
-  }
+  };
 
-  get netApy() {
-    const supplyApy = this.poolsStats.reduce(
+  netApy = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+    const supplyApy = this.pools[poolNum].tokensSetups.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfSupply, stat.decimals)
           .times(stat.prices.min)
@@ -279,7 +318,7 @@ initialized = false;
       BN.ZERO
     );
 
-    const baseAmount = this.poolsStats.reduce(
+    const baseAmount = this.pools[poolNum].tokensSetups.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfSupply, stat.decimals)
           .times(stat.prices.min)
@@ -287,7 +326,7 @@ initialized = false;
       BN.ZERO
     );
 
-    const borrowApy = this.poolsStats.reduce(
+    const borrowApy = this.pools[poolNum].tokensSetups.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfBorrow, stat.decimals)
           .times(stat.prices.min)
@@ -299,17 +338,23 @@ initialized = false;
     return baseAmount.eq(0)
       ? BN.ZERO
       : supplyApy.minus(borrowApy).div(baseAmount);
-  }
+  };
 
-  get accountSupply() {
+  accountSupply = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return [];
-    return this.poolsStats.filter(({ selfSupply }) => selfSupply.gt(0));
-  }
+    return this.pools[poolNum].tokensSetups.filter(({ selfSupply }) =>
+      selfSupply.gt(0)
+    );
+  };
 
-  get accountBorrow() {
+  accountBorrow = (poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return [];
-    return this.poolsStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
-  }
+    return this.pools[poolNum].tokensSetups.filter(({ selfBorrow }) =>
+      selfBorrow.gt(0)
+    );
+  };
 }
 
-export default Markets;
+export default MarketsStore;
