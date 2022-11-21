@@ -22,7 +22,7 @@ export const MarketsVmProvider: React.FC<IProps> = ({ children, poolId }) => {
 export const useMarketsVM = () => useVM(ctx);
 
 class MarketsVM {
-  public readonly poolId: string;
+  // public readonly poolId: string;
   public rootStore: RootStore;
 
   tokens: IToken[] = TOKENS_LIST.slice(0, 5);
