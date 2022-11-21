@@ -46,7 +46,7 @@ const calcAutostakeApy = (
     .times(60)
     .times(12)
     .times(0.8);
-  return fStaked.plus(interest).plus(1).pow(365).minus(1);
+  return fStaked.plus(interest).plus(1).pow(365).minus(1).times(100);
 };
 
 class LendStore {
