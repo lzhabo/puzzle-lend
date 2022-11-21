@@ -35,7 +35,7 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
 
 const MarketsImpl: React.FC<IProps> = observer(() => {
   const vm = useMarketsVM();
-
+  // this.rootStore.marketStore()
   return (
     <Layout>
       <Root>
