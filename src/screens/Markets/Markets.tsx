@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, RouteProps, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { MarketsVmProvider, useMarketsVM } from "./MarketsVm";
@@ -9,6 +9,7 @@ import PoolCards from "./PoolCards";
 import Widgets from "./Widgets";
 import SizedBox from "@components/SizedBox";
 import { POOLS, ROUTES } from "@src/constants";
+import { RootStore, useStores } from "@stores";
 interface IProps {}
 
 const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
@@ -35,6 +36,10 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
 
 const MarketsImpl: React.FC<IProps> = observer(() => {
   const vm = useMarketsVM();
+  const { marketsStore } = useStores();
+  useEffect(() => {
+    console.log(marketsStore.health(POOLS[0].address));
+  }, []);
   // this.rootStore.marketStore()
   return (
     <Layout>

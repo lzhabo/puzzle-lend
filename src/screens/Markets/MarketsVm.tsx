@@ -25,11 +25,11 @@ class MarketsVM {
   // public readonly poolId: string;
   public rootStore: RootStore;
 
-  tokens: IToken[] = TOKENS_LIST.slice(0, 5);
+  // tokens: IToken[] = TOKENS_LIST.slice(0, 5);
 
   constructor(rootStore: RootStore, poolId?: string) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    console.log(this.rootStore.marketsStore.accountSupply(POOLS[0].address));
+    // this.rootStore.marketsStore;
   }
 }

@@ -26,7 +26,8 @@ export type TPoolStats = {
 export type TPoolsStats = {
   name?: string;
   address?: string;
-  tokensSetups: TPoolStats[];
+  poolStats: Array<TPoolStats>;
+  tokensSetups: Array<TPoolToken>;
 };
 
 // fixme
@@ -70,7 +71,7 @@ class MarketsStore {
         this._fetchService = new PoolStateFetchService(e);
         this._fetchService
           .fetchSetups()
-          .then(this.setTokensSetups)
+          .then((res) => this.setTokensSetups(res, e))
           .then(() => this.syncPoolsStats(e))
           .then(() => {
             num--;
@@ -91,8 +92,7 @@ class MarketsStore {
   mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
   setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
-  tokensSetups: Array<TPoolToken> = [];
-  private setTokensSetups = (v: Array<TPoolToken>) => (this.tokensSetups = v);
+  poolStats: Array<TPoolToken> = [];
 
   poolsStats: Array<TPoolStats> = [];
   private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
@@ -100,7 +100,7 @@ class MarketsStore {
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
 
-  pools = [...POOLS] as TPoolsStats[];
+  pools = POOLS as TPoolsStats[];
   setPools = (pool: TPoolsStats[]) => (this.pools = pool);
 
   userCollateralPerPool: BN[] = Array.from({ length: this.pools.length }).map(
@@ -110,6 +110,14 @@ class MarketsStore {
     (this.userCollateralPerPool = v);
 
   poolsId = POOLS.map((e) => e.address);
+
+  private setTokensSetups = (v: Array<TPoolToken>, poolId: string) => {
+    const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+    const pools = this.pools;
+    pools[poolNum].tokensSetups = v;
+
+    this.setPools(pools);
+  };
 
   // get poolsId(): string {
   //   return this.pool.address;
@@ -130,8 +138,12 @@ class MarketsStore {
   }
 
   syncPoolsStats = async (poolId: string) => {
+    console.log("try pool", poolId);
     const address = this.rootStore.accountStore.address;
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
+    console.log(poolNum);
+    console.log(this.pools);
+    console.log(this.pools[poolNum].tokensSetups);
     const keys = this.pools[poolNum].tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
@@ -149,6 +161,7 @@ class MarketsStore {
       [] as string[]
     );
 
+    console.log("1try");
     const [state, rates, prices, interests, userCollateral] = await Promise.all(
       [
         nodeService.nodeKeysRequest(poolId, keys),
@@ -158,6 +171,7 @@ class MarketsStore {
         this.fetchService.getUserCollateral(address || "")
       ]
     );
+    console.log("1");
 
     const stats = this.pools[poolNum].tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
@@ -205,7 +219,7 @@ class MarketsStore {
         `autostake_lastBlock_${token.assetId}`
       );
       const ASlastBlock = new BN(ASlastBlockNum ?? 0);
-
+      console.log("stats ");
       return {
         ...token,
         interest: interests[index],
@@ -232,37 +246,36 @@ class MarketsStore {
       };
     });
     const pools = this.pools;
-    pools[poolNum].tokensSetups = stats;
+    console.log("try");
+    pools[poolNum].poolStats = stats;
 
     const userCollateralPerPool = this.userCollateralPerPool;
     userCollateralPerPool[poolNum] = new BN(userCollateral);
+    console.log("1");
+    console.log(pools);
     this.setPools(pools);
     this.setUserCollateralPerPool(userCollateralPerPool);
   };
 
   health = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
-
-    const bc = this.pools[poolNum].tokensSetups.reduce(
-      (acc: BN, stat, index) => {
-        const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
-        const cf = this.tokensSetups[index]?.cf;
-        if (deposit.eq(0) || !cf) return acc;
-        const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-        return acc.plus(assetBc);
-      },
-      BN.ZERO
-    );
-    const bcu = this.pools[poolNum].tokensSetups.reduce(
-      (acc: BN, stat, index) => {
-        const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-        const lt = this.tokensSetups[index]?.lt;
-        if (borrow.eq(0) || !lt) return acc;
-        const assetBcu = borrow.times(stat.prices.max).div(lt);
-        return acc.plus(assetBcu);
-      },
-      BN.ZERO
-    );
+    console.log(poolNum);
+    console.log(this.pools);
+    console.log(this.pools[poolNum].poolStats);
+    const bc = this.pools[poolNum].poolStats.reduce((acc: BN, stat, index) => {
+      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
+      const cf = this.pools[poolNum].tokensSetups[index]?.cf;
+      if (deposit.eq(0) || !cf) return acc;
+      const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+      return acc.plus(assetBc);
+    }, BN.ZERO);
+    const bcu = this.pools[poolNum].poolStats.reduce((acc: BN, stat, index) => {
+      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+      const lt = this.pools[poolNum].tokensSetups[index]?.lt;
+      if (borrow.eq(0) || !lt) return acc;
+      const assetBcu = borrow.times(stat.prices.max).div(lt);
+      return acc.plus(assetBcu);
+    }, BN.ZERO);
     const health = new BN(1).minus(bcu.div(bc)).times(100);
     if (health.isNaN() || health.gt(100)) return new BN(100);
     if (health.lte(0)) return BN.ZERO;
@@ -273,7 +286,7 @@ class MarketsStore {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
 
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.pools[poolNum].tokensSetups
+    return this.pools[poolNum].poolStats
       .filter(({ selfSupply }) => selfSupply.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -286,7 +299,7 @@ class MarketsStore {
   accountBorrowBalance = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.pools[poolNum].tokensSetups
+    return this.pools[poolNum].poolStats
       .filter(({ selfBorrow }) => selfBorrow.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -298,7 +311,7 @@ class MarketsStore {
 
   totalLiquidity = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
-    return this.pools[poolNum].tokensSetups.reduce(
+    return this.pools[poolNum].poolStats.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.totalSupply, stat.decimals)
           .times(stat.prices.min)
@@ -309,7 +322,7 @@ class MarketsStore {
 
   netApy = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
-    const supplyApy = this.pools[poolNum].tokensSetups.reduce(
+    const supplyApy = this.pools[poolNum].poolStats.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfSupply, stat.decimals)
           .times(stat.prices.min)
@@ -318,7 +331,7 @@ class MarketsStore {
       BN.ZERO
     );
 
-    const baseAmount = this.pools[poolNum].tokensSetups.reduce(
+    const baseAmount = this.pools[poolNum].poolStats.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfSupply, stat.decimals)
           .times(stat.prices.min)
@@ -326,7 +339,7 @@ class MarketsStore {
       BN.ZERO
     );
 
-    const borrowApy = this.pools[poolNum].tokensSetups.reduce(
+    const borrowApy = this.pools[poolNum].poolStats.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.selfBorrow, stat.decimals)
           .times(stat.prices.min)
@@ -343,7 +356,7 @@ class MarketsStore {
   accountSupply = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return [];
-    return this.pools[poolNum].tokensSetups.filter(({ selfSupply }) =>
+    return this.pools[poolNum].poolStats.filter(({ selfSupply }) =>
       selfSupply.gt(0)
     );
   };
@@ -351,7 +364,7 @@ class MarketsStore {
   accountBorrow = (poolId: string) => {
     const poolNum = this.pools.map((e) => e.address).indexOf(poolId);
     if (this.rootStore.accountStore.address == null) return [];
-    return this.pools[poolNum].tokensSetups.filter(({ selfBorrow }) =>
+    return this.pools[poolNum].poolStats.filter(({ selfBorrow }) =>
       selfBorrow.gt(0)
     );
   };
