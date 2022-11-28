@@ -21,7 +21,7 @@ jobs:
         if: endsWith(github.ref, '/develop')
         run: |
           echo "REACT_APP_NODE_ENV=${REACT_APP_NODE_ENV_DEV}" >> $GITHUB_ENV
-          echo "HEROKU_APP_NAME=lend-stage" >> $GITHUB_ENV
+          echo "HEROKU_APP_NAME=quiet-fjord-83730" >> $GITHUB_ENV
       - name: Deploy to PROD
         if: endsWith(github.ref, '/master')
         run: |
