@@ -57,6 +57,7 @@ class LendStore {
   }
 
   setFetchService = async (pool: string) => {
+    if (!pool) return;
     this._fetchService = new PoolStateFetchService(pool);
     return await this._fetchService
       .fetchSetups()
@@ -85,7 +86,7 @@ class LendStore {
   getStatByAssetId = (assetId: string) =>
     this.poolsStats.find((s) => s.assetId === assetId);
 
-  pool = POOLS[0];
+  pool = { name: "", address: "" };
   setPool = (pool: { name: string; address: string }) => (this.pool = pool);
 
   get poolId(): string {
