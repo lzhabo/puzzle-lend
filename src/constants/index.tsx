@@ -32,6 +32,10 @@ export const POOLS_PROD = [
   {
     name: "Waves DeFi pool",
     address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
+  },
+  {
+    name: "Global pool",
+    address: "3PJPpKuM7NTC9QaDqAPY4V8wtRWWmLBSSsY"
   }
 ];
 
@@ -47,6 +51,10 @@ export const POOLS_DEV = [
   {
     name: "Waves DeFi pool",
     address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
+  },
+  {
+    name: "Global pool",
+    address: "3PJPpKuM7NTC9QaDqAPY4V8wtRWWmLBSSsY"
   }
 ];
 
