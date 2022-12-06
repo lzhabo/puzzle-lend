@@ -1,17 +1,15 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { Navigate, RouteProps, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { MarketsVmProvider, useMarketsVM } from "./MarketsVm";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
-import PoolCards from "./PoolCards";
-import Widgets from "./Widgets";
 import SizedBox from "@components/SizedBox";
-import { POOLS, ROUTES } from "@src/constants";
+import TotalMarketsInfo from "@screens/Markets/TotalMarketsInfo";
+import PoolCards from "@screens/Markets/PoolCards";
+
 interface IProps {}
 
-const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
+const Root = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -33,32 +31,19 @@ const Root = styled.div<{ apySort?: boolean; liquiditySort?: boolean }>`
   }
 `;
 
-const MarketsImpl: React.FC<IProps> = observer(() => {
-  const vm = useMarketsVM();
-
+const Markets: React.FC<IProps> = () => {
   return (
     <Layout>
-      <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
+      <Root>
         <Text weight={500} size="large">
           Markets on Puzzle Lend
         </Text>
         <SizedBox height={16} />
-        <Widgets />
+        <TotalMarketsInfo />
+        <SizedBox height={24} />
         <PoolCards />
       </Root>
     </Layout>
-  );
-});
-
-const Markets: React.FC<IProps & RouteProps> = () => {
-  const params = useParams<{ poolId: string }>();
-  if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
-    return <Navigate to={ROUTES.ROOT} />;
-  }
-  return (
-    <MarketsVmProvider poolId={params.poolId}>
-      <MarketsImpl />
-    </MarketsVmProvider>
   );
 };
 

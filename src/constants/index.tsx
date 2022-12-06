@@ -10,7 +10,7 @@ export enum OPERATIONS_TYPE {
 
 export const ROUTES = {
   ROOT: "/",
-  MARKETS: "/",
+  MARKETS: "/markets",
   DASHBOARD: "/dashboard",
   DASHBOARD_MODAL_WITHDRAW: "",
   DASHBOARD_MODALS: {

@@ -14,7 +14,6 @@ import Tooltip from "@components/Tooltip";
 import LinkGroup from "@components/LinkGroup";
 import DarkMode from "@components/Header/DarkMode";
 import isRoutesEquals from "@src/utils/isRoutesEquals";
-import SubHeader from "@components/Header/SubHeader";
 import { Anchor } from "@components/Anchor";
 
 interface IProps {}
@@ -83,6 +82,7 @@ const MenuItem = styled.div<{ selected?: boolean }>`
 
   &:hover {
     border-bottom: 4px solid ${({ theme }) => theme.colors.primary300};
+
     a {
       color: ${({ theme }) => theme.colors.blue500};
     }
@@ -119,7 +119,7 @@ const Header: React.FC<IProps> = () => {
   };
 
   const menuItems = [
-    { name: "Dashboard", link: ROUTES.DASHBOARD },
+    { name: "Markets", link: ROUTES.MARKETS },
     {
       name: "Trade",
       link: "https://puzzleswap.org/",
@@ -216,7 +216,6 @@ const Header: React.FC<IProps> = () => {
           </Tooltip>
         </Desktop>
       </TopMenu>
-      <SubHeader />
     </Root>
   );
 };

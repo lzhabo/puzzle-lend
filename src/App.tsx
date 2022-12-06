@@ -38,6 +38,7 @@ const App: React.FC = () => {
         {/*Account*/}
         <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
         <Route path={ROUTES.MARKETS} element={<Markets />} />
+        <Route path={ROUTES.ROOT} element={<Markets />} />
 
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
