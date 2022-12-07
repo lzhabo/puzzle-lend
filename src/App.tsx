@@ -41,6 +41,7 @@ const App: React.FC = () => {
         <Route path={ROUTES.ROOT} element={<Markets />} />
 
         {/* Dashboard */}
+        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
           {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (
             <Route
@@ -52,7 +53,6 @@ const App: React.FC = () => {
             />
           ))}
         </Route>
-        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
         <Route
           path={ROUTES.DASHBOARD_TOKEN_DETAILS}
           element={<ExploreToken />}

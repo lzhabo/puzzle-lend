@@ -48,7 +48,10 @@ const PoolCards: React.FC<IProps> = () => {
   return (
     <Root>
       {marketsStore.markets.length === 0 ? (
-        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
+        <>
+          <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
+          <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
+        </>
       ) : (
         marketsStore.markets.map(
           ({ title, description, contractAddress, assets, statistics }) => {
