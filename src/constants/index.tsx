@@ -54,9 +54,3 @@ export interface IToken {
   logo: string;
   category?: string[];
 }
-
-export enum ASSETS_TYPE {
-  SUPPLY_BLOCK,
-  HOME,
-  BORROW_BLOCK
-}

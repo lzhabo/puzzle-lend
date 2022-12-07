@@ -1,6 +1,6 @@
 import RootStore from "@stores/RootStore";
 import BN from "@src/utils/BN";
-import { ASSETS_TYPE, TOKENS_BY_SYMBOL } from "@src/constants";
+import { TOKENS_BY_SYMBOL } from "@src/constants";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import nodeService from "@src/services/nodeService";
 import MarketStateFetchService, {
@@ -86,9 +86,6 @@ class Market {
   };
   initialized = false;
   private setInitialized = (l: boolean) => (this.initialized = l);
-
-  mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
-  setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
   tokensSetups: Array<TMarketToken> = [];
   private setTokensSetups = (v: Array<TMarketToken>) => (this.tokensSetups = v);

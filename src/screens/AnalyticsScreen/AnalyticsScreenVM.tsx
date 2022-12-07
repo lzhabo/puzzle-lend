@@ -2,8 +2,7 @@ import React, { useMemo } from "react";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
-import nodeService from "@src/services/nodeService";
-import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { IToken } from "@src/constants";
 import BN from "@src/utils/BN";
 
 const ctx = React.createContext<AnalyticsScreenVM | null>(null);
@@ -237,22 +236,22 @@ class AnalyticsScreenVM {
   }
 }
 
-const parseInfoFromDataEntry = (v: { key: string; value: string | number }) => {
-  const { key, value } = v;
-  if (!new RegExp("(.*)_(supplied|borrowed)_(.*)").test(key) || isNaN(+value)) {
-    return null;
-  }
-  if (key.includes("_total_")) return null;
-  const type: "borrow" | "supply" = key.includes("_supplied_")
-    ? "supply"
-    : "borrow";
-  const [address, assetId] = key.split(
-    type === "supply" ? "_supplied_" : "_borrowed_"
-  );
-  return {
-    amount: new BN(value),
-    type,
-    address: address as string,
-    asset: TOKENS_BY_ASSET_ID[assetId]
-  };
-};
+// const parseInfoFromDataEntry = (v: { key: string; value: string | number }) => {
+//   const { key, value } = v;
+//   if (!new RegExp("(.*)_(supplied|borrowed)_(.*)").test(key) || isNaN(+value)) {
+//     return null;
+//   }
+//   if (key.includes("_total_")) return null;
+//   const type: "borrow" | "supply" = key.includes("_supplied_")
+//     ? "supply"
+//     : "borrow";
+//   const [address, assetId] = key.split(
+//     type === "supply" ? "_supplied_" : "_borrowed_"
+//   );
+//   return {
+//     amount: new BN(value),
+//     type,
+//     address: address as string,
+//     asset: TOKENS_BY_ASSET_ID[assetId]
+//   };
+// };

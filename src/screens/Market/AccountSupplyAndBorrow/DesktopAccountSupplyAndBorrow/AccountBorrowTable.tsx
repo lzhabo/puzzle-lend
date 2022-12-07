@@ -263,7 +263,6 @@ const AccountBorrowTable: React.FC<IProps> = () => {
     navigate,
     openModal
   ]);
-  //todo fix dependency problem
   return (
     <Root>
       {marketVm.market.accountBorrow.length > 0 && (

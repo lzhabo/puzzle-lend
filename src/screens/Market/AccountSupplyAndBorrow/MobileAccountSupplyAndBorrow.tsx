@@ -7,7 +7,7 @@ import SquareTokenIcon from "@components/SquareTokenIcon";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
-import { ASSETS_TYPE, ROUTES } from "@src/constants";
+import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "@components/Tooltip";
 import { useMarketVM } from "@screens/Market/MarketVm";
@@ -48,7 +48,7 @@ const StatsRow = styled.div`
   padding-bottom: 8px;
   margin-bottom: 16px;
 
-  &:first-child {
+  &:first-of-type {
     margin-top: 16px;
   }
 
@@ -65,8 +65,7 @@ const Data = styled(Column)`
 `;
 const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   const navigate = useNavigate();
-  const vm = useMarketVM();
-  console.log("MobileAccountSupplyAndBorrow");
+  const marketVm = useMarketVM();
 
   const isSupplyDisabled = (token: TMarketStats): boolean => {
     if (token?.supplyLimit.eq(0)) return false;
@@ -94,232 +93,230 @@ const MobileAccountSupplyAndBorrow: React.FC<IProps> = () => {
   return (
     <Root>
       <SizedBox height={40} />
-      {vm.market.mobileDashboardAssets === ASSETS_TYPE.SUPPLY_BLOCK &&
-        vm.market.accountSupply.length > 0 && (
-          <Column crossAxisSize="max">
-            <Text weight={500} type="secondary">
-              My supply
-            </Text>
-            <SizedBox height={8} />
-            <Wrapper>
-              {vm.market.accountSupply.map((s) => {
-                const supplied = BN.formatUnits(s.selfSupply, s.decimals);
-                const dIncome = BN.formatUnits(s.dailyIncome, s.decimals);
-                const data = [
-                  {
-                    title: "Supplied",
-                    value: `${supplied.toFormat(4)} ${s.symbol}`,
-                    dollarValue: "$ " + supplied.times(s.prices.min).toFormat(2)
-                  },
-                  { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
-                  {
-                    title: "Daily income",
-                    value: `${dIncome.toFormat(6)} ` + s.symbol,
-                    dollarValue: "$ " + dIncome.times(s.prices.min).toFormat(6)
-                  }
-                ];
-                return (
-                  <Asset key={`token-${s.assetId}`}>
-                    <Row
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        navigate(
-                          ROUTES.MARKET_TOKEN_DETAILS.replace(
-                            ":marketId",
-                            vm.marketId
-                          ).replace(":assetId", s.assetId)
-                        )
-                      }
-                    >
-                      <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                      <SizedBox width={16} />
-                      <Column>
-                        <Text>{s.symbol}</Text>
-                        <Text size="small" type="secondary">
-                          ${s.prices.max.toFormat(2)}
+      {marketVm.market.accountSupply.length > 0 && (
+        <Column crossAxisSize="max">
+          <Text weight={500} type="secondary">
+            My supply
+          </Text>
+          <SizedBox height={8} />
+          <Wrapper>
+            {marketVm.market.accountSupply.map((s) => {
+              const supplied = BN.formatUnits(s.selfSupply, s.decimals);
+              const dIncome = BN.formatUnits(s.dailyIncome, s.decimals);
+              const data = [
+                {
+                  title: "Supplied",
+                  value: `${supplied.toFormat(4)} ${s.symbol}`,
+                  dollarValue: "$ " + supplied.times(s.prices.min).toFormat(2)
+                },
+                { title: "Supply APY", value: s.supplyAPY.toFormat(2) + "%" },
+                {
+                  title: "Daily income",
+                  value: `${dIncome.toFormat(6)} ` + s.symbol,
+                  dollarValue: "$ " + dIncome.times(s.prices.min).toFormat(6)
+                }
+              ];
+              return (
+                <Asset key={`token-${s.assetId}`}>
+                  <Row
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      navigate(
+                        ROUTES.MARKET_TOKEN_DETAILS.replace(
+                          ":marketId",
+                          marketVm.marketId
+                        ).replace(":assetId", s.assetId)
+                      )
+                    }
+                  >
+                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                    <SizedBox width={16} />
+                    <Column>
+                      <Text>{s.symbol}</Text>
+                      <Text size="small" type="secondary">
+                        ${s.prices.max.toFormat(2)}
+                      </Text>
+                    </Column>
+                  </Row>
+                  <SizedBox height={16} />
+                  <Data crossAxisSize="max">
+                    {data.map(({ title, value, dollarValue }, index) => (
+                      <StatsRow key={`asset-${index}`}>
+                        <Text fitContent nowrap>
+                          {title}
                         </Text>
-                      </Column>
-                    </Row>
-                    <SizedBox height={16} />
-                    <Data crossAxisSize="max">
-                      {data.map(({ title, value, dollarValue }, index) => (
-                        <StatsRow key={`asset-${index}`}>
-                          <Text fitContent nowrap>
-                            {title}
+                        <Column crossAxisSize="max">
+                          <Text weight={500} textAlign="right" size="medium">
+                            {value}
                           </Text>
-                          <Column crossAxisSize="max">
-                            <Text weight={500} textAlign="right" size="medium">
-                              {value}
+                          {dollarValue && (
+                            <Text size="medium" textAlign="right">
+                              {dollarValue}
                             </Text>
-                            {dollarValue && (
-                              <Text size="medium" textAlign="right">
-                                {dollarValue}
-                              </Text>
-                            )}
-                          </Column>
-                        </StatsRow>
-                      ))}
-                    </Data>
-                    <SizedBox height={16} />
-                    <Row>
-                      {isSupplyDisabled(s) ? (
-                        <Tooltip
-                          fixed
-                          content={
-                            <Text textAlign="left">
-                              Maximum total supply is reached
-                            </Text>
-                          }
-                        >
-                          <Button
-                            size="medium"
-                            kind="secondary"
-                            fixed
-                            disabled={true}
-                            onClick={(e) =>
-                              openModal(e, vm.marketId, "supply", s.assetId)
-                            }
-                          >
-                            Supply
-                          </Button>
-                        </Tooltip>
-                      ) : (
+                          )}
+                        </Column>
+                      </StatsRow>
+                    ))}
+                  </Data>
+                  <SizedBox height={16} />
+                  <Row>
+                    {isSupplyDisabled(s) ? (
+                      <Tooltip
+                        fixed
+                        content={
+                          <Text textAlign="left">
+                            Maximum total supply is reached
+                          </Text>
+                        }
+                      >
                         <Button
                           size="medium"
                           kind="secondary"
                           fixed
+                          disabled={true}
                           onClick={(e) =>
-                            openModal(e, vm.marketId, "supply", s.assetId)
+                            openModal(e, marketVm.marketId, "supply", s.assetId)
                           }
                         >
                           Supply
                         </Button>
-                      )}
-                      <SizedBox width={8} />
+                      </Tooltip>
+                    ) : (
                       <Button
                         size="medium"
                         kind="secondary"
                         fixed
                         onClick={(e) =>
-                          openModal(e, vm.marketId, "withdraw", s.assetId)
+                          openModal(e, marketVm.marketId, "supply", s.assetId)
                         }
                       >
-                        Withdraw
+                        Supply
                       </Button>
-                    </Row>
-                  </Asset>
-                );
-              })}
-            </Wrapper>
-          </Column>
-        )}
-      {vm.market.mobileDashboardAssets === ASSETS_TYPE.BORROW_BLOCK &&
-        vm.market.accountBorrow.length > 0 && (
-          <Column crossAxisSize="max">
-            <Text weight={500} type="secondary">
-              My borrow
-            </Text>
-            <SizedBox height={8} />
-            <Wrapper>
-              {vm.market.accountBorrow.map((s) => {
-                const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
-                const data = [
-                  {
-                    title: "Borrow APR",
-                    value: `${s.borrowAPY.toFormat(2)} %`
-                  },
-                  {
-                    title: "To be repaid",
-                    value: `${borrowed.toFormat(2)} ${s.symbol}`,
-                    dollarValue: "$ " + borrowed.times(s.prices.min).toFormat(6)
-                  },
-                  {
-                    title: "Daily loan interest",
-                    value:
-                      BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
-                      ` ${s.symbol}`,
-                    dollarValue:
-                      "$ " +
-                      BN.formatUnits(s.dailyLoan, s.decimals)
-                        .times(s.prices.min)
-                        .toFormat(6)
-                  }
-                ];
-                return (
-                  <Asset key={`token-${s.assetId}`}>
-                    <Row
-                      style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        navigate(
-                          ROUTES.MARKET_TOKEN_DETAILS.replace(
-                            ":marketId",
-                            vm.marketId
-                          ).replace(":assetId", s.assetId)
-                        )
+                    )}
+                    <SizedBox width={8} />
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, marketVm.marketId, "withdraw", s.assetId)
                       }
                     >
-                      <SquareTokenIcon size="small" src={s.logo} alt="token" />
-                      <SizedBox width={16} />
-                      <Column>
-                        <Text>{s.symbol}</Text>
-                        <Text size="small" type="secondary">
-                          ${s.prices.max.toFormat(2)}
+                      Withdraw
+                    </Button>
+                  </Row>
+                </Asset>
+              );
+            })}
+          </Wrapper>
+        </Column>
+      )}
+      {marketVm.market.accountBorrow.length > 0 && (
+        <Column crossAxisSize="max">
+          <Text weight={500} type="secondary">
+            My borrow
+          </Text>
+          <SizedBox height={8} />
+          <Wrapper>
+            {marketVm.market.accountBorrow.map((s) => {
+              const borrowed = BN.formatUnits(s.selfBorrow, s.decimals);
+              const data = [
+                {
+                  title: "Borrow APR",
+                  value: `${s.borrowAPY.toFormat(2)} %`
+                },
+                {
+                  title: "To be repaid",
+                  value: `${borrowed.toFormat(2)} ${s.symbol}`,
+                  dollarValue: "$ " + borrowed.times(s.prices.min).toFormat(6)
+                },
+                {
+                  title: "Daily loan interest",
+                  value:
+                    BN.formatUnits(s.dailyLoan, s.decimals).toFormat(6) +
+                    ` ${s.symbol}`,
+                  dollarValue:
+                    "$ " +
+                    BN.formatUnits(s.dailyLoan, s.decimals)
+                      .times(s.prices.min)
+                      .toFormat(6)
+                }
+              ];
+              return (
+                <Asset key={`token-${s.assetId}`}>
+                  <Row
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      navigate(
+                        ROUTES.MARKET_TOKEN_DETAILS.replace(
+                          ":marketId",
+                          marketVm.marketId
+                        ).replace(":assetId", s.assetId)
+                      )
+                    }
+                  >
+                    <SquareTokenIcon size="small" src={s.logo} alt="token" />
+                    <SizedBox width={16} />
+                    <Column>
+                      <Text>{s.symbol}</Text>
+                      <Text size="small" type="secondary">
+                        ${s.prices.max.toFormat(2)}
+                      </Text>
+                    </Column>
+                  </Row>
+                  <SizedBox height={16} />
+                  <Data crossAxisSize="max">
+                    {data.map(({ title, value, dollarValue }, index) => (
+                      <StatsRow
+                        style={{ cursor: "pointer" }}
+                        key={`asset-${index}`}
+                      >
+                        <Text fitContent nowrap>
+                          {title}
                         </Text>
-                      </Column>
-                    </Row>
-                    <SizedBox height={16} />
-                    <Data crossAxisSize="max">
-                      {data.map(({ title, value, dollarValue }, index) => (
-                        <StatsRow
-                          style={{ cursor: "pointer" }}
-                          key={`asset-${index}`}
-                        >
-                          <Text fitContent nowrap>
-                            {title}
+                        <Column crossAxisSize="max">
+                          <Text weight={500} textAlign="right" size="medium">
+                            {value}
                           </Text>
-                          <Column crossAxisSize="max">
-                            <Text weight={500} textAlign="right" size="medium">
-                              {value}
+                          {dollarValue && (
+                            <Text size="medium" textAlign="right">
+                              {dollarValue}
                             </Text>
-                            {dollarValue && (
-                              <Text size="medium" textAlign="right">
-                                {dollarValue}
-                              </Text>
-                            )}
-                          </Column>
-                        </StatsRow>
-                      ))}
-                    </Data>
-                    <SizedBox height={16} />
-                    <Row>
-                      <Button
-                        size="medium"
-                        kind="secondary"
-                        fixed
-                        onClick={(e) =>
-                          openModal(e, vm.marketId, "borrow", s.assetId)
-                        }
-                      >
-                        Borrow
-                      </Button>
-                      <SizedBox width={8} />
-                      <Button
-                        size="medium"
-                        kind="secondary"
-                        fixed
-                        onClick={(e) =>
-                          openModal(e, vm.marketId, "repay", s.assetId)
-                        }
-                      >
-                        Repay
-                      </Button>
-                    </Row>
-                  </Asset>
-                );
-              })}
-            </Wrapper>
-          </Column>
-        )}
+                          )}
+                        </Column>
+                      </StatsRow>
+                    ))}
+                  </Data>
+                  <SizedBox height={16} />
+                  <Row>
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, marketVm.marketId, "borrow", s.assetId)
+                      }
+                    >
+                      Borrow
+                    </Button>
+                    <SizedBox width={8} />
+                    <Button
+                      size="medium"
+                      kind="secondary"
+                      fixed
+                      onClick={(e) =>
+                        openModal(e, marketVm.marketId, "repay", s.assetId)
+                      }
+                    >
+                      Repay
+                    </Button>
+                  </Row>
+                </Asset>
+              );
+            })}
+          </Wrapper>
+        </Column>
+      )}
     </Root>
   );
 };
