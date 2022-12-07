@@ -5,14 +5,14 @@ import BigNumberInput from "@components/BigNumberInput";
 import MaxButton from "@components/MaxButton";
 import AmountInput from "@components/AmountInput";
 import Text from "@components/Text";
-import { TPoolStats } from "@src/stores/LendStore";
+import { TMarketStats } from "@src/entities/Market";
 
-import DollarSymbol from "@src/screens/Dashboard/DashboardModals/components/DollarSymbol";
-import TokenToDollar from "@src/screens/Dashboard/DashboardModals/components/TokenToDollar";
 import { ReactComponent as Swap } from "@src/assets/icons/swap.svg";
+import DollarSymbol from "./DollarSymbol";
+import TokenToDollar from "./TokenToDollar";
 
 interface IProps {
-  token: TPoolStats;
+  token: TMarketStats;
   isDollar: boolean;
   focused: boolean;
   amount: BN;

@@ -1,31 +1,29 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useStores } from "@src/stores";
-import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Button from "@components/Button";
-import { Column, Row } from "@components/Flex";
-import { TPoolStats } from "@src/stores/LendStore";
-import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
-import { ROUTES } from "@src/constants";
-import BN from "@src/utils/BN";
-import _ from "lodash";
-
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import tokenLogos from "@src/constants/tokenLogos";
+import { observer } from "mobx-react-lite";
+import { Column, Row } from "@components/Flex";
+import { TMarketStats } from "@src/entities/Market";
+import BN from "@src/utils/BN";
+import _ from "lodash";
 import {
   Footer,
   Root
-} from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
-import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
-import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
+} from "@screens/Market/MarketModals/components/ModalContent";
+import BackIcon from "@screens/Market/MarketModals/components/BackIcon";
+import ModalTokenInput from "@screens/Market/MarketModals/components/ModalTokenInput";
+import Warning from "@screens/Market/MarketModals/components/Warning";
+import { useMarketModalVM } from "@screens/Market/MarketModals/MarketModalVM";
 
 interface IProps {
-  token: TPoolStats;
-  poolId: string;
+  token: TMarketStats;
+  marketId: string;
   modalAmount: BN;
-  onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
   onSubmit: (
@@ -33,22 +31,23 @@ interface IProps {
     assetId: string,
     contractAddress: string
   ) => Promise<boolean>;
+  onClose: () => void;
 }
 
-const BorrowAssets: React.FC<IProps> = ({
+const SupplyAssets: React.FC<IProps> = ({
   token,
   modalAmount,
-  poolId,
+  marketId,
+  onClose,
   modalSetAmount,
   onMaxClick,
-  onSubmit,
-  onClose
+  onSubmit
 }) => {
-  const vm = DashboardUseVM();
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
+  const vm = useMarketModalVM();
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const { accountStore, lendStore } = useStores();
+  const { accountStore } = useStores();
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
@@ -68,12 +67,13 @@ const BorrowAssets: React.FC<IProps> = ({
   );
 
   const handleChangeAmount = (v: BN) => {
-    vm.repayChangeAmount(v);
+    vm.supplyChangeAmount(v);
     handleDebounce(v);
   };
 
-  const getMax = () => {
-    const val = vm.countMaxBtn;
+  const getMaxSupply = () => {
+    // const val = vm.countMaxBtn.toDecimalPlaces(0);
+    const val = BN.ZERO;
     handleDebounce(val);
 
     return val;
@@ -82,32 +82,26 @@ const BorrowAssets: React.FC<IProps> = ({
   const submitForm = async () => {
     const amountVal = vm.modalFormattedVal;
     const isSuccess = await onSubmit(
-      amountVal.toDecimalPlaces(0, 2),
+      amountVal.toSignificant(0),
       token?.assetId,
-      poolId
+      marketId
     );
 
     if (isSuccess) onClose();
   };
 
   const setInputAmountMeasure = (isCurrentNative: boolean) => {
-    handleDebounce(vm.onNativeChange);
+    handleDebounce(vm.onNativeChange.toDecimalPlaces(0));
     vm.setVMisDollar(isCurrentNative);
   };
 
   return (
     <Root>
       <Row>
+        {/*fixme*/}
         <Row
           alignItems="center"
-          onClick={() =>
-            navigate(
-              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                ":poolId",
-                lendStore.pool.address
-              ).replace(":assetId", token?.assetId)
-            )
-          }
+          onClick={() => navigate("")}
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -138,7 +132,7 @@ const BorrowAssets: React.FC<IProps> = ({
                 : 0}
             </Text>
           </Row>
-          <Text textAlign="right" nowrap size="medium" type="secondary">
+          <Text size="medium" type="secondary" nowrap>
             Wallet Balance
           </Text>
         </Column>
@@ -151,17 +145,34 @@ const BorrowAssets: React.FC<IProps> = ({
         amount={amount}
         error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
-        onMaxClick={() => onMaxClick(getMax())}
+        onMaxClick={() => onMaxClick(getMaxSupply())}
         handleChangeAmount={handleChangeAmount}
         setInputAmountMeasure={setInputAmountMeasure}
       />
       <SizedBox height={24} />
       <Row justifyContent="space-between">
+        <Text
+          size="medium"
+          type={vm.userDailyIncome.gt(0) ? "success" : "secondary"}
+          fitContent
+        >
+          Daily Income
+        </Text>
+        <Text
+          size="medium"
+          type={vm.userDailyIncome.gt(0) ? "success" : "primary"}
+          fitContent
+        >
+          $ {vm.userDailyIncome?.toFormat(6)}
+        </Text>
+      </Row>
+      <SizedBox height={14} />
+      <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          Borrow APY
+          Supply APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.borrowAPY.toFormat(2) ?? 0}%
+          {token?.supplyAPY.toFormat(2)}%
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -170,23 +181,7 @@ const BorrowAssets: React.FC<IProps> = ({
           Borrowed
         </Text>
         <Text size="medium" fitContent>
-          {token?.selfBorrow
-            ? BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(4)
-            : 0}
-        </Text>
-      </Row>
-      <SizedBox height={14} />
-      <Row justifyContent="space-between">
-        <Text size="medium" type="secondary" fitContent>
-          Wallet Balance
-        </Text>
-        <Text size="medium" fitContent>
-          {BN.formatUnits(
-            vm.tokenBalance.minus(amount),
-            token?.decimals
-          ).toFormat(2)}
-          &nbsp;
-          {token?.name}
+          {BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2)}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -198,20 +193,32 @@ const BorrowAssets: React.FC<IProps> = ({
           0.005 WAVES
         </Text>
       </Row>
-      <SizedBox height={16} />
+      <SizedBox height={24} />
+      {vm.modalWarningText && (
+        <>
+          <Warning
+            text={vm.modalWarningText}
+            accentText={
+              <div
+                onClick={() => onMaxClick(getMaxSupply())}
+                style={{ cursor: "pointer" }}
+              >
+                Supply max to limit
+              </div>
+            }
+          />
+          <SizedBox height={24} />
+        </>
+      )}
       <Footer>
         {accountStore && accountStore.address ? (
           <Button
-            disabled={
-              amount.eq(0) ||
-              vm.modalBtnErrorText !== "" ||
-              token?.selfBorrow.eq(0)
-            }
+            disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
             fixed
             onClick={() => submitForm()}
             size="large"
           >
-            {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Repay"}
+            {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Supply"}
           </Button>
         ) : (
           <Button
@@ -228,4 +235,4 @@ const BorrowAssets: React.FC<IProps> = ({
     </Root>
   );
 };
-export default observer(BorrowAssets);
+export default observer(SupplyAssets);

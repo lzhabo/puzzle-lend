@@ -12,7 +12,7 @@ export interface IMarket {
   };
 }
 
-export interface IMarketWithStats extends IMarket {
+export interface IMarketConfig extends IMarket {
   statistics?: {
     totalBorrowed: string;
     totalSupplied: string;
@@ -32,12 +32,12 @@ export interface IMarketsStatsResponse {
 const marketService = {
   getMarketByContractAddress: async (
     address: string
-  ): Promise<IMarketWithStats> => {
+  ): Promise<IMarketConfig> => {
     const req = `${process.env.REACT_APP_API_BASE}/api/v1/markets/${address}`;
     const { data } = await axios.get(req);
     return data;
   },
-  getMarkets: async (): Promise<Array<IMarketWithStats>> => {
+  getMarkets: async (): Promise<Array<IMarketConfig>> => {
     const { data } = await axios.get(
       `${process.env.REACT_APP_API_BASE}/api/v1/markets`
     );

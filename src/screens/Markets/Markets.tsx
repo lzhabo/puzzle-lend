@@ -5,7 +5,7 @@ import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import TotalMarketsInfo from "@screens/Markets/TotalMarketsInfo";
-import PoolCards from "@screens/Markets/PoolCards";
+import MarketCards from "@screens/Markets/MarketCards";
 
 interface IProps {}
 
@@ -41,7 +41,7 @@ const Markets: React.FC<IProps> = () => {
         <SizedBox height={16} />
         <TotalMarketsInfo />
         <SizedBox height={24} />
-        <PoolCards />
+        <MarketCards />
       </Root>
     </Layout>
   );

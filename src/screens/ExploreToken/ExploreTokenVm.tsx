@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable, reaction } from "mobx";
 import { RootStore, useStores } from "@stores";
-import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import dayjs, { Dayjs } from "dayjs";
 import axios from "axios";
 import transactionsService from "@src/services/transactionsService";
@@ -55,7 +55,8 @@ class ExploreTokenVM {
   }
 
   get statistics() {
-    return this.rootStore.lendStore.getStatByAssetId(this.asset.assetId);
+    return null;
+    // return this.rootStore.lendStore.getStatByAssetId(this.asset.assetId);
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
@@ -102,11 +103,14 @@ class ExploreTokenVM {
 
   users = { supply: BN.ZERO, borrow: BN.ZERO };
   setUsers = (users: { supply: BN; borrow: BN }) => (this.users = users);
+  //fixme
   syncUsers = () =>
     nodeService
       .nodeMatchRequest(
-        this.rootStore.lendStore.poolId,
-        `(.*)_(supplied%7Cborrowed)_${this.assetId}`
+        "",
+        ""
+        // this.rootStore.lendStore.poolId,
+        // `(.*)_(supplied%7Cborrowed)_${this.assetId}`
       )
       .then((data) =>
         data.reduce(
@@ -140,17 +144,20 @@ class ExploreTokenVM {
     this.setLoading(false);
   };
 
+  //fixme
   get isAssetOk() {
-    return this.rootStore.lendStore.poolsStats.some(
-      (t) => t.assetId === this.assetId
-    );
+    return true;
+    // return this.rootStore.lendStore.poolsStats.some(
+    //   (t) => t.assetId === this.assetId
+    // );
   }
+
   constructor(rootStore: RootStore, poolId: string, assetId: string) {
     this.rootStore = rootStore;
     this.assetId = assetId;
     makeAutoObservable(this);
-    const pool = POOLS.find((pool) => pool.address === poolId)!;
-    this.rootStore.lendStore.setPool(pool);
+    // const pool = POOLS.find((pool) => pool.address === poolId)!;
+    // this.rootStore.lendStore.setPool(pool);
     Promise.all([
       this.syncChart(),
       this.loadOperations(),

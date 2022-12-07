@@ -10,6 +10,7 @@ import { LOGIN_TYPE } from "@stores/AccountStore";
 import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { useTheme } from "@emotion/react";
+import { useMarketVM } from "@screens/Market/MarketVm";
 
 interface IProps {}
 
@@ -59,22 +60,26 @@ const LoginHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.primary100};
 `;
 const AccountHealth: React.FC<IProps> = () => {
-  const { lendStore, accountStore } = useStores();
+  const { accountStore } = useStores();
+  const vm = useMarketVM();
   const theme = useTheme();
   const data = [
     {
       title: "Supply balance",
-      value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
+      // value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
+      value: `$ ${vm.market?.accountSupplyBalance.toFormat(2)}`,
       description: "USD value of your deposits in total"
     },
     {
       title: "Borrow balance",
-      value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
+      // value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
+      value: `$ ${vm.market?.accountBorrowBalance.toFormat(2)}`,
       description: "USD value of your borrows in total"
     },
     {
       title: "NET APY",
-      value: `${lendStore.netApy.toFormat(2)} %`,
+      // value: `${lendStore.netApy.toFormat(2)} %`,
+      value: `${vm.market?.netApy.toFormat(2)} %`,
       border: true,
       description:
         "Your annual net profit (expenses) relative to your deposits (loans) USD value."
@@ -84,7 +89,7 @@ const AccountHealth: React.FC<IProps> = () => {
   const isKeeperDisabled = !accountStore.isWavesKeeperInstalled;
   return (
     <Root>
-      {accountStore.address && lendStore.health ? (
+      {accountStore.address && vm.market?.health ? (
         <>
           <Health>
             <Text weight={500} type="secondary" fitContent>
@@ -97,7 +102,7 @@ const AccountHealth: React.FC<IProps> = () => {
                 right: "calc(50% - 55px)"
               }}
               text="Account Health"
-              percent={lendStore.health.toDecimalPlaces(2).toNumber()}
+              percent={vm.market.health.toDecimalPlaces(2).toNumber()}
             />
           </Health>
           <SizedBox height={10} />

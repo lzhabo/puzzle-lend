@@ -2,33 +2,32 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useStores } from "@src/stores";
 import { useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import Text from "@components/Text";
 import Button from "@components/Button";
-import SquareTokenIcon from "@components/SquareTokenIcon";
-import tokenLogos from "@src/constants/tokenLogos";
-import { TPoolStats } from "@src/stores/LendStore";
-import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+import { Column, Row } from "@components/Flex";
+import { TMarketStats } from "@src/entities/Market";
 import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 
-import {
-  Footer,
-  Root
-} from "@src/screens/Dashboard/DashboardModals/components/ModalContent";
-import ModalTokenInput from "@src/screens/Dashboard/DashboardModals/components/ModalTokenInput";
-import BackIcon from "@src/screens/Dashboard/DashboardModals/components/BackIcon";
+import SquareTokenIcon from "@components/SquareTokenIcon";
+import tokenLogos from "@src/constants/tokenLogos";
+import { useMarketModalVM } from "@screens/Market/MarketModals/MarketModalVM";
+import ModalTokenInput from "@screens/Market/MarketModals/components/ModalTokenInput";
+import { Footer, Root } from "./components/ModalContent";
+import Warning from "@screens/Market/MarketModals/components/Warning";
+import BackIcon from "@screens/Market/MarketModals/components/BackIcon";
 
 interface IProps {
-  token: TPoolStats;
-  modalAmount: BN;
+  token: TMarketStats;
   poolId: string;
+  modalAmount: BN;
   userHealth: BN;
   onClose: () => void;
   modalSetAmount: (amount: BN) => void;
   onMaxClick: (amount: BN) => void;
+  //fixme
   onSubmit: (
     amount: BN,
     assetId: string,
@@ -36,21 +35,21 @@ interface IProps {
   ) => Promise<boolean>;
 }
 
-const WithdrawAssets: React.FC<IProps> = ({
+const BorrowAssets: React.FC<IProps> = ({
   token,
-  poolId,
   modalAmount,
   userHealth,
-  onClose,
+  poolId,
   modalSetAmount,
   onMaxClick,
-  onSubmit
+  onSubmit,
+  onClose
 }) => {
-  const vm = DashboardUseVM();
   const navigate = useNavigate();
   const [focused, setFocused] = useState(false);
   const [amount, setAmount] = useState<BN>(modalAmount);
-  const { accountStore, lendStore } = useStores();
+  const { accountStore } = useStores();
+  const vm = useMarketModalVM();
 
   useEffect(() => {
     modalAmount && setAmount(modalAmount);
@@ -69,28 +68,13 @@ const WithdrawAssets: React.FC<IProps> = ({
     [debounce]
   );
 
-  const handleChangeAmount = (v: BN) => {
-    vm.withdrawChangeAmount(v);
-    handleDebounce(v);
-  };
-
-  const maxWithdraw = () => {
-    const val = vm.countMaxBtn.toDecimalPlaces(0);
-    vm.withdrawChangeAmount(val);
-    handleDebounce(val);
-
-    return val;
-  };
-
-  const setInputAmountMeasure = (isCurrentNative: boolean) => {
-    handleDebounce(vm.onNativeChange.toDecimalPlaces(0));
-    vm.setVMisDollar(isCurrentNative);
-  };
-
   const submitForm = async () => {
-    const amountVal = vm.modalFormattedVal;
+    let amountVal = modalAmount;
+
+    if (vm.isDollar) amountVal = amountVal.div(token?.prices?.min);
+
     const isSuccess = await onSubmit(
-      amountVal.toDecimalPlaces(0, 2),
+      amountVal.toSignificant(0),
       token?.assetId,
       poolId
     );
@@ -98,19 +82,22 @@ const WithdrawAssets: React.FC<IProps> = ({
     if (isSuccess) onClose();
   };
 
+  const handleChangeAmount = (v: BN) => {
+    vm.borrowChangeAmount(v);
+    handleDebounce(v);
+  };
+
+  const setInputAmountMeasure = (isCurrentNative: boolean) => {
+    handleDebounce(vm.onNativeChange);
+    vm.setVMisDollar(isCurrentNative);
+  };
+
   return (
     <Root>
       <Row>
         <Row
           alignItems="center"
-          onClick={() =>
-            navigate(
-              ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                ":poolId",
-                lendStore.pool.address
-              ).replace(":assetId", token?.assetId)
-            )
-          }
+          onClick={() => navigate("")}
           style={{ cursor: "pointer" }}
         >
           {token?.symbol && (
@@ -124,9 +111,9 @@ const WithdrawAssets: React.FC<IProps> = ({
             </Text>
           </Column>
         </Row>
-        <Column alignItems="flex-end">
+        <Column alignItems="flex-end" justifyContent="flex-end">
           <Row alignItems="center">
-            <Text size="medium" fitContent style={{ cursor: "pointer" }}>
+            <Text size="medium" fitContent>
               {vm.countUserBalance ?? 0}
               &nbsp;
               {vm.currentSymbol}
@@ -135,13 +122,13 @@ const WithdrawAssets: React.FC<IProps> = ({
             <Text size="medium" type="secondary" fitContent>
               {amount.gt(0)
                 ? BN.formatUnits(
-                    vm.staticTokenAmount.plus(amount),
+                    amount.plus(vm.staticTokenAmount),
                     token?.decimals
                   ).toFormat(4) ?? 0
                 : 0}
             </Text>
           </Row>
-          <Text nowrap size="medium" type="secondary">
+          <Text size="medium" type="secondary" nowrap textAlign="right">
             Wallet Balance
           </Text>
         </Column>
@@ -154,14 +141,14 @@ const WithdrawAssets: React.FC<IProps> = ({
         amount={amount}
         error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
-        onMaxClick={() => onMaxClick(maxWithdraw())}
+        onMaxClick={() => onMaxClick(vm.userMaximumToBorrowBN())}
         handleChangeAmount={handleChangeAmount}
         setInputAmountMeasure={setInputAmountMeasure}
       />
       <SizedBox height={24} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          {token?.name} liquidity
+          {token?.symbol} liquidity
         </Text>
         <Text size="medium" fitContent>
           {vm.poolTotalReservesInToken.toFormat(2)} {token?.symbol}
@@ -170,27 +157,33 @@ const WithdrawAssets: React.FC<IProps> = ({
       <SizedBox height={14} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          Supply APY
+          Borrow APY
         </Text>
         <Text size="medium" fitContent>
-          {token?.supplyAPY.toFormat(2) ?? 0}%
+          {token?.borrowAPY ? token?.borrowAPY.toFormat(2) : 0} %
         </Text>
       </Row>
       <SizedBox height={14} />
       <Row justifyContent="space-between">
         <Text size="medium" type="secondary" fitContent>
-          Supplied
+          Borrowed
         </Text>
-        <Text
-          size="medium"
-          fitContent
-          onClick={() => {
-            setFocused(true);
-            onMaxClick && onMaxClick(maxWithdraw());
-          }}
-          style={{ cursor: "pointer" }}
-        >
-          {BN.formatUnits(token?.selfSupply, token?.decimals).toFormat(4)}
+        <Text size="medium" fitContent>
+          {token?.selfBorrow
+            ? BN.formatUnits(token?.selfBorrow, token?.decimals).toFormat(2)
+            : 0}{" "}
+          {token?.symbol}
+        </Text>
+      </Row>
+      <SizedBox height={14} />
+      <Row justifyContent="space-between">
+        <Text size="medium" type="secondary" fitContent>
+          Max possible to Borrow
+        </Text>
+        <Text size="medium" fitContent>
+          {vm.staticMaximum.toFormat(2) ?? 0}
+          <>&nbsp;</>
+          {vm.currentSymbol}
         </Text>
       </Row>
       <SizedBox height={14} />
@@ -202,15 +195,11 @@ const WithdrawAssets: React.FC<IProps> = ({
           <Text size="medium" type="success" fitContent>
             {userHealth.toFormat(2) ?? 0} %
           </Text>
-          {vm.accountHealth < 100 ? (
+          {vm.accountHealth !== 100 ? (
             <>
               <BackIcon />
               <Text
-                type={
-                  vm.accountHealth < +userHealth.toDecimalPlaces(2)
-                    ? "error"
-                    : "success"
-                }
+                type={vm.accountHealth < +userHealth ? "error" : "success"}
                 size="medium"
                 fitContent
               >
@@ -230,19 +219,18 @@ const WithdrawAssets: React.FC<IProps> = ({
           0.005 WAVES
         </Text>
       </Row>
-      <SizedBox height={16} />
-      {/* if NO liquidity show ERROR, else withdraw or login */}
+      <SizedBox height={24} />
+
+      {vm.modalWarningText && (
+        <>
+          <Warning text={vm.modalWarningText} link={vm.borrowLink} />
+          <SizedBox height={24} />
+        </>
+      )}
+
+      {/* if NO liquidity show ERROR, else borrow or login */}
       <Footer>
-        {accountStore && accountStore.address ? (
-          <Button
-            disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
-            fixed
-            onClick={() => submitForm()}
-            size="large"
-          >
-            {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Withdraw"}
-          </Button>
-        ) : (
+        {accountStore && !accountStore.address ? (
           <Button
             fixed
             onClick={() => {
@@ -252,9 +240,21 @@ const WithdrawAssets: React.FC<IProps> = ({
           >
             Login
           </Button>
+        ) : (
+          accountStore &&
+          accountStore.address && (
+            <Button
+              disabled={amount.eq(0) || vm.modalBtnErrorText !== ""}
+              fixed
+              onClick={() => submitForm()}
+              size="large"
+            >
+              {vm.modalBtnErrorText !== "" ? vm.modalBtnErrorText : "Borrow"}
+            </Button>
+          )
         )}
       </Footer>
     </Root>
   );
 };
-export default observer(WithdrawAssets);
+export default observer(BorrowAssets);

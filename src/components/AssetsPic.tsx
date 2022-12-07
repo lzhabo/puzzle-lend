@@ -21,7 +21,6 @@ const Img = styled.img`
   background-color: ${({ theme }) => theme.colors.primary650};
 `;
 const AssetsPic: React.FC<IProps> = ({ assets }) => {
-  assets.map((v) => console.log(tokenLogos[TOKENS_BY_ASSET_ID[v].symbol]));
   return (
     <Root>
       {assets.map((v, index) => (

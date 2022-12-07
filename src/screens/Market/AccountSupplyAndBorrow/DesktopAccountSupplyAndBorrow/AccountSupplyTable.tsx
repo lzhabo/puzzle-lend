@@ -1,20 +1,17 @@
 import styled from "@emotion/styled";
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
-import { useStores } from "@stores";
-import Table from "@components/Table";
 import Tooltip from "@components/Tooltip";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
 import { useTheme } from "@emotion/react";
-import { TPoolStats } from "@src/stores/LendStore";
 import { useSupplyAndBorrowVM } from "./SupplyAndBorrowVM";
+import { TMarketStats } from "@src/entities/Market";
 
 interface IProps {}
 
@@ -39,7 +36,7 @@ const TableWrap = styled.div<{ sort?: boolean }>`
 `;
 
 const AccountSupplyTable: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
+  // const { lendStore } = useStores();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const theme = useTheme();
   const vm = useSupplyAndBorrowVM();
@@ -53,29 +50,29 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() =>
-              lendStore.accountSupply.length > 1
-                ? vm.selectSort("selfSupply", true)
-                : null
-            }
+            // onClick={() =>
+            //   lendStore.accountSupply.length > 1
+            //     ? vm.selectSort("selfSupply", true)
+            //     : null
+            // }
             justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Supplied
             </Text>
-            {lendStore.accountSupply.length > 1 ? (
-              <img
-                src={theme.images.icons.group}
-                alt="group"
-                className={
-                  vm.sortSupply === "selfSupply"
-                    ? "sort-icon-active"
-                    : "sort-icon"
-                }
-              />
-            ) : (
-              <SizedBox width={24} />
-            )}
+            {/*{lendStore.accountSupply.length > 1 ? (*/}
+            {/*  <img*/}
+            {/*    src={theme.images.icons.group}*/}
+            {/*    alt="group"*/}
+            {/*    className={*/}
+            {/*      vm.sortSupply === "selfSupply"*/}
+            {/*        ? "sort-icon-active"*/}
+            {/*        : "sort-icon"*/}
+            {/*    }*/}
+            {/*  />*/}
+            {/*) : (*/}
+            {/*  <SizedBox width={24} />*/}
+            {/*)}*/}
           </Row>
         ),
         accessor: "supplied"
@@ -84,11 +81,11 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() =>
-              lendStore.accountSupply.length > 1
-                ? vm.selectSort("supplyAPY", true)
-                : null
-            }
+            // onClick={() =>
+            //   lendStore.accountSupply.length > 1
+            //     ? vm.selectSort("supplyAPY", true)
+            //     : null
+            // }
             justifyContent="flex-end"
           >
             <Tooltip
@@ -108,19 +105,19 @@ const AccountSupplyTable: React.FC<IProps> = () => {
                 Supply APY
               </Text>
             </Tooltip>
-            {lendStore.accountSupply.length > 1 ? (
-              <img
-                src={theme.images.icons.group}
-                alt="group"
-                className={
-                  vm.sortSupply === "supplyAPY"
-                    ? "sort-icon-active"
-                    : "sort-icon"
-                }
-              />
-            ) : (
-              <SizedBox width={24} />
-            )}
+            {/*{lendStore.accountSupply.length > 1 ? (*/}
+            {/*  <img*/}
+            {/*    src={theme.images.icons.group}*/}
+            {/*    alt="group"*/}
+            {/*    className={*/}
+            {/*      vm.sortSupply === "supplyAPY"*/}
+            {/*        ? "sort-icon-active"*/}
+            {/*        : "sort-icon"*/}
+            {/*    }*/}
+            {/*  />*/}
+            {/*) : (*/}
+            {/*  <SizedBox width={24} />*/}
+            {/*)}*/}
           </Row>
         ),
         accessor: "supplyApy"
@@ -135,19 +132,19 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Daily income
             </Text>
-            {lendStore.accountSupply.length > 1 ? (
-              <img
-                src={theme.images.icons.group}
-                alt="group"
-                className={
-                  vm.sortSupply === "dailyIncome"
-                    ? "sort-icon-active"
-                    : "sort-icon"
-                }
-              />
-            ) : (
-              <SizedBox width={24} />
-            )}
+            {/*{lendStore.accountSupply.length > 1 ? (*/}
+            {/*  <img*/}
+            {/*    src={theme.images.icons.group}*/}
+            {/*    alt="group"*/}
+            {/*    className={*/}
+            {/*      vm.sortSupply === "dailyIncome"*/}
+            {/*        ? "sort-icon-active"*/}
+            {/*        : "sort-icon"*/}
+            {/*    }*/}
+            {/*  />*/}
+            {/*) : (*/}
+            {/*  <SizedBox width={24} />*/}
+            {/*)}*/}
           </Row>
         ),
         accessor: "dailyIncome"
@@ -155,7 +152,7 @@ const AccountSupplyTable: React.FC<IProps> = () => {
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" }
     ],
-    [vm, theme.images.icons.group, lendStore.accountSupply.length]
+    [vm]
   );
 
   const openModal = useCallback(
@@ -171,16 +168,10 @@ const AccountSupplyTable: React.FC<IProps> = () => {
     [navigate]
   );
   useMemo(() => {
-    const data = vm
-      .sortData(lendStore.accountSupply, true)
-      .map((s: TPoolStats) => ({
-        onClick: () =>
-          navigate(
-            ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-              ":poolId",
-              lendStore.pool.address
-            ).replace(":assetId", s.assetId)
-          ),
+    const data = []
+      // .sortData(lendStore.accountSupply, true)
+      .map((s: TMarketStats) => ({
+        onClick: () => navigate(""),
         asset: (
           <Row alignItems="center">
             <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -225,32 +216,11 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             </Text>
           </Column>
         ),
-        supplyBtn: vm.isSupplyDisabled(s) ? (
-          <Tooltip
-            fixed
-            content={
-              <Text textAlign="left">Maximum total supply is reached</Text>
-            }
-          >
-            <Button
-              kind="secondary"
-              size="medium"
-              fixed
-              disabled={true}
-              onClick={(e) =>
-                openModal(e, lendStore.poolId, "supply", s.assetId)
-              }
-              style={{ width: "100px", margin: "0 auto" }}
-            >
-              Supply
-            </Button>
-          </Tooltip>
-        ) : (
+        supplyBtn: (
           <Button
             kind="secondary"
             size="medium"
             fixed
-            onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
             style={{ width: "100px", margin: "0 auto" }}
           >
             Supply
@@ -261,9 +231,6 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             kind="secondary"
             size="medium"
             fixed
-            onClick={(e) =>
-              openModal(e, lendStore.poolId, "withdraw", s.assetId)
-            }
             style={{ width: "100px", margin: "0 auto" }}
           >
             Withdraw
@@ -271,32 +238,24 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         )
       }));
     setFilteredSupplies(data);
-  }, [
-    vm.sortSupply,
-    vm.sortModeSupply,
-    lendStore.pool.address,
-    lendStore.accountSupply,
-    lendStore.poolId,
-    openModal,
-    navigate
-  ]);
+  }, [vm.sortSupply, vm.sortModeSupply, openModal, navigate]);
   //todo fix dependency problem
   return (
     <Root>
-      {lendStore.accountSupply.length > 0 && (
-        <TableWrap sort={vm.sortModeSupply === "descending"}>
-          <Text weight={500} type="secondary">
-            My supply
-          </Text>
-          <SizedBox height={8} />
-          <Table
-            style={{ width: "100%" }}
-            columns={supplyColumns}
-            data={filteredSupplies}
-          />
-          <SizedBox height={24} />
-        </TableWrap>
-      )}
+      {/*{lendStore.accountSupply.length > 0 && (*/}
+      {/*  <TableWrap sort={vm.sortModeSupply === "descending"}>*/}
+      {/*    <Text weight={500} type="secondary">*/}
+      {/*      My supply*/}
+      {/*    </Text>*/}
+      {/*    <SizedBox height={8} />*/}
+      {/*    <Table*/}
+      {/*      style={{ width: "100%" }}*/}
+      {/*      columns={supplyColumns}*/}
+      {/*      data={filteredSupplies}*/}
+      {/*    />*/}
+      {/*    <SizedBox height={24} />*/}
+      {/*  </TableWrap>*/}
+      {/*)}*/}
     </Root>
   );
 };

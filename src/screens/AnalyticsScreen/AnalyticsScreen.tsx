@@ -10,7 +10,6 @@ import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { observer } from "mobx-react-lite";
-import { useStores } from "@stores";
 import AnalyticsTotalData from "@screens/AnalyticsScreen/AnalyticsTotalData";
 import AnalyticsScreenTable from "@screens/AnalyticsScreen/AnalyticsScreenTable";
 import AnalyticsScreenBaseInfo from "@screens/AnalyticsScreen/AnalyticsScreenBaseInfo";
@@ -35,7 +34,7 @@ const TableContainer = styled.div`
 `;
 
 const AnalyticsScreenImpl: React.FC<IProps> = observer(() => {
-  const { lendStore } = useStores();
+  // const { lendStore } = useStores();
 
   return (
     <Layout>
@@ -44,7 +43,8 @@ const AnalyticsScreenImpl: React.FC<IProps> = observer(() => {
           <Row alignItems="center">
             <ArrowBackIcon />
             <Text weight={500} type="blue500">
-              Back to {lendStore.pool.name}
+              {/*Back to {lendStore.pool.name}*/}
+              Back to
             </Text>
           </Row>
         </Link>

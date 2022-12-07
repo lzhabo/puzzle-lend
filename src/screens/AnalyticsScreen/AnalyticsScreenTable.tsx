@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import React from "react";
 import Text from "@components/Text";
 import { Row } from "@src/components/Flex";
-import { POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 import { observer } from "mobx-react-lite";
 import {
   useAnalyticsScreenVM,
@@ -19,7 +19,6 @@ interface IProps {}
 const Root = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: auto;
   width: 100%;
   @media (max-width: 1440px) {
     margin: 40px 0 0 0;
@@ -43,9 +42,11 @@ const RowSelect = styled(Row)`
     > div {
       width: 100%;
       margin: 4px 0 0 0;
+
       > div {
         max-width: calc(100vw - 32px);
         width: calc(100vw - 32px);
+
         > div {
           display: flex;
           justify-content: space-between;
@@ -73,10 +74,7 @@ const AnalyticsScreenTable: React.FC<IProps> = () => {
       <SizedBox height={8} />
       <RowSelect>
         <Select
-          options={[
-            { key: null as any, title: "All pools" },
-            ...POOLS.map((p) => ({ title: p.name, key: p.address }))
-          ]}
+          options={[{ key: null as any, title: "All pools" }]}
           selected={vm.poolId ?? undefined}
           onSelect={(key) => vm.setPoolId(key)}
         />

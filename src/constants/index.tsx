@@ -11,60 +11,17 @@ export enum OPERATIONS_TYPE {
 export const ROUTES = {
   ROOT: "/",
   MARKETS: "/markets",
-  DASHBOARD: "/dashboard",
-  DASHBOARD_MODAL_WITHDRAW: "",
-  DASHBOARD_MODALS: {
-    [OPERATIONS_TYPE.SUPPLY]: ":poolId/supply/:tokenId",
-    [OPERATIONS_TYPE.WITHDRAW]: ":poolId/withdraw/:tokenId",
-    [OPERATIONS_TYPE.BORROW]: ":poolId/borrow/:tokenId",
-    [OPERATIONS_TYPE.REPAY]: ":poolId/repay/:tokenId"
+  MARKET: "/:marketId",
+  MARKET_MODALS: {
+    [OPERATIONS_TYPE.SUPPLY]: ":marketId/supply/:tokenId",
+    [OPERATIONS_TYPE.WITHDRAW]: ":marketId/withdraw/:tokenId",
+    [OPERATIONS_TYPE.BORROW]: ":marketId/borrow/:tokenId",
+    [OPERATIONS_TYPE.REPAY]: ":marketId/repay/:tokenId"
   },
-  DASHBOARD_POOL: "/:poolId",
-  DASHBOARD_TOKEN_DETAILS: "/:poolId/:assetId",
+  MARKET_TOKEN_DETAILS: "/:marketId/:assetId",
   ANALYTICS: "/analytics",
   NOT_FOUND: "/404"
 };
-
-export const POOLS_PROD = [
-  {
-    name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
-  },
-  {
-    name: "Waves DeFi Pool",
-    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
-  },
-  {
-    name: "Global Pool",
-    address: "3PJPpKuM7NTC9QaDqAPY4V8wtRWWmLBSSsY"
-  }
-];
-
-export const POOLS_DEV = [
-  {
-    name: "Main Pool",
-    address: "3P4uA5etnZi4AmBabKinq2bMiWU8KcnHZdH"
-  },
-  {
-    name: "Puzzle Pool",
-    address: "3P6dkRGSqgsNpQFbSYn9m8n4Dd8KRaj5TUU"
-  },
-  {
-    name: "Waves DeFi Pool",
-    address: "3P4DK5VzDwL3vfc5ahUEhtoe5ByZNyacJ3X"
-  },
-  {
-    name: "Global Pool",
-    address: "3PJPpKuM7NTC9QaDqAPY4V8wtRWWmLBSSsY"
-  }
-];
-
-const POOLS_LIST: Record<string, Array<IPool>> = {
-  PROD: POOLS_PROD,
-  DEV: POOLS_DEV
-};
-
-export const POOLS = POOLS_LIST[process.env.REACT_APP_NODE_ENV ?? "DEV"];
 
 export const TOKENS_LIST: Array<IToken> = Object.values(tokens).map((t) => ({
   ...t,

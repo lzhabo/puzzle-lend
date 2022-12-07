@@ -26,12 +26,12 @@ const TotalMarketsInfo: React.FC<IProps> = () => {
   const data = [
     {
       title: "Total supplied",
-      value: marketsStore.marketsStatistic.totalSupplied,
+      value: marketsStore.totalSupplied.toFormat(2),
       icon: totalSupplied
     },
     {
       title: "Total borrowed",
-      value: marketsStore.marketsStatistic.totalBorrowed,
+      value: marketsStore.totalBorrowed.toFormat(2),
       icon: totalBorrowed
     }
   ];
@@ -52,7 +52,7 @@ const TotalMarketsInfo: React.FC<IProps> = () => {
               <Skeleton height={32} width={150} />
             ) : (
               <Text size="newBig" weight={500}>
-                $ {value.toFormat()}
+                $ {value}
               </Text>
             )}
           </Column>

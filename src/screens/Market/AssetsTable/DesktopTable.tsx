@@ -1,20 +1,17 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import Tooltip from "@components/Tooltip";
 import Table from "@components/Table";
-import { ROUTES } from "@src/constants";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import Button from "@src/components/Button";
-import { useStores } from "@stores";
 import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
-import Skeleton from "react-loading-skeleton";
 import { useTheme } from "@emotion/react";
-import { TPoolStats } from "@src/stores/LendStore";
+import { TMarketStats } from "@src/entities/Market";
 
 type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
@@ -51,7 +48,6 @@ const TooltipText = styled(Text)`
 `;
 
 const DesktopTable: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
   const theme = useTheme();
   const [filteredAssets, setFilteredAssets] = useState<any[]>([]);
   const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
@@ -74,7 +70,7 @@ const DesktopTable: React.FC<IProps> = () => {
   );
   const navigate = useNavigate();
 
-  const isSupplyDisabled = useCallback((token: TPoolStats) => {
+  const isSupplyDisabled = useCallback((token: TMarketStats) => {
     if (token?.supplyLimit.eq(0)) return false;
     if (!token?.totalSupply || !token?.totalBorrow) return false;
     const reserves = BN.formatUnits(
@@ -237,51 +233,47 @@ const DesktopTable: React.FC<IProps> = () => {
   );
 
   useMemo(() => {
-    let data: any = lendStore.poolsStats.slice().sort((a, b) => {
-      const stats1: TPoolStats = a;
-      const stats2: TPoolStats = b;
-      let key: keyof TPoolStats | undefined;
-      if (sort === "totalSupply") key = "totalSupply";
-      if (sort === "totalBorrow") key = "totalBorrow";
-      if (sort === "supplyAPY") key = "supplyAPY";
-      if (sort === "borrowAPY") key = "borrowAPY";
-      if (key == null) return 0;
+    // let data: any = lendStore.poolsStats.slice().sort((a, b) => {
+    //   const stats1: TMarketStats = a;
+    //   const stats2: TMarketStats = b;
+    //   let key: keyof TMarketStats | undefined;
+    //   if (sort === "totalSupply") key = "totalSupply";
+    //   if (sort === "totalBorrow") key = "totalBorrow";
+    //   if (sort === "supplyAPY") key = "supplyAPY";
+    //   if (sort === "borrowAPY") key = "borrowAPY";
+    //   if (key == null) return 0;
+    //
+    //   if (stats1 == null || stats2 == null) return 0;
+    //   if (stats1[key] == null && stats2[key] != null)
+    //     return sortMode === "descending" ? 1 : -1;
+    //   if (stats1[key] == null && stats2[key] == null)
+    //     return sortMode === "descending" ? -1 : 1;
+    //
+    //   const stat1 = stats1[key] as keyof TMarketStats;
+    //   const stat2 = stats2[key] as keyof TMarketStats;
+    //
+    //   // if filtering in $ equivalent
+    //   if (["totalBorrow", "totalSupply"].includes(sort)) {
+    //     const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
+    //       .times(stats1?.prices.min)
+    //       .toDecimalPlaces(0);
+    //     const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
+    //       .times(stats2?.prices.min)
+    //       .toDecimalPlaces(0);
+    //
+    //     if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
+    //     else return val1.lt(val2) ? -1 : 1;
+    //   }
+    //
+    //   if (sortMode === "descending") {
+    //     return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
+    //   } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
+    // });
 
-      if (stats1 == null || stats2 == null) return 0;
-      if (stats1[key] == null && stats2[key] != null)
-        return sortMode === "descending" ? 1 : -1;
-      if (stats1[key] == null && stats2[key] == null)
-        return sortMode === "descending" ? -1 : 1;
-
-      const stat1 = stats1[key] as keyof TPoolStats;
-      const stat2 = stats2[key] as keyof TPoolStats;
-
-      // if filtering in $ equivalent
-      if (["totalBorrow", "totalSupply"].includes(sort)) {
-        const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
-          .times(stats1?.prices.min)
-          .toDecimalPlaces(0);
-        const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
-          .times(stats2?.prices.min)
-          .toDecimalPlaces(0);
-
-        if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
-        else return val1.lt(val2) ? -1 : 1;
-      }
-
-      if (sortMode === "descending") {
-        return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
-      } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
-    });
-
-    data = data.map((s: TPoolStats) => ({
+    let data = [] as any;
+    data = data.map((s: TMarketStats) => ({
       onClick: () => {
-        navigate(
-          ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-            ":poolId",
-            lendStore.pool.address
-          ).replace(":assetId", s.assetId)
-        );
+        navigate("");
       },
       asset: (
         <Row alignItems="center">
@@ -353,7 +345,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+          // onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Borrow
@@ -370,7 +362,7 @@ const DesktopTable: React.FC<IProps> = () => {
             size="medium"
             fixed
             disabled={true}
-            onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+            // onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
             style={{ width: "100px", margin: "0 auto" }}
           >
             Supply
@@ -381,7 +373,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+          // onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Supply
@@ -394,20 +386,17 @@ const DesktopTable: React.FC<IProps> = () => {
     sort,
     sortMode,
     isSupplyDisabled,
-    lendStore.pool.address,
-    lendStore.poolsStats,
-    lendStore.poolId,
     openModal,
     navigate
   ]);
 
   return (
     <Root sort={sortMode === "descending"}>
-      {lendStore.initialized && filteredAssets.length ? (
-        <Table columns={columns} data={filteredAssets} />
-      ) : (
-        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
-      )}
+      {/*{lendStore.initialized && filteredAssets.length ? (*/}
+      <Table columns={columns} data={filteredAssets} />
+      {/*) : (*/}
+      {/*  <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />*/}
+      {/*)}*/}
     </Root>
   );
 };

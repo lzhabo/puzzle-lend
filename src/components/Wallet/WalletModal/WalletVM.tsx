@@ -7,8 +7,8 @@ import Balance from "@src/entities/Balance";
 import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
-import { TPoolStats } from "@src/stores/LendStore";
 import { TOKENS_LIST } from "@src/constants";
+import { TMarketStats } from "@src/entities/Market";
 
 const ctx = React.createContext<WalletVM | null>(null);
 //fixme review wallet and fix issues
@@ -60,21 +60,23 @@ class WalletVM {
   }
 
   get userAssets() {
-    const { accountStore, lendStore } = this.rootStore;
-    return TOKENS_LIST.map((t) => {
-      const balance = accountStore.findBalanceByAssetId(t.assetId);
-      return balance ?? new Balance(t);
-    })
-      .filter((balance) =>
-        lendStore.poolsStats.find((item) => item.assetId === balance.assetId)
-      )
-      .filter(({ balance }) => balance && !balance.eq(0))
-      .sort((a, b) => {
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-      });
+    const { accountStore } = this.rootStore;
+    return (
+      TOKENS_LIST.map((t) => {
+        const balance = accountStore.findBalanceByAssetId(t.assetId);
+        return balance ?? new Balance(t);
+      })
+        // .filter((balance) =>
+        //   lendStore.poolsStats.find((item) => item.assetId === balance.assetId)
+        // )
+        .filter(({ balance }) => balance && !balance.eq(0))
+        .sort((a, b) => {
+          if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+          if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+          if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+          return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+        })
+    );
   }
 
   get totalInvestmentAmount() {
@@ -87,13 +89,14 @@ class WalletVM {
     return balancesAmount.plus(BN.ZERO).toFormat(2);
   }
 
-  tokenStats = (tokenAssetId: string): TPoolStats | null => {
-    const tokenIndex = this.rootStore.lendStore.poolsStats
-      .map((item: TPoolStats) => item.assetId)
-      .indexOf(tokenAssetId);
+  tokenStats = (tokenAssetId: string): TMarketStats | null => {
+    // const tokenIndex = this.rootStore.lendStore.poolsStats
+    //   .map((item: TMarketStats) => item.assetId)
+    //   .indexOf(tokenAssetId);
 
-    return tokenIndex !== -1
-      ? this.rootStore.lendStore.poolsStats[tokenIndex]
-      : null;
+    return null;
+    // return tokenIndex !== -1
+    //   ? this.rootStore.lendStore.poolsStats[tokenIndex]
+    //   : null;
   };
 }

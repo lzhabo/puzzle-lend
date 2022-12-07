@@ -5,11 +5,10 @@ import { RootStore, useStores } from "@stores";
 import {
   EXPLORER_URL,
   OPERATIONS_TYPE,
-  POOLS,
   TOKENS_BY_SYMBOL
 } from "@src/constants";
-import { TPoolStats } from "@src/stores/LendStore";
 import BN from "@src/utils/BN";
+import Market, { TMarketStats } from "@src/entities/Market";
 
 const notifications = {
   [OPERATIONS_TYPE.WITHDRAW]: `The withdrawal is successful! You can view the transaction on Waves Explorer`,
@@ -20,38 +19,44 @@ const notifications = {
 
 type UrlParamsTypes = {
   tokenId?: string;
-  poolId?: string;
+  marketId?: string;
 };
 
-const ctx = React.createContext<DashboardModalVM | null>(null);
+const ctx = React.createContext<MarketModalVM | null>(null);
 
-export const DashboardUseVM = () => useVM(ctx);
+export const useMarketModalVM = () => useVM(ctx);
 
-export const DashboardVMProvider: React.FC<{
+export const MarketModalVMProvider: React.FC<{
   operationName: OPERATIONS_TYPE;
   urlParams: UrlParamsTypes;
-}> = ({ operationName, urlParams, children }) => {
+  market: Market | null;
+}> = ({ operationName, urlParams, market, children }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new DashboardModalVM(rootStore, operationName, urlParams),
+    () => new MarketModalVM(rootStore, operationName, urlParams, market),
     [operationName, urlParams, rootStore]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
 
-class DashboardModalVM {
+class MarketModalVM {
   rootStore: RootStore;
 
   constructor(
     rootStore: RootStore,
     operationName: OPERATIONS_TYPE,
-    urlParams: UrlParamsTypes
+    urlParams: UrlParamsTypes,
+    market: Market | null
   ) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.setUrlParams(urlParams);
+    market && this.setMarket(market);
     this.setOperationName(operationName);
   }
+
+  market: Market | null = null;
+  setMarket = (v: Market | null) => (this.market = v);
 
   urlParams: UrlParamsTypes = {};
   setUrlParams = (params: UrlParamsTypes) => {
@@ -69,7 +74,7 @@ class DashboardModalVM {
   };
 
   dashboardModalStep: 0 | 1 = 0;
-  setDashboardModalStep = (step: 0 | 1) => {
+  setMarketModalStep = (step: 0 | 1) => {
     this.dashboardModalStep = step;
   };
 
@@ -98,19 +103,23 @@ class DashboardModalVM {
       this.operationName === OPERATIONS_TYPE.SUPPLY &&
       !this.token?.supplyLimit.eq(0)
     ) {
+      const minPrice = this.token?.prices.min;
+      if (minPrice == null) return null;
+
       const currentVal = this.isDollar
         ? BN.formatUnits(this.modalFormattedVal, this.token?.decimals).times(
-            this.token?.prices.min
+            this.token?.prices.min ?? 0
           )
         : BN.formatUnits(this.modalFormattedVal, this.token?.decimals);
 
       const reservesConverted = this.isDollar
-        ? this.poolTotalReserves.times(this.token?.prices.min)
-        : this.poolTotalReserves.div(this.token?.prices.min);
+        ? this.poolTotalReserves.times(minPrice)
+        : this.poolTotalReserves.div(minPrice);
 
       const limitConverted = this.isDollar
         ? this.token?.supplyLimit
-        : this.token?.supplyLimit.div(this.token?.prices.min);
+        : this.token?.supplyLimit.div(minPrice);
+      if (limitConverted == null) return null;
       const staticLimit = limitConverted.minus(reservesConverted);
 
       const dynamicLimit = limitConverted.minus(
@@ -148,16 +157,19 @@ class DashboardModalVM {
     return this.isDollar ? "$" : this.token?.symbol;
   }
 
-  get currentPoolId() {
-    return this.rootStore.lendStore.poolId;
+  get currentMarketId() {
+    //fixme
+    return BN.ZERO;
+    // return this.rootStore.lendStore.marketId;
   }
 
   get userHealth() {
-    return this.rootStore.lendStore.health;
+    return BN.ZERO;
   }
 
   get userCollateral() {
-    return this.rootStore.lendStore.userCollateral;
+    return BN.ZERO;
+    // return this.rootStore.lendStore.userCollateral;
   }
 
   get tokenBalance(): BN {
@@ -168,63 +180,67 @@ class DashboardModalVM {
     );
   }
 
-  get token(): TPoolStats {
-    return this.rootStore.lendStore.poolsStats.find(
+  //todo check
+  get token(): TMarketStats | undefined {
+    return this.market?.marketStats.find(
       (_) => _.assetId === this.urlParams.tokenId
-    )!;
+    );
   }
 
   // REPAY MODAL
   get userRepayAmount(): string {
+    const token = this.token;
+    if (token == null) return "0";
     const val = !this.isDollar
       ? this.token?.selfBorrow.minus(this.modalFormattedVal)
       : BN.formatUnits(
-          this.token?.selfBorrow
+          token.selfBorrow
             .minus(this.modalFormattedVal)
-            .times(this.token?.prices?.min),
+            .times(token?.prices?.min),
           this.token?.decimals
         ).toFormat(2);
 
     if (this.token?.selfBorrow.eq(0)) return "0";
 
-    return BN.formatUnits(val, this.token?.decimals).toFormat(2);
+    return BN.formatUnits(val ?? 0, this.token?.decimals).toFormat(2);
   }
 
   get countMaxBtn() {
     let selfVal = BN.ZERO;
+    const token = this.token;
+    if (token == null) return "";
 
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
-      selfVal = this.token?.selfSupply;
+      selfVal = token?.selfSupply;
     }
     if (this.operationName === OPERATIONS_TYPE.REPAY) {
-      selfVal = BN.min(this.tokenBalance, this.token?.selfBorrow);
+      selfVal = BN.min(this.tokenBalance, token.selfBorrow);
     }
     if (this.operationName === OPERATIONS_TYPE.SUPPLY) {
       selfVal = this.tokenBalance;
     }
 
-    const isWavesPool =
-      this.rootStore.lendStore.poolId ===
-      POOLS.find((e) => e.name === "Waves DeFi pool")?.address;
+    //fixme
+    const isWavesMarket = false;
 
     const reservesConverted = this.isDollar
-      ? this.poolTotalReserves.times(this.token?.prices.min)
-      : this.poolTotalReserves.div(this.token?.prices.min);
+      ? this.poolTotalReserves.times(token?.prices.min)
+      : this.poolTotalReserves.div(token?.prices.min);
 
     const limitConverted = this.isDollar
-      ? this.token?.supplyLimit
-      : this.token?.supplyLimit.div(this.token?.prices.min);
+      ? token?.supplyLimit
+      : token?.supplyLimit.div(token?.prices.min);
 
     const dynamicLimit = limitConverted.minus(reservesConverted);
-    const isUSDN = this.token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
-    const isWAVES = this.token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
+    const isUSDN = token.assetId === TOKENS_BY_SYMBOL.USDN.assetId;
+    const isWAVES = token.assetId === TOKENS_BY_SYMBOL.WAVES.assetId;
 
     let countVal = BN.min(
-      dynamicLimit.times(new BN(10, 10).pow(this.token?.decimals)),
+      dynamicLimit.times(new BN(10, 10).pow(token?.decimals)),
       selfVal
     );
 
-    if (!isWavesPool || isUSDN || isWAVES) countVal = selfVal;
+    if (!isWavesMarket || isUSDN || isWAVES) countVal = selfVal;
 
     return countVal.toDecimalPlaces(0, 2);
   }
@@ -232,18 +248,20 @@ class DashboardModalVM {
   get modalFormattedVal() {
     const countVal = !this.isDollar
       ? this.modalAmount
-      : this.modalAmount.div(this.token?.prices?.min);
+      : this.modalAmount.div(this.token?.prices?.min ?? 0);
 
     return countVal;
   }
 
   get onNativeChange(): BN {
+    if (this.token == null) return BN.ZERO;
     return this.isDollar
       ? this.modalAmount.div(this.token?.prices?.min)
       : this.modalAmount.times(this.token?.prices?.min);
   }
 
   get staticMaximum(): BN {
+    if (this.token == null) return BN.ZERO;
     return this.isDollar
       ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
       : BN.formatUnits(this.userCollateral, 6)
@@ -252,6 +270,7 @@ class DashboardModalVM {
   }
 
   get staticTokenAmount(): BN {
+    if (this.token == null) return BN.ZERO;
     return !this.isDollar
       ? this.tokenBalance
       : this.tokenBalance.times(this.token?.prices?.min);
@@ -287,6 +306,7 @@ class DashboardModalVM {
   }
 
   get userDailyIncome(): BN {
+    if (this.token == null) return BN.ZERO;
     const UR = this.token?.totalBorrow.div(this.token?.totalSupply);
     const supplyInterest = this.token?.interest.times(UR).times(0.8);
     if (supplyInterest.isNaN()) return BN.ZERO;
@@ -309,28 +329,29 @@ class DashboardModalVM {
 
   // BORROW MODAL
   countBorrowAccountHealth = (currentBorrow: BN) => {
-    const { lendStore } = this.rootStore;
-
     if (currentBorrow.eq(0)) {
       this.setAccountHealth(100);
       return 100;
     }
-
+    if (this.token == null) return BN.ZERO;
     const currentBorrowAmount = !this.isDollar
       ? BN.formatUnits(currentBorrow, this.token?.decimals)
       : BN.formatUnits(currentBorrow, this.token?.decimals).div(
           this.token?.prices?.min
         );
 
-    const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
-      const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
-      if (deposit.eq(0)) return acc;
-      const cf = stat.cf;
-      const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
-      return acc.plus(assetBc);
-    }, BN.ZERO);
+    const bc = this.market?.marketStats.reduce(
+      (acc: BN, stat: TMarketStats) => {
+        const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
+        if (deposit.eq(0)) return acc;
+        const cf = stat.cf;
+        const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
+        return acc.plus(assetBc);
+      },
+      BN.ZERO
+    );
 
-    let bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    let bcu = this.market?.marketStats.reduce((acc: BN, stat: TMarketStats) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = stat.lt;
       let assetBcu = borrow.times(stat.prices.max).div(lt);
@@ -346,14 +367,17 @@ class DashboardModalVM {
       return acc.plus(assetBcu);
     }, BN.ZERO);
 
-    // case when user did'nt borrow anything
-    if (bcu.eq(0))
+    //todo check
+    // if (bcu == null) return 0;
+
+    // case when user didn't borrow anything
+    if (bcu == null || bcu.eq(0))
       bcu = currentBorrowAmount
         .times(this.token?.prices.max)
         .div(this.token?.lt)
-        .plus(bcu);
+        .plus(bcu ?? 0);
 
-    const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
+    const accountHealth: BN = new BN(1).minus(bcu.div(bc ?? 0)).times(100);
 
     if (bcu.lt(0) || accountHealth.lt(0)) {
       this.setAccountHealth(0);
@@ -366,6 +390,7 @@ class DashboardModalVM {
 
   // counting maximum amount for MAX btn
   userMaximumToBorrowBN = () => {
+    if (this.token == null) return BN.ZERO;
     const maximum = this.isDollar
       ? BN.formatUnits(this.userCollateral, 6).times(this.token?.lt)
       : BN.formatUnits(this.userCollateral, 6)
@@ -378,7 +403,7 @@ class DashboardModalVM {
 
     // cause if market liquidity lower, asset cant provide requested amount of money to user
     if (this.poolTotalReserves.lt(maximum)) {
-      this.setError("Not enough Reserves in Pool");
+      this.setError("Not enough Reserves in Market");
       isError = true;
       return val;
     }
@@ -398,6 +423,7 @@ class DashboardModalVM {
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
 
     // if !isNative, show maximum in dollars, collateral in dollars by default
+    if (this.token == null) return BN.ZERO;
     const maxCollateral = this.isDollar
       ? BN.formatUnits(this.userCollateral, 6)
       : BN.formatUnits(this.userCollateral, 6).div(this.token?.prices?.min);
@@ -410,7 +436,7 @@ class DashboardModalVM {
     }
 
     if (this.poolTotalReserves.isLessThanOrEqualTo(formattedVal)) {
-      this.setError("Not enough Reserves in Pool");
+      this.setError("Not enough Reserves in Market");
       isError = true;
     }
 
@@ -425,12 +451,13 @@ class DashboardModalVM {
 
   // WITHDRAW MODAL
   countWithdrawAccountHealth = (currentWithdraw: BN) => {
-    const { lendStore } = this.rootStore;
+    // const { lendStore } = this.rootStore;
+    if (this.token == null) return BN.ZERO;
     const currentWithdrawAmount = !this.isDollar
       ? currentWithdraw
       : currentWithdraw.div(this.token?.prices?.min);
 
-    const bc = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
+    let bc = this.market?.marketStats.reduce((acc: BN, stat: TMarketStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
       const cf = stat.cf;
@@ -448,16 +475,21 @@ class DashboardModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    const bcu = lendStore.poolsStats.reduce((acc: BN, stat: TPoolStats) => {
-      const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
-      const lt = stat.lt;
-      let assetBcu = borrow.times(stat.prices.max).div(lt);
-      return acc.plus(assetBcu);
-    }, BN.ZERO);
+    const bcu = this.market?.marketStats.reduce(
+      (acc: BN, stat: TMarketStats) => {
+        const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
+        const lt = stat.lt;
+        let assetBcu = borrow.times(stat.prices.max).div(lt);
+        return acc.plus(assetBcu);
+      },
+      BN.ZERO
+    );
 
-    const accountHealth: BN = new BN(1).minus(bcu.div(bc)).times(100);
+    // const accountHealth = new BN(1).minus(bcu.div(bc)).times(100);
+    const accountHealth = BN.ZERO;
 
-    if (bc.lt(0) || accountHealth.lt(0)) {
+    //todo check
+    if (bc == null || bc.lt(0) || accountHealth.lt(0)) {
       this.setAccountHealth(0);
       return 0;
     }
@@ -495,6 +527,7 @@ class DashboardModalVM {
 
   // REPAY MODAL
   repayChangeAmount = (v: BN) => {
+    if (this.token == null) return BN.ZERO;
     const walletBalance = !this.isDollar
       ? this.tokenBalance
       : this.tokenBalance.times(this.token?.prices?.min);
@@ -521,6 +554,7 @@ class DashboardModalVM {
 
   // SUPPLY MODAL
   supplyChangeAmount = (v: BN) => {
+    if (this.token == null) return BN.ZERO;
     const formattedVal = BN.formatUnits(v, this.token?.decimals);
     const walletBal = !this.isDollar
       ? BN.formatUnits(this.tokenBalance, this.token?.decimals)
@@ -544,9 +578,9 @@ class DashboardModalVM {
     assetId: string,
     contractAddress: string
   ): Promise<boolean> => {
-    const { accountStore, lendStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
     let result = Promise.resolve(false);
-    if (lendStore.poolId == null) return result;
+    if (this.market == null) return result;
     await accountStore
       .invoke({
         dApp: contractAddress,
@@ -569,7 +603,7 @@ class DashboardModalVM {
       })
       .finally(() => {
         accountStore.updateAccountAssets(true);
-        lendStore.syncPoolsStats();
+        // lendStore.syncMarketsStats();
       });
 
     return result;
@@ -580,9 +614,10 @@ class DashboardModalVM {
     assetId: string,
     contractAddress: string
   ): Promise<boolean> => {
-    const { accountStore, lendStore } = this.rootStore;
+    //fixme
+    const { accountStore } = this.rootStore;
     let result = Promise.resolve(false);
-    if (lendStore.poolId == null) return result;
+    if (this.market == null) return result;
 
     await accountStore
       .invoke({
@@ -600,7 +635,7 @@ class DashboardModalVM {
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
-        lendStore.syncPoolsStats();
+        // lendStore.syncMarketsStats();
       });
 
     return result;
@@ -611,9 +646,10 @@ class DashboardModalVM {
     assetId: string,
     contractAddress: string
   ): Promise<boolean> => {
-    const { accountStore, lendStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
+    //fixme
     let result = Promise.resolve(false);
-    if (lendStore.poolId == null) return result;
+    if (this.market == null) return result;
 
     await accountStore
       .invoke({
@@ -637,7 +673,7 @@ class DashboardModalVM {
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
-        lendStore.syncPoolsStats();
+        // lendStore.syncMarketsStats();
       });
 
     return result;
@@ -648,9 +684,9 @@ class DashboardModalVM {
     assetId: string,
     contractAddress: string
   ): Promise<boolean> => {
-    const { accountStore, lendStore } = this.rootStore;
+    const { accountStore } = this.rootStore;
     let result = Promise.resolve(false);
-    if (lendStore.poolId == null) return result;
+    if (this.market == null) return result;
 
     await accountStore
       .invoke({
@@ -668,7 +704,6 @@ class DashboardModalVM {
       })
       .then(() => {
         accountStore.updateAccountAssets(true);
-        lendStore.syncPoolsStats();
       });
 
     return result;

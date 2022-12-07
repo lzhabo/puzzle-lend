@@ -164,7 +164,7 @@ const Header: React.FC<IProps> = () => {
       </Mobile>
       <TopMenu>
         <Row alignItems="center" crossAxisSize="max">
-          <Link to={ROUTES.DASHBOARD}>
+          <Link to={ROUTES.ROOT}>
             <img className="logo" src={theme.images.icons.logo} alt="logo" />
           </Link>
           <Desktop>

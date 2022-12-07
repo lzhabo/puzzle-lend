@@ -27,6 +27,14 @@ export default {
   icon: {
     borderColor: colors.primary100
   },
+  marketCard: {
+    titleText: "#FFFFFF",
+    subTitleText: "#C6C9F4",
+    accountBalanceTitle: "#8082C5",
+    accountBalanceValue: "#363870",
+    gradient: "linear-gradient(94.61deg, #16214B 0.61%, #213069 100%)"
+  },
+
   gradient: "rgba(255, 255, 255, 0.5)",
   tokenDescGradient:
     "linear-gradient(180deg, rgba(248, 248, 255, 0) 0%, #f8f8ff 100%)",

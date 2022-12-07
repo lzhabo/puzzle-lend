@@ -4,19 +4,18 @@ import { Navigate, RouteProps, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 import { useStores } from "@stores";
-import { DashboardVMProvider, useDashboardVM } from "./DashboardVm";
 import Layout from "@components/Layout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import WhatIsLend from "@screens/Dashboard/WhatIsLend";
-import FAQ from "@screens/Dashboard/FAQ";
-import AssetsTable from "@screens/Dashboard/AssetsTable";
-import AccountSupplyAndBorrow from "@screens/Dashboard/AccountSupplyAndBorrow";
-import AccountHealth from "@screens/Dashboard/AccountHealth";
+import WhatIsLend from "@screens/Market/WhatIsLend";
+import FAQ from "@screens/Market/FAQ";
+import AssetsTable from "@screens/Market/AssetsTable";
+import AccountSupplyAndBorrow from "@screens/Market/AccountSupplyAndBorrow";
+import AccountHealth from "@screens/Market/AccountHealth";
 import { Column } from "@src/components/Flex";
-import { POOLS, ROUTES } from "@src/constants";
 
 import bg from "@src/assets/dashboard/main_bg.png";
+import { MarketVMProvider, useMarketVM } from "@screens/Market/MarketVm";
 
 interface IProps {}
 
@@ -65,9 +64,9 @@ const TotalLiquidity = styled.div`
   background-size: cover;
   box-sizing: border-box;
 `;
-const DashboardImpl: React.FC<IProps> = observer(() => {
-  const vm = useDashboardVM();
-  const { accountStore, lendStore } = useStores();
+const MarketImpl: React.FC<IProps> = observer(() => {
+  const vm = useMarketVM();
+  const { accountStore } = useStores();
 
   return (
     <Layout>
@@ -94,8 +93,8 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
             <Column crossAxisSize="max">
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>
-                  {`Total liquidity of ${lendStore.poolName}: `}
-                  <b>$ {lendStore.totalLiquidity.toFormat(2)}</b>
+                  {`Total liquidity of ${vm.market?.title}: `}
+                  <b>$ {vm.market?.totalLiquidity.toFormat(2)}</b>
                 </Text>
               </TotalLiquidity>
               <SizedBox height={24} />
@@ -112,16 +111,14 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
   );
 });
 
-const Dashboard: React.FC<IProps & RouteProps> = () => {
-  const params = useParams<{ poolId: string }>();
-  if (params.poolId && !POOLS.some((p) => p.address === params.poolId)) {
-    return <Navigate to={ROUTES.ROOT} />;
-  }
+const Market: React.FC<IProps & RouteProps> = () => {
+  const params = useParams<{ marketId: string }>();
+  if (params.marketId == null) return <>oops, there is no such market</>;
   return (
-    <DashboardVMProvider poolId={params.poolId}>
-      <DashboardImpl />
-    </DashboardVMProvider>
+    <MarketVMProvider marketId={params.marketId ?? ""}>
+      <MarketImpl />
+    </MarketVMProvider>
   );
 };
 
-export default observer(Dashboard);
+export default Market;

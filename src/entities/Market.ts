@@ -1,14 +1,15 @@
 import RootStore from "@stores/RootStore";
-import PoolStateFetchService, {
-  TPoolToken
-} from "@src/services/PoolStateFetchService";
 import BN from "@src/utils/BN";
 import { ASSETS_TYPE, TOKENS_BY_SYMBOL } from "@src/constants";
 import { getStateByKey } from "@src/utils/getStateByKey";
 import { makeAutoObservable, reaction } from "mobx";
 import nodeService from "@src/services/nodeService";
+import MarketStateFetchService, {
+  TMarketToken
+} from "@src/services/MarketStateFetchService";
+import { IMarketConfig } from "@src/services/marketsSeervice";
 
-export type TPoolStats = {
+export type TMarketStats = {
   totalSupply: BN;
   totalBorrow: BN;
   supplyAPY: BN;
@@ -20,7 +21,7 @@ export type TPoolStats = {
   supplyLimit: BN;
   isAutostakeAvl?: boolean;
   prices: { min: BN; max: BN };
-} & TPoolToken;
+} & TMarketToken;
 
 export interface IData {
   key: string;
@@ -57,18 +58,40 @@ const calcAutostakeApy = (
 
 class Market {
   public readonly rootStore: RootStore;
-  private _fetchService?: PoolStateFetchService;
+  private _fetchService?: MarketStateFetchService;
+
+  public readonly title: string;
+  public readonly description: string;
+  public readonly contractAddress: string;
+  public readonly assets: string[];
+
+  private readonly _logo?: string;
+
   get fetchService() {
     return this._fetchService!;
   }
 
-  setFetchService = async (pool: string) => {
-    if (!pool) return;
-    this._fetchService = new PoolStateFetchService(pool);
+  constructor(rootStore: RootStore, params: IMarketConfig) {
+    //todo try to remove
+    this.rootStore = rootStore;
+    this.title = params.title;
+    this.description = params.description;
+    this.contractAddress = params.contractAddress;
+    this.assets = params.assets ?? [];
+
+    this.setFetchService(params.contractAddress).then(() =>
+      this.setInitialized(true)
+    );
+    setInterval(this.syncMarketsStats, 60 * 1000);
+  }
+
+  setFetchService = async (market: string) => {
+    if (!market) return;
+    this._fetchService = new MarketStateFetchService(market);
     return await this._fetchService
       .fetchSetups()
       .then(this.setTokensSetups)
-      .then(() => this.syncPoolsStats())
+      .then(() => this.syncMarketsStats())
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message, { type: "error" })
       );
@@ -79,38 +102,27 @@ class Market {
   mobileDashboardAssets: ASSETS_TYPE = ASSETS_TYPE.HOME;
   setDashboardAssetType = (v: ASSETS_TYPE) => (this.mobileDashboardAssets = v);
 
-  tokensSetups: Array<TPoolToken> = [];
-  private setTokensSetups = (v: Array<TPoolToken>) => (this.tokensSetups = v);
+  tokensSetups: Array<TMarketToken> = [];
+  private setTokensSetups = (v: Array<TMarketToken>) => (this.tokensSetups = v);
 
-  poolsStats: Array<TPoolStats> = [];
-  private setPoolsStats = (v: Array<TPoolStats>) => (this.poolsStats = v);
+  marketStats: Array<TMarketStats> = [];
+  private setMarketsStats = (v: Array<TMarketStats>) => (this.marketStats = v);
 
   userCollateral: BN = BN.ZERO;
   private setUserCollateral = (v: BN) => (this.userCollateral = v);
 
   getStatByAssetId = (assetId: string) =>
-    this.poolsStats.find((s) => s.assetId === assetId);
+    this.marketStats.find((s) => s.assetId === assetId);
 
-  pool = { name: "", address: "" };
-  setPool = (pool: { name: string; address: string }) => (this.pool = pool);
+  market = { name: "", contractAddress: "" };
+  setMarket = (market: { name: string; contractAddress: string }) =>
+    (this.market = market);
 
-  get poolId(): string {
-    return this.pool.address;
+  get marketId(): string {
+    return this.market.contractAddress;
   }
 
-  get poolName(): string {
-    return this.pool.name;
-  }
-
-  constructor(rootStore: RootStore) {
-    this.rootStore = rootStore;
-    makeAutoObservable(this);
-    this.setFetchService(this.poolId).then(() => this.setInitialized(true));
-    reaction(() => this.poolId, this.setFetchService);
-    setInterval(this.syncPoolsStats, 60 * 1000);
-  }
-
-  syncPoolsStats = async () => {
+  syncMarketsStats = async () => {
     const address = this.rootStore.accountStore.address;
 
     const keys = this.tokensSetups.reduce(
@@ -132,7 +144,7 @@ class Market {
 
     const [state, rates, prices, interests, userCollateral] = await Promise.all(
       [
-        nodeService.nodeKeysRequest(this.poolId, keys),
+        nodeService.nodeKeysRequest(this.marketId, keys),
         this.fetchService.calculateTokenRates(),
         this.fetchService.getPrices(),
         this.fetchService.calculateTokensInterest(),
@@ -212,19 +224,19 @@ class Market {
         borrowAPY: calcApy(interests[index])
       };
     });
-    this.setPoolsStats(stats);
+    this.setMarketsStats(stats);
     this.setUserCollateral(new BN(userCollateral));
   };
 
   get health() {
-    const bc = this.poolsStats.reduce((acc: BN, stat, index) => {
+    const bc = this.marketStats.reduce((acc: BN, stat, index) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       const cf = this.tokensSetups[index]?.cf;
       if (deposit.eq(0) || !cf) return acc;
       const assetBc = cf.times(1).times(deposit).times(stat.prices.min);
       return acc.plus(assetBc);
     }, BN.ZERO);
-    const bcu = this.poolsStats.reduce((acc: BN, stat, index) => {
+    const bcu = this.marketStats.reduce((acc: BN, stat, index) => {
       const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
       const lt = this.tokensSetups[index]?.lt;
       if (borrow.eq(0) || !lt) return acc;
@@ -239,7 +251,7 @@ class Market {
 
   get accountSupplyBalance() {
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.poolsStats
+    return this.marketStats
       .filter(({ selfSupply }) => selfSupply.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -251,7 +263,7 @@ class Market {
 
   get accountBorrowBalance() {
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.poolsStats
+    return this.marketStats
       .filter(({ selfBorrow }) => selfBorrow.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -262,7 +274,7 @@ class Market {
   }
 
   get totalLiquidity() {
-    return this.poolsStats.reduce(
+    return this.marketStats.reduce(
       (acc, stat) =>
         BN.formatUnits(stat.totalSupply, stat.decimals)
           .times(stat.prices.min)
@@ -273,7 +285,7 @@ class Market {
 
   get netApy() {
     try {
-      const supplyApy = this.poolsStats.reduce(
+      const supplyApy = this.marketStats.reduce(
         (acc, stat) =>
           BN.formatUnits(stat.selfSupply, stat.decimals)
             .times(stat.prices.min)
@@ -282,7 +294,7 @@ class Market {
         BN.ZERO
       );
 
-      const baseAmount = this.poolsStats.reduce(
+      const baseAmount = this.marketStats.reduce(
         (acc, stat) =>
           BN.formatUnits(stat.selfSupply, stat.decimals)
             .times(stat.prices.min)
@@ -290,7 +302,7 @@ class Market {
         BN.ZERO
       );
 
-      const borrowApy = this.poolsStats.reduce(
+      const borrowApy = this.marketStats.reduce(
         (acc, stat) =>
           BN.formatUnits(stat.selfBorrow, stat.decimals)
             .times(stat.prices.min)
@@ -309,12 +321,12 @@ class Market {
 
   get accountSupply() {
     if (this.rootStore.accountStore.address == null) return [];
-    return this.poolsStats.filter(({ selfSupply }) => selfSupply.gt(0));
+    return this.marketStats.filter(({ selfSupply }) => selfSupply.gt(0));
   }
 
   get accountBorrow() {
     if (this.rootStore.accountStore.address == null) return [];
-    return this.poolsStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
+    return this.marketStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
   }
 }
 

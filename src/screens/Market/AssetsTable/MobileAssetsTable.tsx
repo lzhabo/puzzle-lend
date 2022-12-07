@@ -5,15 +5,14 @@ import { Column, Row } from "@src/components/Flex";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import SizedBox from "@components/SizedBox";
 import Button from "@components/Button";
-import { useStores } from "@stores";
 import BN from "@src/utils/BN";
 import { observer } from "mobx-react-lite";
 import Skeleton from "react-loading-skeleton";
-import { ROUTES } from "@src/constants";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "@components/Tooltip";
-import { TPoolStats } from "@src/stores/LendStore";
 import { useTheme } from "@emotion/react";
+import { useMarketVM } from "@screens/Market/MarketVm";
+import { TMarketStats } from "@src/entities/Market";
 
 interface IProps {}
 
@@ -33,6 +32,7 @@ const SupplyApy = styled.div`
   > div {
     white-space: nowrap;
     display: flex;
+
     img {
       margin: 1px 4px 0 -1px;
     }
@@ -83,9 +83,10 @@ const Data = styled(Column)`
   }
 `;
 const MobileAssetsTable: React.FC<IProps> = () => {
-  const { lendStore } = useStores();
+  // const { lendStore } = useStores();
   const navigate = useNavigate();
   const theme = useTheme();
+  const vm = useMarketVM();
 
   const openModal = useCallback(
     (
@@ -100,7 +101,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
     [navigate]
   );
 
-  const isSupplyDisabled = (token: TPoolStats): boolean => {
+  const isSupplyDisabled = (token: TMarketStats): boolean => {
     if (token?.supplyLimit.eq(0)) return false;
     if (!token?.totalSupply || !token?.totalBorrow) return false;
     const reserves = BN.formatUnits(
@@ -112,8 +113,8 @@ const MobileAssetsTable: React.FC<IProps> = () => {
 
   return (
     <Root>
-      {lendStore.initialized
-        ? lendStore.poolsStats.map((s) => {
+      {vm.market != null
+        ? vm.market.marketStats.map((s) => {
             const data = [
               {
                 title: "Total supply",
@@ -171,17 +172,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
             ];
             return (
               <Asset key={`token-${s.assetId}`}>
-                <Row
-                  style={{ cursor: "pointer" }}
-                  onClick={() =>
-                    navigate(
-                      ROUTES.DASHBOARD_TOKEN_DETAILS.replace(
-                        ":poolId",
-                        lendStore.pool.address
-                      ).replace(":assetId", s.assetId)
-                    )
-                  }
-                >
+                <Row style={{ cursor: "pointer" }} onClick={() => navigate("")}>
                   <SquareTokenIcon size="small" src={s.logo} alt="token" />
                   <SizedBox width={16} />
                   <Column>
@@ -227,9 +218,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                         kind="secondary"
                         fixed
                         disabled={true}
-                        onClick={(e) =>
-                          openModal(e, lendStore.poolId, "supply", s.assetId)
-                        }
+                        // onClick={(e) =>
+                        //   openModal(e, lendStore.poolId, "supply", s.assetId)
+                        // }
                       >
                         Supply
                       </Button>
@@ -239,9 +230,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                       kind="secondary"
                       size="medium"
                       fixed
-                      onClick={(e) =>
-                        openModal(e, lendStore.poolId, "supply", s.assetId)
-                      }
+                      // onClick={(e) =>
+                      //   openModal(e, lendStore.poolId, "supply", s.assetId)
+                      // }
                     >
                       Supply
                     </Button>
@@ -251,9 +242,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                     kind="secondary"
                     size="medium"
                     fixed
-                    onClick={(e) =>
-                      openModal(e, lendStore.poolId, "borrow", s.assetId)
-                    }
+                    // onClick={(e) =>
+                    //   openModal(e, lendStore.poolId, "borrow", s.assetId)
+                    // }
                   >
                     Borrow
                   </Button>

@@ -1,16 +1,12 @@
 import { RootStore } from "./index";
 import { makeAutoObservable, reaction } from "mobx";
 import { IData } from "@src/entities/Market";
-import marketService, { IMarketWithStats } from "@src/services/marketsSeervice";
+import marketService, { IMarketConfig } from "@src/services/marketsSeervice";
 import BN from "@src/utils/BN";
 
 export type TMarketState = {
   state: IData[];
   contractAddress: string;
-};
-export type TMarketsStatistic = {
-  totalBorrowed: BN | null;
-  totalSupplied: BN | null;
 };
 
 export interface ISerializedMarketsStore {
@@ -21,10 +17,10 @@ export default class MarketsStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-
-    Promise.all([this.syncMarkets(), this.syncMarketsStatistic()]).then(() =>
-      this.setInitialized(true)
-    );
+    this.syncMarkets().then(() => {
+      console.log("MarketsStore- markets", this.markets.length);
+      this.setInitialized(true);
+    });
     //todo add more
     setInterval(this.syncMarkets, 15 * 1000);
     reaction(
@@ -36,20 +32,13 @@ export default class MarketsStore {
   initialized = false;
   private setInitialized = (v: boolean) => (this.initialized = v);
 
-  marketsStatistic: TMarketsStatistic = {
-    totalBorrowed: null,
-    totalSupplied: null
-  };
-  setMarketsStatistic = (b: string, s: string) =>
-    (this.marketsStatistic = {
-      totalBorrowed: new BN(b),
-      totalSupplied: new BN(s)
-    });
-
   public rootStore: RootStore;
 
-  markets: IMarketWithStats[] = [];
-  setMarkets = (markets: IMarketWithStats[]) => (this.markets = markets);
+  markets: IMarketConfig[] = [];
+  setMarkets = (markets: IMarketConfig[]) => (this.markets = markets);
+
+  getMarketByContractAddress = (v: string) =>
+    this.markets.find((market) => market.contractAddress === v);
 
   public marketsState: TMarketState[] | null = null;
   private setMarketState = (value: TMarketState[]) =>
@@ -66,9 +55,17 @@ export default class MarketsStore {
     this.setMarketState(state);
   };
 
-  syncMarketsStatistic = async () => {
-    // const state = await marketService.getStats();
-    console.log("syncMarketsStatistic");
-    this.setMarketsStatistic("35000", "45000");
-  };
+  get totalBorrowed() {
+    return this.markets.reduce(
+      (acc, v) => new BN(v.statistics?.totalBorrowed ?? 0).plus(acc),
+      BN.ZERO
+    );
+  }
+
+  get totalSupplied() {
+    return this.markets.reduce(
+      (acc, v) => new BN(v.statistics?.totalSupplied ?? 0).plus(acc),
+      BN.ZERO
+    );
+  }
 }

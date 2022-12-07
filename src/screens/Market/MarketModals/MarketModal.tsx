@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
 import { Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
 import { OPERATIONS_TYPE } from "@src/constants";
-import { useStores } from "@stores";
-import Skeleton from "react-loading-skeleton";
-import DashboardModalBody from "@screens/Dashboard/DashboardModals/DashboardModalBody";
 import Dialog from "@components/Dialog";
 import {
-  DashboardVMProvider,
-  DashboardUseVM
-} from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+  MarketModalVMProvider,
+  useMarketModalVM
+} from "@screens/Market/MarketModals/MarketModalVM";
+import MarketModalBody from "@screens/Market/MarketModals/MarketModalBody";
+import { useStores } from "@stores";
+import { useMarketVM } from "@screens/Market/MarketVm";
 
 interface IProps {}
 
@@ -22,13 +22,13 @@ interface IPropsVM {
 }
 
 const TabsWrapper = styled(Row)`
-  border-radius: 16px 16px 0px 0px;
+  border-radius: 16px 16px 0 0;
   height: 56px;
   margin-top: -56px;
 `;
 
-const DashboardModalContent: React.FC<IProps> = () => {
-  const vm = DashboardUseVM();
+const MarketModalContent: React.FC<IProps> = () => {
+  const vm = useMarketModalVM();
   const navigate = useNavigate();
   const [getModalTitles, setModalTitles] = useState<[string, string]>(["", ""]);
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -49,8 +49,8 @@ const DashboardModalContent: React.FC<IProps> = () => {
         vm.operationName
       )
     )
-      vm.setDashboardModalStep(1);
-    else vm.setDashboardModalStep(0);
+      vm.setMarketModalStep(1);
+    else vm.setMarketModalStep(0);
     setOpen(true);
   }, [vm]);
 
@@ -64,9 +64,9 @@ const DashboardModalContent: React.FC<IProps> = () => {
         vm.operationName === OPERATIONS_TYPE.SUPPLY
           ? OPERATIONS_TYPE.WITHDRAW
           : OPERATIONS_TYPE.SUPPLY;
-      vm.setDashboardModalStep(step);
+      vm.setMarketModalStep(step);
       return navigate(
-        `/${vm.urlParams?.poolId}/${operation}/${vm.urlParams?.tokenId}`
+        `/${vm.urlParams?.marketId}/${operation}/${vm.urlParams?.tokenId}`
       );
     }
 
@@ -77,14 +77,14 @@ const DashboardModalContent: React.FC<IProps> = () => {
         vm.operationName === OPERATIONS_TYPE.BORROW
           ? OPERATIONS_TYPE.REPAY
           : OPERATIONS_TYPE.BORROW;
-      vm.setDashboardModalStep(step);
+      vm.setMarketModalStep(step);
       return navigate(
-        `/${vm.urlParams?.poolId}/${operation}/${vm.urlParams?.tokenId}`
+        `/${vm.urlParams?.marketId}/${operation}/${vm.urlParams?.tokenId}`
       );
     }
   };
 
-  const closeTab = () => navigate(`/${vm.urlParams?.poolId}`);
+  const closeTab = () => navigate(`/${vm.urlParams?.marketId}`);
 
   return (
     <Dialog
@@ -104,7 +104,7 @@ const DashboardModalContent: React.FC<IProps> = () => {
         />
       </TabsWrapper>
       {vm.token && (
-        <DashboardModalBody
+        <MarketModalBody
           urlParams={vm.urlParams}
           operationName={vm.operationName}
           tokenStats={vm.token}
@@ -115,26 +115,18 @@ const DashboardModalContent: React.FC<IProps> = () => {
   );
 };
 
-const DashboardModal: React.FC<IPropsVM> = ({ operationName }) => {
+const MarketModal: React.FC<IPropsVM> = ({ operationName }) => {
   const urlParams = useParams<{ tokenId: string; poolId: string }>();
-  const { lendStore } = useStores();
-
+  const vm = useMarketVM();
   return (
-    <DashboardVMProvider operationName={operationName} urlParams={urlParams}>
-      {lendStore.initialized ? (
-        <DashboardModalContent />
-      ) : (
-        <Dialog
-          wrapClassName="dashboard-dialog"
-          title="Operations"
-          visible={true}
-          style={{ maxWidth: "415px" }}
-        >
-          <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
-        </Dialog>
-      )}
-    </DashboardVMProvider>
+    <MarketModalVMProvider
+      operationName={operationName}
+      urlParams={urlParams}
+      market={vm.market}
+    >
+      <MarketModalContent />
+    </MarketModalVMProvider>
   );
 };
 
-export default observer(DashboardModal);
+export default observer(MarketModal);

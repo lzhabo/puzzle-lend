@@ -190,7 +190,7 @@ class AccountStore {
     }
     const loginData = await this.signer?.login();
     this.setAddress(loginData?.address ?? null);
-    this.rootStore.lendStore.syncPoolsStats();
+    // this.rootStore.lendStore.syncPoolsStats();
   };
 
   logout() {
@@ -248,7 +248,7 @@ class AccountStore {
 
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);
-    this.rootStore.lendStore.syncPoolsStats();
+    // this.rootStore.lendStore.syncPoolsStats();
   };
 
   ///------------------transfer

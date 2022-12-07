@@ -2,24 +2,23 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import styled from "@emotion/styled";
 import { Column } from "@src/components/Flex";
-import { TPoolStats } from "@src/stores/LendStore";
-import { DashboardUseVM } from "@screens/Dashboard/DashboardModals/DashboardModalVM";
+import { TMarketStats } from "@src/entities/Market";
 import { OPERATIONS_TYPE } from "@src/constants";
-
-import RepayAssets from "@screens/Dashboard/DashboardModals/RepayAssets";
-import SupplyAssets from "@screens/Dashboard/DashboardModals/SupplyAssets";
-import WithdrawAssets from "@screens/Dashboard//DashboardModals/WithdrawAssets";
-import BorrowAssets from "@screens/Dashboard/DashboardModals/BorrowAssets";
+import WithdrawAssets from "@screens/Market/MarketModals/WithdrawAssets";
+import BorrowAssets from "@screens/Market/MarketModals/RepayAssets";
+import { useMarketModalVM } from "@screens/Market/MarketModals/MarketModalVM";
+import SupplyAssets from "@screens/Market/MarketModals/SupplyAssets";
+import RepayAssets from "@screens/Market/MarketModals/RepayAssets";
 
 type UrlParamsTypes = {
   tokenId?: string;
-  poolId?: string;
+  marketId?: string;
 };
 
 interface IProps {
   urlParams: UrlParamsTypes;
   operationName: OPERATIONS_TYPE;
-  tokenStats: TPoolStats;
+  tokenStats: TMarketStats;
   onClose: () => void;
 }
 
@@ -33,20 +32,20 @@ const Root = styled(Column)`
   }
 `;
 
-const DashboardModalBody: React.FC<IProps> = ({
+const MarketModalBody: React.FC<IProps> = ({
   operationName,
   tokenStats,
   urlParams,
   onClose
 }) => {
-  const vm = DashboardUseVM();
+  const vm = useMarketModalVM();
 
   return (
     <Root>
       {operationName === OPERATIONS_TYPE.SUPPLY && (
         <SupplyAssets
           token={tokenStats}
-          poolId={urlParams?.poolId || vm.currentPoolId}
+          marketId={urlParams?.marketId ?? ""}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
@@ -57,7 +56,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
           token={tokenStats}
-          poolId={urlParams?.poolId || vm.currentPoolId}
+          marketId={urlParams?.marketId ?? ""}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -69,8 +68,8 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.BORROW && (
         <BorrowAssets
           token={tokenStats}
-          poolId={urlParams?.poolId || vm.currentPoolId}
-          userHealth={vm.userHealth}
+          marketId={urlParams?.marketId ?? ""}
+          // userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
@@ -81,7 +80,7 @@ const DashboardModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.REPAY && (
         <RepayAssets
           token={tokenStats}
-          poolId={urlParams?.poolId || vm.currentPoolId}
+          marketId={urlParams?.marketId ?? ""}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
@@ -92,4 +91,4 @@ const DashboardModalBody: React.FC<IProps> = ({
     </Root>
   );
 };
-export default observer(DashboardModalBody);
+export default observer(MarketModalBody);

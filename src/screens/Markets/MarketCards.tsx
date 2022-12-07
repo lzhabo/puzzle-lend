@@ -10,6 +10,7 @@ import AssetsPic from "@components/AssetsPic";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@emotion/react";
 
 interface IProps {}
 
@@ -29,7 +30,7 @@ const TopMarketCard = styled.div`
     padding: 24px;
   }
 
-  background: linear-gradient(94.61deg, #16214b 0.61%, #213069 100%);
+  background: ${({ theme }) => theme.colors.marketCard.gradient};
   border-radius: 16px 16px 0 0;
 `;
 const BottomMarketCard = styled.div`
@@ -42,9 +43,10 @@ const BottomMarketCard = styled.div`
   }
 `;
 
-const PoolCards: React.FC<IProps> = () => {
+const MarketCards: React.FC<IProps> = () => {
   const { marketsStore } = useStores();
   const navigate = useNavigate();
+  const theme = useTheme();
   return (
     <Root>
       {marketsStore.markets.length === 0 ? (
@@ -65,17 +67,25 @@ const PoolCards: React.FC<IProps> = () => {
                 value: new BN(statistics?.totalBorrowed ?? 0)
               }
             ];
-            const handleGoToMarket = () => navigate(`/`);
+            const handleGoToMarket = () => navigate(`/${contractAddress}`);
             return (
               <div key={`market-card-${contractAddress}`}>
                 <TopMarketCard>
                   <Row justifyContent="space-between">
                     <Column>
-                      <Text size="newBig" fitContent>
+                      <Text
+                        size="newBig"
+                        fitContent
+                        style={{ color: theme.colors.marketCard.titleText }}
+                      >
                         {title}
                       </Text>
                       <SizedBox height={4} />
-                      <Text>{description}</Text>
+                      <Text
+                        style={{ color: theme.colors.marketCard.subTitleText }}
+                      >
+                        {description}
+                      </Text>
                     </Column>
                     <AssetsPic assets={assets ?? []} />
                   </Row>
@@ -83,10 +93,19 @@ const PoolCards: React.FC<IProps> = () => {
                   <Row>
                     {marketStats.map(({ title, value }) => (
                       <Column crossAxisSize="max">
-                        <Text type="secondary" size="medium">
+                        <Text
+                          type="secondary"
+                          size="medium"
+                          style={{
+                            color: theme.colors.marketCard.subTitleText
+                          }}
+                        >
                           {title}
                         </Text>
-                        <Text weight={500}>{`$ ${value.toFormat(2)}`}</Text>
+                        <Text
+                          weight={500}
+                          style={{ color: theme.colors.marketCard.titleText }}
+                        >{`$ ${value.toFormat(2)}`}</Text>
                       </Column>
                     ))}
                   </Row>
@@ -95,10 +114,21 @@ const PoolCards: React.FC<IProps> = () => {
                   <Row justifyContent="space-between" alignItems="flex-start">
                     {marketStats.map(({ title, value }) => (
                       <Column crossAxisSize="max">
-                        <Text type="secondary" size="medium">
+                        <Text
+                          type="secondary"
+                          size="medium"
+                          style={{
+                            color: theme.colors.marketCard.accountBalanceTitle
+                          }}
+                        >
                           {title}
                         </Text>
-                        <Text weight={500}>{`$ ${value.toFormat(2)}`}</Text>
+                        <Text
+                          weight={500}
+                          style={{
+                            color: theme.colors.marketCard.accountBalanceValue
+                          }}
+                        >{`$ ${value.toFormat(2)}`}</Text>
                       </Column>
                     ))}
                   </Row>
@@ -120,4 +150,4 @@ const PoolCards: React.FC<IProps> = () => {
     </Root>
   );
 };
-export default observer(PoolCards);
+export default observer(MarketCards);

@@ -3,9 +3,8 @@ import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import { useVM } from "@src/hooks/useVM";
 import nodeService from "@src/services/nodeService";
-import { IToken, POOLS, TOKENS_BY_ASSET_ID } from "@src/constants";
+import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 import BN from "@src/utils/BN";
-import PoolStateFetchService from "@src/services/PoolStateFetchService";
 
 const ctx = React.createContext<AnalyticsScreenVM | null>(null);
 
@@ -185,50 +184,50 @@ class AnalyticsScreenVM {
       .sort((prev, curr) => curr.amountTotal - prev.amountTotal);
 
   syncPrices = async () => {
-    const poolIds = POOLS.map((pool) => pool.address);
-    const res = await Promise.all(
-      poolIds.map(async (id) => {
-        const fetchService = new PoolStateFetchService(id);
-        const tokenSetups = await nodeService.nodeKeysRequest(
-          id,
-          "setup_tokens"
-        );
-        const prices = await fetchService.getPrices();
-        return (tokenSetups[0].value as string)
-          .split(",")
-          .map((assetId, index) => ({
-            assetId,
-            prices: prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO }
-          }));
-      })
-    );
-    const prices = res.reduce(
-      (acc, item, i) => ({ ...acc, [poolIds[i]]: item }),
-      {} as TAssetPrices
-    );
-    this.setPrices(prices);
+    // const poolIds = POOLS.map((pool) => pool.address);
+    // const res = await Promise.all(
+    //   poolIds.map(async (id) => {
+    //     const fetchService = new MarketStateFetchService(id);
+    //     const tokenSetups = await nodeService.nodeKeysRequest(
+    //       id,
+    //       "setup_tokens"
+    //     );
+    //     const prices = await fetchService.getPrices();
+    //     return (tokenSetups[0].value as string)
+    //       .split(",")
+    //       .map((assetId, index) => ({
+    //         assetId,
+    //         prices: prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO }
+    //       }));
+    //   })
+    // );
+    // const prices = res.reduce(
+    //   (acc, item, i) => ({ ...acc, [poolIds[i]]: item }),
+    //   {} as TAssetPrices
+    // );
+    // this.setPrices(prices);
   };
 
   syncData = async () => {
-    const poolIds = POOLS.map((pool) => pool.address);
-    const rgxp = "(.*)_(supplied%7Cborrowed)_(.*)";
-    const req = poolIds.map((pool) => nodeService.nodeMatchRequest(pool, rgxp));
-    const res = await Promise.all(req).then((data) =>
-      data.reduce(
-        (acc, arr, index) => [
-          ...acc,
-          ...arr
-            .map(parseInfoFromDataEntry)
-            .filter((v) => v != null)
-            .map((v) => {
-              const poolId = POOLS[index].address;
-              return { ...v, poolId } as TStatisticItem;
-            })
-        ],
-        [] as Array<TStatisticItem>
-      )
-    );
-    this.setStatistics(res);
+    // const poolIds = POOLS.map((pool) => pool.address);
+    // const rgxp = "(.*)_(supplied%7Cborrowed)_(.*)";
+    // const req = poolIds.map((pool) => nodeService.nodeMatchRequest(pool, rgxp));
+    // const res = await Promise.all(req).then((data) =>
+    //   data.reduce(
+    //     (acc, arr, index) => [
+    //       ...acc,
+    //       ...arr
+    //         .map(parseInfoFromDataEntry)
+    //         .filter((v) => v != null)
+    //         .map((v) => {
+    //           const poolId = POOLS[index].address;
+    //           return { ...v, poolId } as TStatisticItem;
+    //         })
+    //     ],
+    //     [] as Array<TStatisticItem>
+    //   )
+    // );
+    // this.setStatistics(res);
   };
 
   constructor(private rootStore: RootStore) {

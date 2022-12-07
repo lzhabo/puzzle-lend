@@ -3,21 +3,21 @@ import { getStateByKey } from "@src/utils/getStateByKey";
 import BN from "@src/utils/BN";
 import { IToken, TOKENS_BY_ASSET_ID } from "@src/constants";
 
-export type TPoolToken = {
+export type TMarketToken = {
   cf: BN;
   lt: BN;
   penalty: BN;
   interest: BN;
 } & IToken;
 
-class PoolStateFetchService {
+class MarketStateFetchService {
   private readonly pool: string;
 
   constructor(pool: string) {
     this.pool = pool;
   }
 
-  fetchSetups = async (): Promise<TPoolToken[]> => {
+  fetchSetups = async (): Promise<TMarketToken[]> => {
     const settingKeys = [
       "setup_tokens",
       "setup_ltvs",
@@ -113,4 +113,4 @@ class PoolStateFetchService {
   };
 }
 
-export default PoolStateFetchService;
+export default MarketStateFetchService;

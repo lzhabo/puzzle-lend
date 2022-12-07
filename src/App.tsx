@@ -6,14 +6,13 @@ import Header from "@components/Header";
 import { Column } from "@components/Flex";
 import { useStores } from "@stores";
 import WalletModal from "@components/Wallet/WalletModal";
-import MobileNavBar from "./components/MobileNavBar";
 import { ROUTES, OPERATIONS_TYPE } from "@src/constants";
-import Dashboard from "@screens/Dashboard";
 import Markets from "@screens/Markets";
 import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
-import DashboardModal from "@screens/Dashboard/DashboardModals";
 import AnalyticsScreen from "@screens/AnalyticsScreen";
+import Market from "@screens/Market/Market";
+import MarketModal from "@screens/Market/MarketModals/MarketModal";
 
 const Root = styled(Column)`
   width: 100%;
@@ -22,49 +21,35 @@ const Root = styled(Column)`
   min-height: 100vh;
 `;
 
-const MobileSpace = styled.div`
-  height: 56px;
-  @media (min-width: 880px) {
-    display: none;
-  }
-`;
-
 const App: React.FC = () => {
   const { accountStore } = useStores();
   return (
     <Root>
       <Header />
       <Routes>
-        {/*Account*/}
         <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
+
+        {/* MARKETS ARRAY PAGE */}
         <Route path={ROUTES.MARKETS} element={<Markets />} />
         <Route path={ROUTES.ROOT} element={<Markets />} />
 
-        {/* Dashboard */}
-        <Route path={ROUTES.DASHBOARD_POOL} element={<Dashboard />} />
-        <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>
-          {[...Object.entries(ROUTES.DASHBOARD_MODALS)].map(([type, path]) => (
+        {/* MARKET DETAILS PAGE */}
+        <Route path={ROUTES.MARKET} element={<Market />}>
+          {[...Object.entries(ROUTES.MARKET_MODALS)].map(([type, path]) => (
             <Route
               path={path}
               key={path}
-              element={
-                <DashboardModal operationName={type as OPERATIONS_TYPE} />
-              }
+              element={<MarketModal operationName={type as OPERATIONS_TYPE} />}
             />
           ))}
         </Route>
-        <Route
-          path={ROUTES.DASHBOARD_TOKEN_DETAILS}
-          element={<ExploreToken />}
-        />
+        <Route path={ROUTES.MARKET_TOKEN_DETAILS} element={<ExploreToken />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <WalletModal
         onClose={() => accountStore.setWalletModalOpened(false)}
         visible={accountStore.walletModalOpened}
       />
-      <MobileSpace />
-      <MobileNavBar />
     </Root>
   );
 };

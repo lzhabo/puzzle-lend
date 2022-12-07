@@ -3,12 +3,9 @@ import Layout from "@components/Layout";
 import ExploreLayout from "./ExploreLayout";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
-import {
-  ExploreTokenVMProvider,
-  useExploreTokenVM
-} from "@screens/ExploreToken/ExploreTokenVm";
-import { Link, Navigate, useParams } from "react-router-dom";
-import { POOLS, ROUTES } from "@src/constants";
+import { useExploreTokenVM } from "@screens/ExploreToken/ExploreTokenVm";
+import { Link, useParams } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 import { Row } from "@components/Flex";
 import { ReactComponent as ArrowBackIcon } from "@src/assets/icons/backArrow.svg";
 import ExploreTokenBasicInformation from "@screens/ExploreToken/ExploreTokenBasicInformation";
@@ -17,7 +14,6 @@ import RoundTokenIcon from "@components/RoundTokenIcon";
 import { observer } from "mobx-react-lite";
 import SocialMediaAndFav from "@screens/ExploreToken/SocialMediaAndFav";
 import { useTheme } from "@emotion/react";
-import { useStores } from "@stores";
 import Spinner from "@components/Spinner";
 
 interface IProps {}
@@ -36,12 +32,12 @@ const SpinnerComponent = () => (
 );
 
 const ExploreTokenImpl: React.FC<IProps> = observer(() => {
-  const { lendStore } = useStores();
+  // const { lendStore } = useStores();
   const vm = useExploreTokenVM();
   const theme = useTheme();
-  if (lendStore.poolsStats.length === 0) return <SpinnerComponent />;
-  else if (!vm.isAssetOk) return <Navigate to={ROUTES.ROOT} />;
-  if (vm.statistics == null) return <Navigate to={ROUTES.ROOT} />;
+  if (true) return <SpinnerComponent />;
+  // else if (!vm.isAssetOk) return <Navigate to={ROUTES.ROOT} />;
+  // if (vm.statistics == null) return <Navigate to={ROUTES.ROOT} />;
 
   return (
     <Layout>
@@ -50,7 +46,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
           <Row alignItems="center">
             <ArrowBackIcon />
             <Text weight={500} type="blue500">
-              Back to {lendStore.pool.name}
+              {/*Back to {lendStore.pool.name}*/}
             </Text>
           </Row>
         </Link>
@@ -77,13 +73,14 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
 
 const ExploreToken: React.FC<IProps> = () => {
   const { assetId, poolId } = useParams<{ assetId: string; poolId: string }>();
-  if (assetId == null || !POOLS.some((p) => p.address === poolId)) {
-    return <Navigate to={ROUTES.ROOT} />;
-  }
+  // if (assetId == null || !POOLS.some((p) => p.address === poolId)) {
+  //   return <Navigate to={ROUTES.ROOT} />;
+  // }
   return (
-    <ExploreTokenVMProvider assetId={assetId} poolId={poolId}>
-      <ExploreTokenImpl />
-    </ExploreTokenVMProvider>
+    <div>ExploreToken</div>
+    // <ExploreTokenVMProvider assetId={assetId} poolId={poolId}>
+    //   <ExploreTokenImpl />
+    // </ExploreTokenVMProvider>
   );
 };
 
