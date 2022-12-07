@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import styled from "@emotion/styled";
 import { observer } from "mobx-react-lite";
-import { Row } from "@components/Flex";
+import { Column, Row } from "@components/Flex";
 import SizedBox from "@components/SizedBox";
 import SwitchButtons from "@components/SwitchButtons";
 import { OPERATIONS_TYPE } from "@src/constants";
@@ -12,8 +12,8 @@ import {
   useMarketModalVM
 } from "@screens/Market/MarketModals/MarketModalVM";
 import MarketModalBody from "@screens/Market/MarketModals/MarketModalBody";
-import { useStores } from "@stores";
 import { useMarketVM } from "@screens/Market/MarketVm";
+import Spinner from "@components/Spinner";
 
 interface IProps {}
 
@@ -27,7 +27,7 @@ const TabsWrapper = styled(Row)`
   margin-top: -56px;
 `;
 
-const MarketModalContent: React.FC<IProps> = () => {
+const MarketModalContent: React.FC<IProps> = observer(() => {
   const vm = useMarketModalVM();
   const navigate = useNavigate();
   const [getModalTitles, setModalTitles] = useState<[string, string]>(["", ""]);
@@ -103,6 +103,13 @@ const MarketModalContent: React.FC<IProps> = () => {
           border
         />
       </TabsWrapper>
+      {vm.token == null && vm.market?.marketStats.length === 0 && (
+        <Column justifyContent="center" alignItems="center" crossAxisSize="max">
+          <SizedBox height={48} />
+          <Spinner />
+          <SizedBox height={64} />
+        </Column>
+      )}
       {vm.token && (
         <MarketModalBody
           urlParams={vm.urlParams}
@@ -113,15 +120,20 @@ const MarketModalContent: React.FC<IProps> = () => {
       )}
     </Dialog>
   );
-};
+});
 
 const MarketModal: React.FC<IPropsVM> = ({ operationName }) => {
-  const urlParams = useParams<{ tokenId: string; poolId: string }>();
+  const { tokenId, marketId } = useParams<{
+    tokenId: string;
+    marketId: string;
+  }>();
   const vm = useMarketVM();
+  if (tokenId == null || marketId == null)
+    return <Navigate to={"/" + vm.market.marketId} />;
   return (
     <MarketModalVMProvider
       operationName={operationName}
-      urlParams={urlParams}
+      urlParams={{ tokenId, marketId }}
       market={vm.market}
     >
       <MarketModalContent />

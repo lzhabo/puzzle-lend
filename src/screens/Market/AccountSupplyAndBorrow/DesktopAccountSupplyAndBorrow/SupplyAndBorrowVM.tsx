@@ -48,47 +48,44 @@ class SupplyAndBorrowVM {
   sortData = (poolsData: TMarketStats[], isSupply: boolean) => {
     const sort = isSupply ? this.sortSupply : this.sortBorrow;
     const sortMode = isSupply ? this.sortModeSupply : this.sortModeBorrow;
-    // return poolsData.slice().sort((a, b) => {
-    //   let key: keyof TMarketStats | undefined;
-    //   if (sort === "borrowAPY") key = "borrowAPY";
-    //   if (sort === "supplyAPY") key = "supplyAPY";
-    //   if (sort === "selfSupply") key = "selfSupply";
-    //   if (sort === "selfBorrow") key = "selfBorrow";
-    //   if (sort === "dailyIncome") key = "dailyIncome";
-    //   if (sort === "dailyLoan") key = "dailyLoan";
-    //   if (key == null) return 0;
-    //
-    //   if (a == null || b == null) return 0;
-    //   if (a[key] == null && b[key] != null)
-    //     return sortMode === "descending" ? 1 : -1;
-    //   if (a[key] == null && b[key] == null)
-    //     return sortMode === "descending" ? -1 : 1;
-    //
-    //   const stat1 = a[key] as keyof TMarketStats;
-    //   const stat2 = b[key] as keyof TMarketStats;
-    //
-    //   // if filtering in $ equivalent
-    //   if (
-    //     ["selfSupply", "selfBorrow", "dailyIncome", "dailyLoan"].includes(sort)
-    //   ) {
-    //     // const val1 = (BN.formatUnits(stat1, a.decimals) as BN)
-    //     //   .times(a?.prices.min)
-    //     //   .toDecimalPlaces(0);
-    //     // const val2 = (BN.formatUnits(stat2, b.decimals) as BN)
-    //     //   .times(b?.prices.min)
-    //     //   .toDecimalPlaces(0);
-    //     //
-    //     // if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
-    //     // else return val1.lt(val2) ? -1 : 1;
-    //     return 1;
-    //   }
-    //
-    //   // if (sortMode === "descending") {
-    //   //   return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
-    //   // } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
-    //
-    //   return BN.ZERO;
-    // });
+    return poolsData.slice().sort((a, b) => {
+      let key: keyof TMarketStats | undefined;
+      if (sort === "borrowAPY") key = "borrowAPY";
+      if (sort === "supplyAPY") key = "supplyAPY";
+      if (sort === "selfSupply") key = "selfSupply";
+      if (sort === "selfBorrow") key = "selfBorrow";
+      if (sort === "dailyIncome") key = "dailyIncome";
+      if (sort === "dailyLoan") key = "dailyLoan";
+      if (key == null) return 0;
+
+      if (a == null || b == null) return 0;
+      if (a[key] == null && b[key] != null)
+        return sortMode === "descending" ? 1 : -1;
+      if (a[key] == null && b[key] == null)
+        return sortMode === "descending" ? -1 : 1;
+
+      const stat1 = a[key] as keyof TMarketStats;
+      const stat2 = b[key] as keyof TMarketStats;
+
+      // if filtering in $ equivalent
+      if (
+        ["selfSupply", "selfBorrow", "dailyIncome", "dailyLoan"].includes(sort)
+      ) {
+        const val1 = (BN.formatUnits(stat1, a.decimals) as BN)
+          .times(a?.prices.min)
+          .toDecimalPlaces(0);
+        const val2 = (BN.formatUnits(stat2, b.decimals) as BN)
+          .times(b?.prices.min)
+          .toDecimalPlaces(0);
+
+        if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
+        else return val1.lt(val2) ? -1 : 1;
+      }
+
+      if (sortMode === "descending") {
+        return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
+      } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
+    });
   };
 
   selectSort = (v: ISortTypes, isSupply: boolean) => {
@@ -107,13 +104,13 @@ class SupplyAndBorrowVM {
   };
 
   isSupplyDisabled = (token: TMarketStats) => {
-    // if (token?.supplyLimit.eq(0)) return false;
-    // if (!token?.totalSupply || !token?.totalBorrow) return false;
-    // const reserves = BN.formatUnits(
-    //   token?.totalSupply?.minus(token?.totalBorrow),
-    //   token?.decimals
-    // );
-    // return reserves.gt(token?.supplyLimit.div(token.prices.min));
+    if (token?.supplyLimit.eq(0)) return false;
+    if (!token?.totalSupply || !token?.totalBorrow) return false;
+    const reserves = BN.formatUnits(
+      token?.totalSupply?.minus(token?.totalBorrow),
+      token?.decimals
+    );
+    return reserves.gt(token?.supplyLimit.div(token.prices.min));
   };
 
   constructor(rootStore: RootStore) {

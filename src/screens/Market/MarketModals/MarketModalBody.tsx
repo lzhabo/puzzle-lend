@@ -11,8 +11,8 @@ import SupplyAssets from "@screens/Market/MarketModals/SupplyAssets";
 import RepayAssets from "@screens/Market/MarketModals/RepayAssets";
 
 type UrlParamsTypes = {
-  tokenId?: string;
-  marketId?: string;
+  tokenId: string;
+  marketId: string;
 };
 
 interface IProps {
@@ -45,7 +45,7 @@ const MarketModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.SUPPLY && (
         <SupplyAssets
           token={tokenStats}
-          marketId={urlParams?.marketId ?? ""}
+          marketId={urlParams.marketId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}
@@ -56,7 +56,7 @@ const MarketModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.WITHDRAW && (
         <WithdrawAssets
           token={tokenStats}
-          marketId={urlParams?.marketId ?? ""}
+          marketId={urlParams.marketId}
           userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -68,7 +68,7 @@ const MarketModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.BORROW && (
         <BorrowAssets
           token={tokenStats}
-          marketId={urlParams?.marketId ?? ""}
+          marketId={urlParams.marketId}
           // userHealth={vm.userHealth}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
@@ -80,7 +80,7 @@ const MarketModalBody: React.FC<IProps> = ({
       {operationName === OPERATIONS_TYPE.REPAY && (
         <RepayAssets
           token={tokenStats}
-          marketId={urlParams?.marketId ?? ""}
+          marketId={urlParams.marketId}
           modalAmount={vm.modalAmount}
           modalSetAmount={vm.setVMamount}
           onMaxClick={vm.triggerMaxClickFunc}

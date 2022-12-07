@@ -69,8 +69,7 @@ const BorrowAssets: React.FC<IProps> = ({
 
   const getMax = () => {
     const val = vm.countMaxBtn;
-    // handleDebounce(val);
-    handleDebounce(BN.ZERO);
+    handleDebounce(val);
 
     return val;
   };
@@ -141,8 +140,7 @@ const BorrowAssets: React.FC<IProps> = ({
         amount={amount}
         error={vm.modalBtnErrorText}
         setFocused={() => setFocused(true)}
-        // onMaxClick={() => onMaxClick(getMax())}
-        onMaxClick={() => console.log("onMaxClick")}
+        onMaxClick={() => onMaxClick(getMax())}
         handleChangeAmount={handleChangeAmount}
         setInputAmountMeasure={setInputAmountMeasure}
       />

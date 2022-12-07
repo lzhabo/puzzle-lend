@@ -72,8 +72,7 @@ const SupplyAssets: React.FC<IProps> = ({
   };
 
   const getMaxSupply = () => {
-    // const val = vm.countMaxBtn.toDecimalPlaces(0);
-    const val = BN.ZERO;
+    const val = vm.countMaxBtn.toDecimalPlaces(0);
     handleDebounce(val);
 
     return val;

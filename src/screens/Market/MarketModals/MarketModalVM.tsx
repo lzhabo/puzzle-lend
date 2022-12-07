@@ -18,8 +18,8 @@ const notifications = {
 };
 
 type UrlParamsTypes = {
-  tokenId?: string;
-  marketId?: string;
+  tokenId: string;
+  marketId: string;
 };
 
 const ctx = React.createContext<MarketModalVM | null>(null);
@@ -34,7 +34,7 @@ export const MarketModalVMProvider: React.FC<{
   const rootStore = useStores();
   const store = useMemo(
     () => new MarketModalVM(rootStore, operationName, urlParams, market),
-    [operationName, urlParams, rootStore]
+    [rootStore, operationName, urlParams, market]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -50,7 +50,7 @@ class MarketModalVM {
   ) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.setUrlParams(urlParams);
+    this.urlParams = urlParams;
     market && this.setMarket(market);
     this.setOperationName(operationName);
   }
@@ -58,7 +58,7 @@ class MarketModalVM {
   market: Market | null = null;
   setMarket = (v: Market | null) => (this.market = v);
 
-  urlParams: UrlParamsTypes = {};
+  urlParams: UrlParamsTypes;
   setUrlParams = (params: UrlParamsTypes) => {
     this.urlParams = params;
   };
@@ -176,7 +176,7 @@ class MarketModalVM {
     return (
       this.rootStore.accountStore.balances.find(
         (tokenData) => tokenData.assetId === this.urlParams?.tokenId
-      )?.balance || BN.ZERO
+      )?.balance ?? BN.ZERO
     );
   }
 
@@ -208,7 +208,7 @@ class MarketModalVM {
   get countMaxBtn() {
     let selfVal = BN.ZERO;
     const token = this.token;
-    if (token == null) return "";
+    if (token == null) return selfVal;
 
     if (this.operationName === OPERATIONS_TYPE.WITHDRAW) {
       selfVal = token?.selfSupply;
@@ -451,13 +451,12 @@ class MarketModalVM {
 
   // WITHDRAW MODAL
   countWithdrawAccountHealth = (currentWithdraw: BN) => {
-    // const { lendStore } = this.rootStore;
-    if (this.token == null) return BN.ZERO;
+    if (this.token == null || this.market == null) return BN.ZERO;
     const currentWithdrawAmount = !this.isDollar
       ? currentWithdraw
       : currentWithdraw.div(this.token?.prices?.min);
 
-    let bc = this.market?.marketStats.reduce((acc: BN, stat: TMarketStats) => {
+    let bc = this.market.marketStats.reduce((acc: BN, stat: TMarketStats) => {
       const deposit = BN.formatUnits(stat.selfSupply, stat.decimals);
       if (deposit.eq(0)) return acc;
       const cf = stat.cf;
@@ -475,7 +474,7 @@ class MarketModalVM {
       return acc.plus(assetBc);
     }, BN.ZERO);
 
-    const bcu = this.market?.marketStats.reduce(
+    const bcu = this.market.marketStats.reduce(
       (acc: BN, stat: TMarketStats) => {
         const borrow = BN.formatUnits(stat.selfBorrow, stat.decimals);
         const lt = stat.lt;
@@ -485,8 +484,7 @@ class MarketModalVM {
       BN.ZERO
     );
 
-    // const accountHealth = new BN(1).minus(bcu.div(bc)).times(100);
-    const accountHealth = BN.ZERO;
+    const accountHealth = new BN(1).minus(bcu.div(bc)).times(100);
 
     //todo check
     if (bc == null || bc.lt(0) || accountHealth.lt(0)) {

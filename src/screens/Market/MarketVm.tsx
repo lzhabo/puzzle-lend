@@ -26,8 +26,20 @@ class MarketVm {
   searchValue = "";
   setSearchValue = (v: string) => (this.searchValue = v);
 
-  market: Market | null = null;
-  setMarket = (v: Market | null) => (this.market = v);
+  private _market: Market | null = null;
+  private setMarket = (v: Market | null) => (this._market = v);
+
+  get market() {
+    return this._market!;
+  }
+
+  get initialized() {
+    return this.market.marketStats.length > 0;
+  }
+
+  get marketId() {
+    return this.market.marketId;
+  }
 
   sortApy = true;
   setSortApy = (v: boolean) => (this.sortApy = v);
@@ -40,14 +52,9 @@ class MarketVm {
 
   constructor(rootStore: RootStore, marketId: string) {
     this.rootStore = rootStore;
-    makeAutoObservable(this);
     const market =
       this.rootStore.marketsStore.getMarketByContractAddress(marketId);
-    if (market != null) {
-      this.setMarket(new Market(this.rootStore, market));
-      // this.market?.syncMarketsStats();
-      // setInterval(this.market?.syncMarketsStats, 60 * 1000);
-    }
-    console.log(this.market?.title);
+    market != null && this.setMarket(new Market(this.rootStore, market));
+    makeAutoObservable(this);
   }
 }

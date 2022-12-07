@@ -6,6 +6,7 @@ import SizedBox from "@components/SizedBox";
 import useWindowSize from "@src/hooks/useWindowSize";
 import DesktopTable from "@screens/Market/AssetsTable/DesktopTable";
 import MobileAssetsTable from "@screens/Market/AssetsTable/MobileAssetsTable";
+import { useMarketVM } from "@screens/Market/MarketVm";
 
 interface IProps {}
 
@@ -20,19 +21,22 @@ const Root = styled.div`
 `;
 
 const AssetsTable: React.FC<IProps> = () => {
+  const vm = useMarketVM();
+  const { marketStats: stats, contractAddress: poolId } = vm.market;
   const { width } = useWindowSize();
 
-  if (width && width < 880) return null;
-
-  //todo add filter
   return (
     <Root>
       <Text weight={500} type="secondary">
         All assets
       </Text>
       <SizedBox height={8} />
-      {/*filter*/}
-      {width && width >= 880 ? <DesktopTable /> : <MobileAssetsTable />}
+
+      {width && width >= 880 ? (
+        <DesktopTable {...{ stats, poolId }} />
+      ) : (
+        <MobileAssetsTable {...{ stats, poolId }} />
+      )}
     </Root>
   );
 };

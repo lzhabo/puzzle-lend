@@ -11,11 +11,12 @@ import Skeleton from "react-loading-skeleton";
 import { useNavigate } from "react-router-dom";
 import Tooltip from "@components/Tooltip";
 import { useTheme } from "@emotion/react";
-import { useMarketVM } from "@screens/Market/MarketVm";
 import { TMarketStats } from "@src/entities/Market";
 
-interface IProps {}
-
+interface IProps {
+  stats: TMarketStats[];
+  poolId: string;
+}
 const Root = styled.div`
   display: grid;
   gap: 24px;
@@ -67,7 +68,8 @@ const StatsRow = styled.div`
   padding-bottom: 8px;
   margin-bottom: 16px;
 
-  &:first-child {
+  //&:first-child {
+  &:first-of-type {
     margin-top: 16px;
   }
 
@@ -82,20 +84,18 @@ const Data = styled(Column)`
     margin-bottom: 16px;
   }
 `;
-const MobileAssetsTable: React.FC<IProps> = () => {
-  // const { lendStore } = useStores();
+const MobileAssetsTable: React.FC<IProps> = ({ poolId, stats }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const vm = useMarketVM();
-
   const openModal = useCallback(
     (
       e: React.MouseEvent,
-      poolId: string,
+      poolId: string | undefined,
       operationName: string,
       assetId: string
     ) => {
       e.stopPropagation();
+      if (poolId == null) return;
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
     [navigate]
@@ -110,11 +110,10 @@ const MobileAssetsTable: React.FC<IProps> = () => {
     );
     return reserves.gt(token?.supplyLimit.div(token.prices.min));
   };
-
   return (
     <Root>
-      {vm.market != null
-        ? vm.market.marketStats.map((s) => {
+      {stats.length > 0
+        ? stats.map((s) => {
             const data = [
               {
                 title: "Total supply",
@@ -218,9 +217,9 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                         kind="secondary"
                         fixed
                         disabled={true}
-                        // onClick={(e) =>
-                        //   openModal(e, lendStore.poolId, "supply", s.assetId)
-                        // }
+                        onClick={(e) =>
+                          openModal(e, poolId, "supply", s.assetId)
+                        }
                       >
                         Supply
                       </Button>
@@ -230,9 +229,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                       kind="secondary"
                       size="medium"
                       fixed
-                      // onClick={(e) =>
-                      //   openModal(e, lendStore.poolId, "supply", s.assetId)
-                      // }
+                      onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
                     >
                       Supply
                     </Button>
@@ -242,9 +239,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
                     kind="secondary"
                     size="medium"
                     fixed
-                    // onClick={(e) =>
-                    //   openModal(e, lendStore.poolId, "borrow", s.assetId)
-                    // }
+                    onClick={(e) => openModal(e, poolId, "borrow", s.assetId)}
                   >
                     Borrow
                   </Button>
@@ -252,9 +247,7 @@ const MobileAssetsTable: React.FC<IProps> = () => {
               </Asset>
             );
           })
-        : Array.from({
-            length: 4
-          }).map((_, index) => (
+        : Array.from({ length: 4 }).map((_, index) => (
             <Skeleton height={356} key={`${index}skeleton-row`} />
           ))}
     </Root>

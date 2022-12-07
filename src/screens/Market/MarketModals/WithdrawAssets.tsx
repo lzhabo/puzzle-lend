@@ -73,8 +73,7 @@ const WithdrawAssets: React.FC<IProps> = ({
   };
 
   const maxWithdraw = () => {
-    // const val = vm.countMaxBtn.toDecimalPlaces(0);
-    const val = BN.ZERO;
+    const val = vm.countMaxBtn.toDecimalPlaces(0);
     vm.withdrawChangeAmount(val);
     handleDebounce(val);
 

@@ -13,10 +13,10 @@ export const ROUTES = {
   MARKETS: "/markets",
   MARKET: "/:marketId",
   MARKET_MODALS: {
-    [OPERATIONS_TYPE.SUPPLY]: ":marketId/supply/:tokenId",
-    [OPERATIONS_TYPE.WITHDRAW]: ":marketId/withdraw/:tokenId",
-    [OPERATIONS_TYPE.BORROW]: ":marketId/borrow/:tokenId",
-    [OPERATIONS_TYPE.REPAY]: ":marketId/repay/:tokenId"
+    [OPERATIONS_TYPE.SUPPLY]: "/:marketId/supply/:tokenId",
+    [OPERATIONS_TYPE.WITHDRAW]: "/:marketId/withdraw/:tokenId",
+    [OPERATIONS_TYPE.BORROW]: "/:marketId/borrow/:tokenId",
+    [OPERATIONS_TYPE.REPAY]: "/:marketId/repay/:tokenId"
   },
   MARKET_TOKEN_DETAILS: "/:marketId/:assetId",
   ANALYTICS: "/analytics",

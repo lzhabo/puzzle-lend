@@ -7,7 +7,6 @@ import Text from "@components/Text";
 import Button from "@components/Button";
 import { Column, Row } from "@components/Flex";
 import { TMarketStats } from "@src/entities/Market";
-import { ROUTES } from "@src/constants";
 import BN from "@src/utils/BN";
 import _ from "lodash";
 

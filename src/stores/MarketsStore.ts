@@ -17,11 +17,7 @@ export default class MarketsStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    this.syncMarkets().then(() => {
-      console.log("MarketsStore- markets", this.markets.length);
-      this.setInitialized(true);
-    });
-    //todo add more
+    this.syncMarkets().then(() => this.setInitialized(true));
     setInterval(this.syncMarkets, 15 * 1000);
     reaction(
       () => this.rootStore.accountStore.address,

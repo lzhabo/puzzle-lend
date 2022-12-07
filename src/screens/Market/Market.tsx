@@ -16,6 +16,10 @@ import { Column } from "@src/components/Flex";
 
 import bg from "@src/assets/dashboard/main_bg.png";
 import { MarketVMProvider, useMarketVM } from "@screens/Market/MarketVm";
+import { ROUTES } from "@src/constants";
+import Spinner from "@components/Spinner";
+import { Anchor } from "@components/Anchor";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -58,51 +62,50 @@ const TotalLiquidity = styled.div`
   padding: 8px 20px;
   border-radius: 16px;
   width: 100%;
-  background: url(${bg});
-  background-repeat: no-repeat;
-  background-position: center;
+  background: url(${bg}) center no-repeat;
   background-size: cover;
   box-sizing: border-box;
+`;
+const WavesLink = styled(Anchor)`
+  color: #7075e9;
+  padding-left: 4px;
 `;
 const MarketImpl: React.FC<IProps> = observer(() => {
   const vm = useMarketVM();
   const { accountStore } = useStores();
 
-  return (
+  return vm.market == null ? (
+    <Navigate to={ROUTES.MARKETS} />
+  ) : (
     <Layout>
       <Root apySort={vm.sortApy} liquiditySort={vm.sortLiquidity}>
         <Text weight={500} size="large">
           Lending protocol built on the
-          <a
-            style={{ color: "#7075E9", paddingLeft: 4 }}
-            href="https://waves.tech/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Waves blockchain
-          </a>
+          <WavesLink href="https://waves.tech/">Waves blockchain</WavesLink>
         </Text>
         <SizedBox height={4} />
         <Subtitle fitContent>
           Supply and borrow tokens using different pools
         </Subtitle>
         <SizedBox height={40} />
-        {accountStore != null && (
-          <AccountDataWrapper>
-            <AccountHealth />
-            <Column crossAxisSize="max">
-              <TotalLiquidity>
-                <Text style={{ color: "#ffffff" }}>
-                  {`Total liquidity of ${vm.market?.title}: `}
-                  <b>$ {vm.market?.totalLiquidity.toFormat(2)}</b>
-                </Text>
-              </TotalLiquidity>
-              <SizedBox height={24} />
-              {accountStore.address && <AccountSupplyAndBorrow />}
-              <AssetsTable />
-            </Column>
-          </AccountDataWrapper>
-        )}
+        <AccountDataWrapper>
+          <AccountHealth />
+          <Column crossAxisSize="max">
+            <TotalLiquidity>
+              <Text style={{ color: "#ffffff" }}>
+                {`Total liquidity of ${vm.market.title}: `}
+                {vm.initialized ? (
+                  <b>$ {vm.market.totalLiquidity.toFormat(2)}</b>
+                ) : (
+                  <Skeleton baseColor="#fff" width={64} height={16} />
+                )}
+              </Text>
+            </TotalLiquidity>
+            <SizedBox height={24} />
+            {accountStore.address && <AccountSupplyAndBorrow />}
+            <AssetsTable />
+          </Column>
+        </AccountDataWrapper>
         <WhatIsLend />
         <FAQ />
         <Outlet />
@@ -111,14 +114,17 @@ const MarketImpl: React.FC<IProps> = observer(() => {
   );
 });
 
-const Market: React.FC<IProps & RouteProps> = () => {
-  const params = useParams<{ marketId: string }>();
-  if (params.marketId == null) return <>oops, there is no such market</>;
-  return (
-    <MarketVMProvider marketId={params.marketId ?? ""}>
+const Market: React.FC<IProps & RouteProps> = observer(() => {
+  const { marketsStore } = useStores();
+  const { marketId } = useParams<{ marketId?: string }>();
+  if (marketId == null) return <Navigate to={ROUTES.NOT_FOUND} />;
+  return !marketsStore.initialized ? (
+    <Spinner />
+  ) : (
+    <MarketVMProvider marketId={marketId}>
       <MarketImpl />
     </MarketVMProvider>
   );
-};
+});
 
 export default Market;

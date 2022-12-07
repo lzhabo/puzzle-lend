@@ -1,16 +1,19 @@
 import styled from "@emotion/styled";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import Text from "@components/Text";
 import SizedBox from "@components/SizedBox";
 import { Column, Row } from "@src/components/Flex";
+import Table from "@components/Table";
 import Tooltip from "@components/Tooltip";
 import SquareTokenIcon from "@components/SquareTokenIcon";
 import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { useSupplyAndBorrowVM } from "./SupplyAndBorrowVM";
+import { useMarketVM } from "@screens/Market/MarketVm";
 import { TMarketStats } from "@src/entities/Market";
 
 interface IProps {}
@@ -36,11 +39,11 @@ const TableWrap = styled.div<{ sort?: boolean }>`
 `;
 
 const AccountSupplyTable: React.FC<IProps> = () => {
-  // const { lendStore } = useStores();
   const [filteredSupplies, setFilteredSupplies] = useState<any[]>([]);
   const theme = useTheme();
   const vm = useSupplyAndBorrowVM();
   const navigate = useNavigate();
+  const marketVm = useMarketVM();
 
   const supplyColumns = useMemo(
     () => [
@@ -50,29 +53,29 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            // onClick={() =>
-            //   lendStore.accountSupply.length > 1
-            //     ? vm.selectSort("selfSupply", true)
-            //     : null
-            // }
+            onClick={() =>
+              marketVm.market.accountSupply.length > 1
+                ? vm.selectSort("selfSupply", true)
+                : null
+            }
             justifyContent="flex-end"
           >
             <Text size="medium" fitContent nowrap>
               Supplied
             </Text>
-            {/*{lendStore.accountSupply.length > 1 ? (*/}
-            {/*  <img*/}
-            {/*    src={theme.images.icons.group}*/}
-            {/*    alt="group"*/}
-            {/*    className={*/}
-            {/*      vm.sortSupply === "selfSupply"*/}
-            {/*        ? "sort-icon-active"*/}
-            {/*        : "sort-icon"*/}
-            {/*    }*/}
-            {/*  />*/}
-            {/*) : (*/}
-            {/*  <SizedBox width={24} />*/}
-            {/*)}*/}
+            {marketVm.market.accountSupply.length > 1 ? (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  vm.sortSupply === "selfSupply"
+                    ? "sort-icon-active"
+                    : "sort-icon"
+                }
+              />
+            ) : (
+              <SizedBox width={24} />
+            )}
           </Row>
         ),
         accessor: "supplied"
@@ -81,11 +84,11 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            // onClick={() =>
-            //   lendStore.accountSupply.length > 1
-            //     ? vm.selectSort("supplyAPY", true)
-            //     : null
-            // }
+            onClick={() =>
+              marketVm.market.accountSupply.length > 1
+                ? vm.selectSort("supplyAPY", true)
+                : null
+            }
             justifyContent="flex-end"
           >
             <Tooltip
@@ -105,19 +108,19 @@ const AccountSupplyTable: React.FC<IProps> = () => {
                 Supply APY
               </Text>
             </Tooltip>
-            {/*{lendStore.accountSupply.length > 1 ? (*/}
-            {/*  <img*/}
-            {/*    src={theme.images.icons.group}*/}
-            {/*    alt="group"*/}
-            {/*    className={*/}
-            {/*      vm.sortSupply === "supplyAPY"*/}
-            {/*        ? "sort-icon-active"*/}
-            {/*        : "sort-icon"*/}
-            {/*    }*/}
-            {/*  />*/}
-            {/*) : (*/}
-            {/*  <SizedBox width={24} />*/}
-            {/*)}*/}
+            {marketVm.market.accountSupply.length > 1 ? (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  vm.sortSupply === "supplyAPY"
+                    ? "sort-icon-active"
+                    : "sort-icon"
+                }
+              />
+            ) : (
+              <SizedBox width={24} />
+            )}
           </Row>
         ),
         accessor: "supplyApy"
@@ -132,19 +135,19 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             <Text size="medium" fitContent nowrap>
               Daily income
             </Text>
-            {/*{lendStore.accountSupply.length > 1 ? (*/}
-            {/*  <img*/}
-            {/*    src={theme.images.icons.group}*/}
-            {/*    alt="group"*/}
-            {/*    className={*/}
-            {/*      vm.sortSupply === "dailyIncome"*/}
-            {/*        ? "sort-icon-active"*/}
-            {/*        : "sort-icon"*/}
-            {/*    }*/}
-            {/*  />*/}
-            {/*) : (*/}
-            {/*  <SizedBox width={24} />*/}
-            {/*)}*/}
+            {marketVm.market.accountSupply.length > 1 ? (
+              <img
+                src={theme.images.icons.group}
+                alt="group"
+                className={
+                  vm.sortSupply === "dailyIncome"
+                    ? "sort-icon-active"
+                    : "sort-icon"
+                }
+              />
+            ) : (
+              <SizedBox width={24} />
+            )}
           </Row>
         ),
         accessor: "dailyIncome"
@@ -152,26 +155,32 @@ const AccountSupplyTable: React.FC<IProps> = () => {
       { Header: "", accessor: "supplyBtn" },
       { Header: "", accessor: "withdrawBtn" }
     ],
-    [vm]
+    [vm, theme.images.icons.group, marketVm.market.accountSupply.length]
   );
 
   const openModal = useCallback(
     (
       e: React.MouseEvent,
-      poolId: string,
+      marketId: string,
       operationName: string,
       assetId: string
     ) => {
       e.stopPropagation();
-      return navigate(`/${poolId}/${operationName}/${assetId}`);
+      return navigate(`/${marketId}/${operationName}/${assetId}`);
     },
     [navigate]
   );
   useMemo(() => {
-    const data = []
-      // .sortData(lendStore.accountSupply, true)
+    const data = vm
+      .sortData(marketVm.market.accountSupply, true)
       .map((s: TMarketStats) => ({
-        onClick: () => navigate(""),
+        onClick: () =>
+          navigate(
+            ROUTES.MARKET_TOKEN_DETAILS.replace(
+              ":marketId",
+              marketVm.marketId
+            ).replace(":assetId", s.assetId)
+          ),
         asset: (
           <Row alignItems="center">
             <SquareTokenIcon size="small" src={s.logo} alt="logo" />
@@ -216,11 +225,34 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             </Text>
           </Column>
         ),
-        supplyBtn: (
+        supplyBtn: vm.isSupplyDisabled(s) ? (
+          <Tooltip
+            fixed
+            content={
+              <Text textAlign="left">Maximum total supply is reached</Text>
+            }
+          >
+            <Button
+              kind="secondary"
+              size="medium"
+              fixed
+              disabled={true}
+              onClick={(e) =>
+                openModal(e, marketVm.marketId, "supply", s.assetId)
+              }
+              style={{ width: "100px", margin: "0 auto" }}
+            >
+              Supply
+            </Button>
+          </Tooltip>
+        ) : (
           <Button
             kind="secondary"
             size="medium"
             fixed
+            onClick={(e) =>
+              openModal(e, marketVm.marketId, "supply", s.assetId)
+            }
             style={{ width: "100px", margin: "0 auto" }}
           >
             Supply
@@ -231,6 +263,9 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             kind="secondary"
             size="medium"
             fixed
+            onClick={(e) =>
+              openModal(e, marketVm.marketId, "withdraw", s.assetId)
+            }
             style={{ width: "100px", margin: "0 auto" }}
           >
             Withdraw
@@ -238,24 +273,30 @@ const AccountSupplyTable: React.FC<IProps> = () => {
         )
       }));
     setFilteredSupplies(data);
-  }, [vm.sortSupply, vm.sortModeSupply, openModal, navigate]);
+  }, [
+    vm,
+    marketVm.market.accountSupply,
+    marketVm.marketId,
+    navigate,
+    openModal
+  ]);
   //todo fix dependency problem
   return (
     <Root>
-      {/*{lendStore.accountSupply.length > 0 && (*/}
-      {/*  <TableWrap sort={vm.sortModeSupply === "descending"}>*/}
-      {/*    <Text weight={500} type="secondary">*/}
-      {/*      My supply*/}
-      {/*    </Text>*/}
-      {/*    <SizedBox height={8} />*/}
-      {/*    <Table*/}
-      {/*      style={{ width: "100%" }}*/}
-      {/*      columns={supplyColumns}*/}
-      {/*      data={filteredSupplies}*/}
-      {/*    />*/}
-      {/*    <SizedBox height={24} />*/}
-      {/*  </TableWrap>*/}
-      {/*)}*/}
+      {marketVm.market.accountSupply.length > 0 && (
+        <TableWrap sort={vm.sortModeSupply === "descending"}>
+          <Text weight={500} type="secondary">
+            My supply
+          </Text>
+          <SizedBox height={8} />
+          <Table
+            style={{ width: "100%" }}
+            columns={supplyColumns}
+            data={filteredSupplies}
+          />
+          <SizedBox height={24} />
+        </TableWrap>
+      )}
     </Root>
   );
 };

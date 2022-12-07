@@ -11,6 +11,7 @@ import { observer } from "mobx-react-lite";
 import { useStores } from "@stores";
 import { useTheme } from "@emotion/react";
 import { useMarketVM } from "@screens/Market/MarketVm";
+import Skeleton from "react-loading-skeleton";
 
 interface IProps {}
 
@@ -22,10 +23,10 @@ const Root = styled.div`
   background: ${({ theme }) => `${theme.colors.white}`};
   border: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
   border-radius: 16px;
-  margin-top: 32px;
+  //margin-top: 32px;
   align-self: flex-start;
-  align-items: center;
-  flex-direction: column;
+  //align-items: center;
+  //flex-direction: column;
   margin: 50px auto 20px auto;
   width: 100%;
   box-sizing: border-box;
@@ -66,20 +67,17 @@ const AccountHealth: React.FC<IProps> = () => {
   const data = [
     {
       title: "Supply balance",
-      // value: `$ ${lendStore.accountSupplyBalance.toFormat(2)}`,
-      value: `$ ${vm.market?.accountSupplyBalance.toFormat(2)}`,
+      value: `$ ${vm.market.accountSupplyBalance.toFormat(2)}`,
       description: "USD value of your deposits in total"
     },
     {
       title: "Borrow balance",
-      // value: `$ ${lendStore.accountBorrowBalance.toFormat(2)}`,
-      value: `$ ${vm.market?.accountBorrowBalance.toFormat(2)}`,
+      value: `$ ${vm.market.accountBorrowBalance.toFormat(2)}`,
       description: "USD value of your borrows in total"
     },
     {
       title: "NET APY",
-      // value: `${lendStore.netApy.toFormat(2)} %`,
-      value: `${vm.market?.netApy.toFormat(2)} %`,
+      value: `${vm.market.netApy.toFormat(2)} %`,
       border: true,
       description:
         "Your annual net profit (expenses) relative to your deposits (loans) USD value."
@@ -125,7 +123,7 @@ const AccountHealth: React.FC<IProps> = () => {
                   </Title>
                 </Tooltip>
                 <Text nowrap fitContent>
-                  {value}
+                  {vm.initialized ? value : <Skeleton width={64} height={16} />}
                 </Text>
               </Row>
             ))}

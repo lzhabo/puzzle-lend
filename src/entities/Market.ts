@@ -2,12 +2,12 @@ import RootStore from "@stores/RootStore";
 import BN from "@src/utils/BN";
 import { ASSETS_TYPE, TOKENS_BY_SYMBOL } from "@src/constants";
 import { getStateByKey } from "@src/utils/getStateByKey";
-import { makeAutoObservable, reaction } from "mobx";
 import nodeService from "@src/services/nodeService";
 import MarketStateFetchService, {
   TMarketToken
 } from "@src/services/MarketStateFetchService";
 import { IMarketConfig } from "@src/services/marketsSeervice";
+import { makeAutoObservable } from "mobx";
 
 export type TMarketStats = {
   totalSupply: BN;
@@ -71,19 +71,7 @@ class Market {
     return this._fetchService!;
   }
 
-  constructor(rootStore: RootStore, params: IMarketConfig) {
-    //todo try to remove
-    this.rootStore = rootStore;
-    this.title = params.title;
-    this.description = params.description;
-    this.contractAddress = params.contractAddress;
-    this.assets = params.assets ?? [];
-
-    this.setFetchService(params.contractAddress).then(() =>
-      this.setInitialized(true)
-    );
-    setInterval(this.syncMarketsStats, 60 * 1000);
-  }
+  market: { name: string; contractAddress: string };
 
   setFetchService = async (market: string) => {
     if (!market) return;
@@ -91,7 +79,7 @@ class Market {
     return await this._fetchService
       .fetchSetups()
       .then(this.setTokensSetups)
-      .then(() => this.syncMarketsStats())
+      .then(this.syncMarketsStats)
       .catch((e) =>
         this.rootStore.notificationStore.notify(e.message, { type: "error" })
       );
@@ -114,17 +102,12 @@ class Market {
   getStatByAssetId = (assetId: string) =>
     this.marketStats.find((s) => s.assetId === assetId);
 
-  market = { name: "", contractAddress: "" };
-  setMarket = (market: { name: string; contractAddress: string }) =>
-    (this.market = market);
-
   get marketId(): string {
     return this.market.contractAddress;
   }
 
   syncMarketsStats = async () => {
     const address = this.rootStore.accountStore.address;
-
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
@@ -251,7 +234,7 @@ class Market {
 
   get accountSupplyBalance() {
     if (this.rootStore.accountStore.address == null) return BN.ZERO;
-    return this.marketStats
+    const accountSupplyBalance = this.marketStats
       .filter(({ selfSupply }) => selfSupply.gt(0))
       .reduce((acc, v) => {
         const balance = v.prices.max.times(
@@ -259,6 +242,7 @@ class Market {
         );
         return acc.plus(balance);
       }, BN.ZERO);
+    return accountSupplyBalance;
   }
 
   get accountBorrowBalance() {
@@ -327,6 +311,23 @@ class Market {
   get accountBorrow() {
     if (this.rootStore.accountStore.address == null) return [];
     return this.marketStats.filter(({ selfBorrow }) => selfBorrow.gt(0));
+  }
+
+  constructor(rootStore: RootStore, params: IMarketConfig) {
+    this.rootStore = rootStore;
+    this.title = params.title;
+    this.description = params.description;
+    this.contractAddress = params.contractAddress;
+    this.assets = params.assets ?? [];
+    this.market = {
+      contractAddress: params.contractAddress,
+      name: params.title
+    };
+    this.setFetchService(params.contractAddress).then(() =>
+      this.setInitialized(true)
+    );
+    setInterval(this.syncMarketsStats, 60 * 1000);
+    makeAutoObservable(this);
   }
 }
 

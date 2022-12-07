@@ -91,8 +91,8 @@ const MarketCards: React.FC<IProps> = () => {
                   </Row>
                   <SizedBox height={16} />
                   <Row>
-                    {marketStats.map(({ title, value }) => (
-                      <Column crossAxisSize="max">
+                    {marketStats.map(({ title, value }, i) => (
+                      <Column crossAxisSize="max" key={i}>
                         <Text
                           type="secondary"
                           size="medium"
@@ -112,8 +112,8 @@ const MarketCards: React.FC<IProps> = () => {
                 </TopMarketCard>
                 <BottomMarketCard>
                   <Row justifyContent="space-between" alignItems="flex-start">
-                    {marketStats.map(({ title, value }) => (
-                      <Column crossAxisSize="max">
+                    {marketStats.map(({ title, value }, i) => (
+                      <Column crossAxisSize="max" key={i}>
                         <Text
                           type="secondary"
                           size="medium"

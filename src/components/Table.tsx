@@ -26,7 +26,8 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
     th {
       border-radius: 16px 16px 0 0;
 
-      :first-child {
+      //:first-child {
+      :first-of-type {
         text-align: left;
       }
     }
@@ -71,7 +72,8 @@ const Root = styled.div<{ hovered?: boolean; fitContent?: boolean }>`
       padding: 16px 8px;
       border-bottom: 1px solid ${({ theme }) => `${theme.colors.primary100}`};
 
-      :first-child {
+      //:first-child {
+      :first-of-type {
         text-align: left;
       }
 

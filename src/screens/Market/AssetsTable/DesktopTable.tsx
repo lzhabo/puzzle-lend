@@ -12,10 +12,14 @@ import { observer } from "mobx-react-lite";
 import BN from "@src/utils/BN";
 import { useTheme } from "@emotion/react";
 import { TMarketStats } from "@src/entities/Market";
+import Skeleton from "react-loading-skeleton";
 
 type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
-interface IProps {}
+interface IProps {
+  stats: TMarketStats[];
+  poolId: string;
+}
 
 const Root = styled.div<{ sort?: boolean }>`
   display: flex;
@@ -47,7 +51,7 @@ const TooltipText = styled(Text)`
   white-space: normal;
 `;
 
-const DesktopTable: React.FC<IProps> = () => {
+const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
   const theme = useTheme();
   const [filteredAssets, setFilteredAssets] = useState<any[]>([]);
   const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
@@ -222,55 +226,55 @@ const DesktopTable: React.FC<IProps> = () => {
   const openModal = useCallback(
     (
       e: React.MouseEvent,
-      poolId: string,
+      poolId: string | undefined,
       operationName: string,
       assetId: string
     ) => {
       e.stopPropagation();
+      if (poolId == null) return;
       return navigate(`/${poolId}/${operationName}/${assetId}`);
     },
     [navigate]
   );
 
   useMemo(() => {
-    // let data: any = lendStore.poolsStats.slice().sort((a, b) => {
-    //   const stats1: TMarketStats = a;
-    //   const stats2: TMarketStats = b;
-    //   let key: keyof TMarketStats | undefined;
-    //   if (sort === "totalSupply") key = "totalSupply";
-    //   if (sort === "totalBorrow") key = "totalBorrow";
-    //   if (sort === "supplyAPY") key = "supplyAPY";
-    //   if (sort === "borrowAPY") key = "borrowAPY";
-    //   if (key == null) return 0;
-    //
-    //   if (stats1 == null || stats2 == null) return 0;
-    //   if (stats1[key] == null && stats2[key] != null)
-    //     return sortMode === "descending" ? 1 : -1;
-    //   if (stats1[key] == null && stats2[key] == null)
-    //     return sortMode === "descending" ? -1 : 1;
-    //
-    //   const stat1 = stats1[key] as keyof TMarketStats;
-    //   const stat2 = stats2[key] as keyof TMarketStats;
-    //
-    //   // if filtering in $ equivalent
-    //   if (["totalBorrow", "totalSupply"].includes(sort)) {
-    //     const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
-    //       .times(stats1?.prices.min)
-    //       .toDecimalPlaces(0);
-    //     const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
-    //       .times(stats2?.prices.min)
-    //       .toDecimalPlaces(0);
-    //
-    //     if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
-    //     else return val1.lt(val2) ? -1 : 1;
-    //   }
-    //
-    //   if (sortMode === "descending") {
-    //     return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
-    //   } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
-    // });
+    let data: any = stats.slice().sort((a, b) => {
+      const stats1: TMarketStats = a;
+      const stats2: TMarketStats = b;
+      let key: keyof TMarketStats | undefined;
+      if (sort === "totalSupply") key = "totalSupply";
+      if (sort === "totalBorrow") key = "totalBorrow";
+      if (sort === "supplyAPY") key = "supplyAPY";
+      if (sort === "borrowAPY") key = "borrowAPY";
+      if (key == null) return 0;
 
-    let data = [] as any;
+      if (stats1 == null || stats2 == null) return 0;
+      if (stats1[key] == null && stats2[key] != null)
+        return sortMode === "descending" ? 1 : -1;
+      if (stats1[key] == null && stats2[key] == null)
+        return sortMode === "descending" ? -1 : 1;
+
+      const stat1 = stats1[key] as keyof TMarketStats;
+      const stat2 = stats2[key] as keyof TMarketStats;
+
+      // if filtering in $ equivalent
+      if (["totalBorrow", "totalSupply"].includes(sort)) {
+        const val1 = (BN.formatUnits(stat1, stats1.decimals) as BN)
+          .times(stats1?.prices.min)
+          .toDecimalPlaces(0);
+        const val2 = (BN.formatUnits(stat2, stats2.decimals) as BN)
+          .times(stats2?.prices.min)
+          .toDecimalPlaces(0);
+
+        if (sortMode === "descending") return val1.lt(val2) ? 1 : -1;
+        else return val1.lt(val2) ? -1 : 1;
+      }
+
+      if (sortMode === "descending") {
+        return BN.formatUnits(stat1, 0).lt(stat2) ? 1 : -1;
+      } else return BN.formatUnits(stat1, 0).lt(stat2) ? -1 : 1;
+    });
+
     data = data.map((s: TMarketStats) => ({
       onClick: () => {
         navigate("");
@@ -345,7 +349,7 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          // onClick={(e) => openModal(e, lendStore.poolId, "borrow", s.assetId)}
+          onClick={(e) => openModal(e, poolId, "borrow", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Borrow
@@ -362,7 +366,7 @@ const DesktopTable: React.FC<IProps> = () => {
             size="medium"
             fixed
             disabled={true}
-            // onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+            onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
             style={{ width: "100px", margin: "0 auto" }}
           >
             Supply
@@ -373,30 +377,32 @@ const DesktopTable: React.FC<IProps> = () => {
           kind="secondary"
           size="medium"
           fixed
-          // onClick={(e) => openModal(e, lendStore.poolId, "supply", s.assetId)}
+          onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Supply
         </Button>
       )
     }));
-    setFilteredAssets(data);
+    data && setFilteredAssets(data);
   }, [
-    theme.images.icons.autostaking,
+    stats,
     sort,
     sortMode,
+    theme.images.icons.autostaking,
     isSupplyDisabled,
+    navigate,
     openModal,
-    navigate
+    poolId
   ]);
 
   return (
     <Root sort={sortMode === "descending"}>
-      {/*{lendStore.initialized && filteredAssets.length ? (*/}
-      <Table columns={columns} data={filteredAssets} />
-      {/*) : (*/}
-      {/*  <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />*/}
-      {/*)}*/}
+      {stats.length > 0 ? (
+        <Table columns={columns} data={filteredAssets} />
+      ) : (
+        <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
+      )}
     </Root>
   );
 };
