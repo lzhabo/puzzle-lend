@@ -1,6 +1,6 @@
 import { RootStore } from "./index";
 import { makeAutoObservable, reaction } from "mobx";
-import Market, { IData } from "@src/entities/Market";
+import { IData } from "@src/entities/Market";
 import marketService, { IMarketWithStats } from "@src/services/marketsSeervice";
 import BN from "@src/utils/BN";
 

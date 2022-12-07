@@ -47,7 +47,7 @@ const PoolCards: React.FC<IProps> = () => {
   const navigate = useNavigate();
   return (
     <Root>
-      {marketsStore.markets.length == 0 ? (
+      {marketsStore.markets.length === 0 ? (
         <Skeleton height={56} style={{ marginBottom: 8 }} count={4} />
       ) : (
         marketsStore.markets.map(

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import React from "react";
 import tokenLogos from "@src/constants/tokenLogos";
+import { TOKENS_BY_ASSET_ID } from "@src/constants";
 
 interface IProps {
   assets: string[];
@@ -17,15 +18,18 @@ const Img = styled.img`
   height: 24px;
 
   border-radius: 50px;
+  background-color: ${({ theme }) => theme.colors.primary650};
 `;
 const AssetsPic: React.FC<IProps> = ({ assets }) => {
-  console.log(assets);
+  assets.map((v) => console.log(tokenLogos[TOKENS_BY_ASSET_ID[v].symbol]));
   return (
     <Root>
       {assets.map((v, index) => (
         <Img
-          src={tokenLogos[v]}
-          style={{ right: index * 16, zIndex: -index }}
+          src={tokenLogos[TOKENS_BY_ASSET_ID[v].symbol]}
+          style={{ right: (index + 1) * 16, zIndex: +index }}
+          key={v}
+          alt="token-logo"
         />
       ))}
     </Root>
