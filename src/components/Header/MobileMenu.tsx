@@ -79,7 +79,7 @@ const MobileMenu: React.FC<IProps> = ({
     <Root {...{ bannerClosed, opened }}>
       <div className="menu-body">
         <Divider />
-        <Scrollbar style={{ margin: 24, marginTop: 100, marginBottom: 0 }}>
+        <Scrollbar style={{ margin: 24 }}>
           <Column crossAxisSize="max" style={{ maxHeight: "50vh" }}>
             <LinkGroup onClick={onClose} title="" links={mainFunctional} />
             <SizedBox height={24} />
