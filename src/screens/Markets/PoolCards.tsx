@@ -21,7 +21,6 @@ const Root = styled.div`
     flex-direction: row;
   }
 `;
-const Card = styled.div``;
 const TopMarketCard = styled.div`
   display: flex;
   flex-direction: column;
@@ -65,7 +64,7 @@ const PoolCards: React.FC<IProps> = () => {
             ];
             const handleGoToMarket = () => navigate(`/`);
             return (
-              <Card key={`market-card-${contractAddress}`}>
+              <div key={`market-card-${contractAddress}`}>
                 <TopMarketCard>
                   <Row justifyContent="space-between">
                     <Column>
@@ -78,11 +77,13 @@ const PoolCards: React.FC<IProps> = () => {
                     <AssetsPic assets={assets ?? []} />
                   </Row>
                   <SizedBox height={16} />
-                  <Row justifyContent="space-between" alignItems="flex-start">
+                  <Row>
                     {marketStats.map(({ title, value }) => (
-                      <Column>
-                        <Text>{title}</Text>
-                        <Text>{`$ ${value.toFormat(2)}`}</Text>
+                      <Column crossAxisSize="max">
+                        <Text type="secondary" size="medium">
+                          {title}
+                        </Text>
+                        <Text weight={500}>{`$ ${value.toFormat(2)}`}</Text>
                       </Column>
                     ))}
                   </Row>
@@ -90,9 +91,11 @@ const PoolCards: React.FC<IProps> = () => {
                 <BottomMarketCard>
                   <Row justifyContent="space-between" alignItems="flex-start">
                     {marketStats.map(({ title, value }) => (
-                      <Column>
-                        <Text>{title}</Text>
-                        <Text>{`$ ${value.toFormat(2)}`}</Text>
+                      <Column crossAxisSize="max">
+                        <Text type="secondary" size="medium">
+                          {title}
+                        </Text>
+                        <Text weight={500}>{`$ ${value.toFormat(2)}`}</Text>
                       </Column>
                     ))}
                   </Row>
@@ -106,7 +109,7 @@ const PoolCards: React.FC<IProps> = () => {
                     Go to market
                   </Button>
                 </BottomMarketCard>
-              </Card>
+              </div>
             );
           }
         )
