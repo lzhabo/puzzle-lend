@@ -36,11 +36,11 @@ export default {
     borderColor: colors.primary800
   },
   marketCard: {
-    titleText: "#363870",
-    subTitleText: "#8082C5",
+    titleText: "#FFFFFF",
+    subTitleText: "#C6C9F4",
     accountBalanceTitle: "#C6C9F4",
     accountBalanceValue: "#ffffff",
-    gradient: "linear-gradient(94.61deg, #FFFFFF 0.61%, #E1E3FF 100%);"
+    gradient: "linear-gradient(94.61deg, #2B2F76 0.61%, #4D51B8 100%);"
   },
   gradient: "rgba(0, 0, 0, 0.5);",
   tokenDescGradient:

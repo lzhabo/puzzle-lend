@@ -32,7 +32,7 @@ export default {
     subTitleText: "#C6C9F4",
     accountBalanceTitle: "#8082C5",
     accountBalanceValue: "#363870",
-    gradient: "linear-gradient(94.61deg, #16214B 0.61%, #213069 100%)"
+    gradient: "linear-gradient(94.61deg, #2B2F76 0.61%, #4D51B8 100%);"
   },
 
   gradient: "rgba(255, 255, 255, 0.5)",
