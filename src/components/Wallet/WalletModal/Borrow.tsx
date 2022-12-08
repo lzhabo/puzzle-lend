@@ -66,14 +66,12 @@ const Borrow: React.FC<IProps> = () => {
           <SizedBox height={16} />
           <NotFoundIcon />
           <Text type="secondary" size="medium" textAlign="center">
-            You don’t have any assets on your wallet.
-            <br />
-            Buy WAVES on Waves Exchange to start trading.
+            You don’t have any borrow yet
           </Text>
-          <SizedBox height={16} />
-          <Anchor href="https://waves.exchange/trading/spot/WAVES_USDN">
-            <Button size="medium">Buy WAVES</Button>
-          </Anchor>
+          {/*<SizedBox height={16} />*/}
+          {/*<Anchor href="https://waves.exchange/trading/spot/WAVES_USDN">*/}
+          {/*  <Button size="medium">Buy WAVES</Button>*/}
+          {/*</Anchor>*/}
           <SizedBox height={100} />
         </Column>
       )}

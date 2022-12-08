@@ -23,7 +23,7 @@ const Root = styled(Column)`
 `;
 
 const TabsWrapper = styled(Row)`
-  border-radius: 16px 16px 0px 0px;
+  border-radius: 16px 16px 0 0;
   background: ${({ theme }) => theme.colors.white};
   height: 56px;
   margin-top: -56px;

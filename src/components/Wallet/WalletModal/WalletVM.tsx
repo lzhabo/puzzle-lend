@@ -11,7 +11,6 @@ import { TOKENS_LIST } from "@src/constants";
 import { TMarketStats } from "@src/entities/Market";
 
 const ctx = React.createContext<WalletVM | null>(null);
-//fixme review wallet and fix issues
 export const WalletVMProvider: React.FC = ({ children }) => {
   const rootStore = useStores();
   const store = useMemo(() => new WalletVM(rootStore), [rootStore]);
@@ -60,23 +59,23 @@ class WalletVM {
   }
 
   get userAssets() {
-    const { accountStore } = this.rootStore;
-    return (
-      TOKENS_LIST.map((t) => {
-        const balance = accountStore.findBalanceByAssetId(t.assetId);
-        return balance ?? new Balance(t);
-      })
-        // .filter((balance) =>
-        //   lendStore.poolsStats.find((item) => item.assetId === balance.assetId)
-        // )
-        .filter(({ balance }) => balance && !balance.eq(0))
-        .sort((a, b) => {
-          if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-          if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-          if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-          return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-        })
-    );
+    const { accountStore, marketsStore } = this.rootStore;
+    return TOKENS_LIST.map((t) => {
+      const balance = accountStore.findBalanceByAssetId(t.assetId);
+      return balance ?? new Balance(t);
+    })
+      .filter((balance) =>
+        marketsStore.markets
+          .map((v) => v.assets)
+          .find((item) => item?.includes(balance.assetId))
+      )
+      .filter(({ balance }) => balance && !balance.eq(0))
+      .sort((a, b) => {
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+      });
   }
 
   get totalInvestmentAmount() {

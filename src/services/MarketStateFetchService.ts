@@ -61,6 +61,8 @@ class MarketStateFetchService {
     const response = await nodeService.evaluate(this.pool, "getPrices(false)");
     const value = response?.result?.value?._2?.value as string;
 
+    console.log(value);
+
     if (!value) return null;
 
     return value

@@ -12,7 +12,14 @@ export interface IMarket {
   };
 }
 
+export interface ITokenPrice {
+  assetId: string;
+  min: string;
+  max: string;
+}
+
 export interface IMarketConfig extends IMarket {
+  prices?: ITokenPrice[];
   statistics?: {
     totalBorrowed: string;
     totalSupplied: string;
