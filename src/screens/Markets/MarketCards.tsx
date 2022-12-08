@@ -44,7 +44,7 @@ const BottomMarketCard = styled.div`
 `;
 
 const MarketCards: React.FC<IProps> = () => {
-  const { marketsStore } = useStores();
+  const { marketsStore, accountStore } = useStores();
   const navigate = useNavigate();
   const theme = useTheme();
   return (
@@ -65,6 +65,16 @@ const MarketCards: React.FC<IProps> = () => {
               {
                 title: "Total borrowed",
                 value: new BN(statistics?.totalBorrowed ?? 0)
+              }
+            ];
+            const userData = [
+              {
+                title: "My supply balance",
+                value: accountStore.address == null ? "—" : "0.00"
+              },
+              {
+                title: "My borrow balance",
+                value: accountStore.address == null ? "—" : "0.00"
               }
             ];
             const handleGoToMarket = () => navigate(`/${contractAddress}`);
@@ -112,7 +122,7 @@ const MarketCards: React.FC<IProps> = () => {
                 </TopMarketCard>
                 <BottomMarketCard>
                   <Row justifyContent="space-between" alignItems="flex-start">
-                    {marketStats.map(({ title, value }, i) => (
+                    {userData.map(({ title, value }, i) => (
                       <Column crossAxisSize="max" key={i}>
                         <Text
                           type="secondary"
@@ -128,7 +138,9 @@ const MarketCards: React.FC<IProps> = () => {
                           style={{
                             color: theme.colors.marketCard.accountBalanceValue
                           }}
-                        >{`$ ${value.toFormat(2)}`}</Text>
+                        >
+                          {value}
+                        </Text>
                       </Column>
                     ))}
                   </Row>

@@ -8,17 +8,18 @@ import axios from "axios";
 import transactionsService from "@src/services/transactionsService";
 import nodeService from "@src/services/nodeService";
 import BN from "@src/utils/BN";
+import Market from "@src/entities/Market";
 
 const ctx = React.createContext<ExploreTokenVM | null>(null);
 
 export const ExploreTokenVMProvider: React.FC<{
   assetId: string;
-  poolId?: string;
-}> = ({ assetId, poolId, children }) => {
+  marketId?: string;
+}> = ({ assetId, marketId, children }) => {
   const rootStore = useStores();
   const store = useMemo(
-    () => new ExploreTokenVM(rootStore, poolId ?? "", assetId),
-    [assetId, poolId, rootStore]
+    () => new ExploreTokenVM(rootStore, marketId ?? "", assetId),
+    [assetId, marketId, rootStore]
   );
   return <ctx.Provider value={store}>{children}</ctx.Provider>;
 };
@@ -50,13 +51,15 @@ class ExploreTokenVM {
   chartLoading = true;
   setChartLoading = (v: boolean) => (this.chartLoading = v);
 
+  market: Market | null = null;
+  setMarket = (v: Market | null) => (this.market = v);
+
   get asset() {
     return TOKENS_BY_ASSET_ID[this.assetId];
   }
 
   get statistics() {
-    return null;
-    // return this.rootStore.lendStore.getStatByAssetId(this.asset.assetId);
+    return this.market?.marketStats.find((t) => t.assetId === this.assetId);
   }
 
   selectedChartPeriod: keyof TChartDataRecord = "1d";
@@ -107,10 +110,8 @@ class ExploreTokenVM {
   syncUsers = () =>
     nodeService
       .nodeMatchRequest(
-        "",
-        ""
-        // this.rootStore.lendStore.poolId,
-        // `(.*)_(supplied%7Cborrowed)_${this.assetId}`
+        this.market?.contractAddress ?? "",
+        `(.*)_(supplied%7Cborrowed)_${this.assetId}`
       )
       .then((data) =>
         data.reduce(
@@ -146,18 +147,17 @@ class ExploreTokenVM {
 
   //fixme
   get isAssetOk() {
-    return true;
-    // return this.rootStore.lendStore.poolsStats.some(
-    //   (t) => t.assetId === this.assetId
-    // );
+    return this.market?.assets.includes(this.assetId);
   }
 
-  constructor(rootStore: RootStore, poolId: string, assetId: string) {
+  constructor(rootStore: RootStore, marketId: string, assetId: string) {
+    console.log("constructor ExploreTokenVMProvider");
     this.rootStore = rootStore;
     this.assetId = assetId;
+    const market =
+      this.rootStore.marketsStore.getMarketByContractAddress(marketId);
+    market != null && this.setMarket(new Market(this.rootStore, market));
     makeAutoObservable(this);
-    // const pool = POOLS.find((pool) => pool.address === poolId)!;
-    // this.rootStore.lendStore.setPool(pool);
     Promise.all([
       this.syncChart(),
       this.loadOperations(),

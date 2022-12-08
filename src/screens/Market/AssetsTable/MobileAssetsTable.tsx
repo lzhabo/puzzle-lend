@@ -15,8 +15,9 @@ import { TMarketStats } from "@src/entities/Market";
 
 interface IProps {
   stats: TMarketStats[];
-  poolId: string;
+  marketId: string;
 }
+
 const Root = styled.div`
   display: grid;
   gap: 24px;
@@ -84,19 +85,19 @@ const Data = styled(Column)`
     margin-bottom: 16px;
   }
 `;
-const MobileAssetsTable: React.FC<IProps> = ({ poolId, stats }) => {
+const MobileAssetsTable: React.FC<IProps> = ({ marketId, stats }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const openModal = useCallback(
     (
       e: React.MouseEvent,
-      poolId: string | undefined,
+      marketId: string | undefined,
       operationName: string,
       assetId: string
     ) => {
       e.stopPropagation();
-      if (poolId == null) return;
-      return navigate(`/${poolId}/${operationName}/${assetId}`);
+      if (marketId == null) return;
+      return navigate(`/${marketId}/${operationName}/${assetId}`);
     },
     [navigate]
   );
@@ -218,7 +219,7 @@ const MobileAssetsTable: React.FC<IProps> = ({ poolId, stats }) => {
                         fixed
                         disabled={true}
                         onClick={(e) =>
-                          openModal(e, poolId, "supply", s.assetId)
+                          openModal(e, marketId, "supply", s.assetId)
                         }
                       >
                         Supply
@@ -229,7 +230,9 @@ const MobileAssetsTable: React.FC<IProps> = ({ poolId, stats }) => {
                       kind="secondary"
                       size="medium"
                       fixed
-                      onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
+                      onClick={(e) =>
+                        openModal(e, marketId, "supply", s.assetId)
+                      }
                     >
                       Supply
                     </Button>
@@ -239,7 +242,7 @@ const MobileAssetsTable: React.FC<IProps> = ({ poolId, stats }) => {
                     kind="secondary"
                     size="medium"
                     fixed
-                    onClick={(e) => openModal(e, poolId, "borrow", s.assetId)}
+                    onClick={(e) => openModal(e, marketId, "borrow", s.assetId)}
                   >
                     Borrow
                   </Button>

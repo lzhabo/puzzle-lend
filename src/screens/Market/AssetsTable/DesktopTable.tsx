@@ -13,12 +13,13 @@ import BN from "@src/utils/BN";
 import { useTheme } from "@emotion/react";
 import { TMarketStats } from "@src/entities/Market";
 import Skeleton from "react-loading-skeleton";
+import { ROUTES } from "@src/constants";
 
 type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
 interface IProps {
   stats: TMarketStats[];
-  poolId: string;
+  marketId: string;
 }
 
 const Root = styled.div<{ sort?: boolean }>`
@@ -51,7 +52,7 @@ const TooltipText = styled(Text)`
   white-space: normal;
 `;
 
-const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
+const DesktopTable: React.FC<IProps> = ({ stats, marketId }) => {
   const theme = useTheme();
   const [filteredAssets, setFilteredAssets] = useState<any[]>([]);
   const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
@@ -226,13 +227,13 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
   const openModal = useCallback(
     (
       e: React.MouseEvent,
-      poolId: string | undefined,
+      marketId: string | undefined,
       operationName: string,
       assetId: string
     ) => {
       e.stopPropagation();
-      if (poolId == null) return;
-      return navigate(`/${poolId}/${operationName}/${assetId}`);
+      if (marketId == null) return;
+      return navigate(`/${marketId}/${operationName}/${assetId}`);
     },
     [navigate]
   );
@@ -277,7 +278,12 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
 
     data = data.map((s: TMarketStats) => ({
       onClick: () => {
-        navigate("");
+        navigate(
+          ROUTES.MARKET_TOKEN_DETAILS.replace(":marketId", marketId).replace(
+            ":assetId",
+            s.assetId
+          )
+        );
       },
       asset: (
         <Row alignItems="center">
@@ -349,7 +355,7 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, poolId, "borrow", s.assetId)}
+          onClick={(e) => openModal(e, marketId, "borrow", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Borrow
@@ -366,7 +372,7 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
             size="medium"
             fixed
             disabled={true}
-            onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
+            onClick={(e) => openModal(e, marketId, "supply", s.assetId)}
             style={{ width: "100px", margin: "0 auto" }}
           >
             Supply
@@ -377,7 +383,7 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
           kind="secondary"
           size="medium"
           fixed
-          onClick={(e) => openModal(e, poolId, "supply", s.assetId)}
+          onClick={(e) => openModal(e, marketId, "supply", s.assetId)}
           style={{ width: "100px", margin: "0 auto" }}
         >
           Supply
@@ -393,7 +399,7 @@ const DesktopTable: React.FC<IProps> = ({ stats, poolId }) => {
     isSupplyDisabled,
     navigate,
     openModal,
-    poolId
+    marketId
   ]);
 
   return (

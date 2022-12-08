@@ -22,7 +22,7 @@ const Root = styled.div`
 
 const AssetsTable: React.FC<IProps> = () => {
   const vm = useMarketVM();
-  const { marketStats: stats, contractAddress: poolId } = vm.market;
+  const { marketStats: stats, contractAddress: marketId } = vm.market;
   const { width } = useWindowSize();
 
   return (
@@ -33,9 +33,9 @@ const AssetsTable: React.FC<IProps> = () => {
       <SizedBox height={8} />
 
       {width && width >= 880 ? (
-        <DesktopTable {...{ stats, poolId }} />
+        <DesktopTable {...{ stats, marketId }} />
       ) : (
-        <MobileAssetsTable {...{ stats, poolId }} />
+        <MobileAssetsTable {...{ stats, marketId }} />
       )}
     </Root>
   );
