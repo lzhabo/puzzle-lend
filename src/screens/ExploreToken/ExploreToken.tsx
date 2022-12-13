@@ -46,7 +46,7 @@ const ExploreTokenImpl: React.FC<IProps> = observer(() => {
   return (
     <Layout>
       <ExploreLayout>
-        <Link to={ROUTES.ROOT}>
+        <Link to={`/${lendStore.pool.address}`}>
           <Row alignItems="center">
             <ArrowBackIcon />
             <Text weight={500} type="blue500">
