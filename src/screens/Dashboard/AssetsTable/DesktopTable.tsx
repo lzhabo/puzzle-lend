@@ -20,6 +20,13 @@ type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
 interface IProps {}
 
+enum SORT_TYPES {
+  TOTAL_SUPPLY = "totalSupply",
+  SUPPLY_APY = "supplyAPY",
+  TOTAL_BORROW = "totalBorrow",
+  BORROW_APY = "borrowAPY"
+}
+
 const Root = styled.div<{ sort?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -57,7 +64,7 @@ const DesktopTable: React.FC<IProps> = () => {
   const [sortMode, setActiveSortMode] = useState<"descending" | "ascending">(
     "descending"
   );
-  const [sort, setActiveSort] = useState<ISortTypes>("totalSupply");
+  const [sort, setActiveSort] = useState<ISortTypes>(SORT_TYPES.SUPPLY_APY);
 
   const selectSort = useCallback(
     (v: ISortTypes) => {
@@ -92,7 +99,7 @@ const DesktopTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() => selectSort("totalSupply")}
+            onClick={() => selectSort(SORT_TYPES.TOTAL_SUPPLY)}
             justifyContent="flex-end"
           >
             <Tooltip
@@ -124,7 +131,7 @@ const DesktopTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() => selectSort("supplyAPY")}
+            onClick={() => selectSort(SORT_TYPES.SUPPLY_APY)}
             justifyContent="flex-end"
           >
             <Tooltip
@@ -156,7 +163,7 @@ const DesktopTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() => selectSort("totalBorrow")}
+            onClick={() => selectSort(SORT_TYPES.TOTAL_BORROW)}
             justifyContent="flex-end"
           >
             <Tooltip
@@ -188,7 +195,7 @@ const DesktopTable: React.FC<IProps> = () => {
         Header: () => (
           <Row
             style={{ cursor: "pointer" }}
-            onClick={() => selectSort("borrowAPY")}
+            onClick={() => selectSort(SORT_TYPES.BORROW_APY)}
             justifyContent="flex-end"
           >
             <Tooltip
@@ -241,10 +248,10 @@ const DesktopTable: React.FC<IProps> = () => {
       const stats1: TPoolStats = a;
       const stats2: TPoolStats = b;
       let key: keyof TPoolStats | undefined;
-      if (sort === "totalSupply") key = "totalSupply";
-      if (sort === "totalBorrow") key = "totalBorrow";
-      if (sort === "supplyAPY") key = "supplyAPY";
-      if (sort === "borrowAPY") key = "borrowAPY";
+      if (sort === SORT_TYPES.TOTAL_SUPPLY) key = SORT_TYPES.TOTAL_SUPPLY;
+      if (sort === SORT_TYPES.TOTAL_BORROW) key = SORT_TYPES.TOTAL_BORROW;
+      if (sort === SORT_TYPES.SUPPLY_APY) key = SORT_TYPES.SUPPLY_APY;
+      if (sort === SORT_TYPES.BORROW_APY) key = SORT_TYPES.BORROW_APY;
       if (key == null) return 0;
 
       if (stats1 == null || stats2 == null) return 0;
