@@ -65,6 +65,12 @@ const TotalLiquidity = styled.div`
   background-size: cover;
   box-sizing: border-box;
 `;
+const BarWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
 const DashboardImpl: React.FC<IProps> = observer(() => {
   const vm = useDashboardVM();
   const { accountStore, lendStore } = useStores();
@@ -90,7 +96,10 @@ const DashboardImpl: React.FC<IProps> = observer(() => {
         <SizedBox height={40} />
         {accountStore != null && (
           <AccountDataWrapper>
+            {/*<BarWrapper>*/}
             <AccountHealth />
+            {/*  <TotalRewards />*/}
+            {/*</BarWrapper>*/}
             <Column crossAxisSize="max">
               <TotalLiquidity>
                 <Text style={{ color: "#ffffff" }}>

@@ -15,6 +15,8 @@ import { ROUTES } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
 import { useSupplyAndBorrowVM } from "@screens/Dashboard/AccountSupplyAndBorrow/DesktopAccountSupplyAndBorrow/SupplyAndBorrowVM";
+import RoundTokenIcon from "@components/RoundTokenIcon";
+import { getTokenIconById } from "@src/utils/getTokenIconById";
 
 interface IProps {}
 
@@ -35,6 +37,28 @@ const TableWrap = styled.div<{ sort?: boolean }>`
     height: 20px;
     margin-left: 4px;
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
+  }
+`;
+
+const AdditionalApy = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  white-space: nowrap;
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const BorrowApy = styled.div`
+  display: flex;
+  white-space: nowrap;
+  flex-direction: column;
+
+  img {
+    margin: 1px 4px 0 -1px;
   }
 `;
 
@@ -215,7 +239,26 @@ const AccountBorrowTable: React.FC<IProps> = () => {
             </Text>
           </Column>
         ),
-        borrowAPY: s.borrowAPY.toBigFormat(2) + " %",
+        borrowAPY: (
+          <BorrowApy>
+            {s.additionalBorrowAPY ? (
+              <>
+                <AdditionalApy>
+                  <RoundTokenIcon
+                    src={getTokenIconById(s.additionalBorrowAPY.assetId)}
+                    alt={"logo"}
+                  />
+                  {s.additionalBorrowAPY.value.toBigFormat(2) + " %"}
+                </AdditionalApy>
+                <div style={{ textDecoration: "line-through" }}>
+                  {s.borrowAPY.toBigFormat(2) + " %"}
+                </div>
+              </>
+            ) : (
+              <div>{s.borrowAPY.toBigFormat(2) + " %"}</div>
+            )}
+          </BorrowApy>
+        ),
         dailyLoan: (
           <Column crossAxisSize="max">
             <Text weight={500} textAlign="right" size="medium">

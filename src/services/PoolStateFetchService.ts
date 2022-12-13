@@ -8,6 +8,7 @@ export type TPoolToken = {
   lt: BN;
   penalty: BN;
   interest: BN;
+  price: BN | null;
 } & IToken;
 
 class PoolStateFetchService {
@@ -28,7 +29,7 @@ class PoolStateFetchService {
     ];
 
     const settings = await nodeService.nodeKeysRequest(this.pool, settingKeys);
-
+    const prices = await this.getPrices();
     const splitRecord = (rec?: string | number) =>
       rec ? String(rec).split(",") : null;
 
@@ -41,6 +42,10 @@ class PoolStateFetchService {
     if (tokens == null || !active) throw new Error("pool not active");
     return tokens.map((assetId, index) => {
       const asset = TOKENS_BY_ASSET_ID[assetId];
+      let price: BN | null = null;
+      if (prices && prices[index]) {
+        price = prices[index].min;
+      }
       return {
         ...asset,
         cf: ltvs && ltvs[index] ? new BN(ltvs![index]).div(1e8) : BN.ZERO,
@@ -49,6 +54,7 @@ class PoolStateFetchService {
           penalties && penalties[index]
             ? new BN(penalties![index]).div(1e8)
             : BN.ZERO,
+        price: price,
         interest:
           interest && interest[index]
             ? new BN(interest![index]).div(1e8)
@@ -60,7 +66,6 @@ class PoolStateFetchService {
   getPrices = async () => {
     const response = await nodeService.evaluate(this.pool, "getPrices(false)");
     const value = response?.result?.value?._2?.value as string;
-
     if (!value) return null;
 
     return value

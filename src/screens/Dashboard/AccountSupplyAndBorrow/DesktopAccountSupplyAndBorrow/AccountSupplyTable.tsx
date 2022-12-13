@@ -15,6 +15,8 @@ import { ROUTES } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
 import { useSupplyAndBorrowVM } from "./SupplyAndBorrowVM";
+import RoundTokenIcon from "@components/RoundTokenIcon";
+import { getTokenIconById } from "@src/utils/getTokenIconById";
 
 interface IProps {}
 
@@ -35,6 +37,42 @@ const TableWrap = styled.div<{ sort?: boolean }>`
     height: 20px;
     margin-left: 4px;
     transform: ${({ sort }) => (sort ? "scale(1)" : "scale(1, -1)")};
+  }
+`;
+
+const SupplyApy = styled.div`
+  display: flex;
+  white-space: nowrap;
+  justify-content: flex-end;
+
+  img {
+    margin: 1px 4px 0 -1px;
+  }
+`;
+
+const SupplyApyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+const TooltipText = styled(Text)`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  max-width: 180px;
+  white-space: normal;
+`;
+
+const AdditionalApy = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  white-space: nowrap;
+
+  img {
+    width: 20px;
+    height: 20px;
   }
 `;
 
@@ -210,7 +248,45 @@ const AccountSupplyTable: React.FC<IProps> = () => {
             </Text>
           </Column>
         ),
-        supplyApy: s.supplyAPY.toFormat(2) + "%",
+        supplyApy: (
+          <SupplyApy>
+            {s.additionalSupplyAPY ? (
+              <SupplyApyWrapper>
+                <AdditionalApy>
+                  <RoundTokenIcon
+                    src={getTokenIconById(s.additionalSupplyAPY.assetId)}
+                    alt={"logo"}
+                  />
+                  {s.additionalSupplyAPY.value.toBigFormat(2) + " %"}
+                </AdditionalApy>
+                <div style={{ textDecoration: "line-through" }}>
+                  {s.supplyAPY.toBigFormat(2) + " %"}
+                </div>
+              </SupplyApyWrapper>
+            ) : (
+              <>
+                <Tooltip
+                  config={{ placement: "top-start" }}
+                  content={
+                    <TooltipText textAlign="left">
+                      Non-borrowed tokens are automatically staked within native
+                      protocol to generate additional interest
+                    </TooltipText>
+                  }
+                >
+                  {s.isAutostakeAvl && (
+                    <img
+                      src={theme.images.icons.autostaking}
+                      alt="autostaking"
+                      className="autostaking-icon"
+                    />
+                  )}
+                </Tooltip>
+                {s.supplyAPY.toFormat(2) + " %"}
+              </>
+            )}
+          </SupplyApy>
+        ),
         dailyIncome: (
           <Column crossAxisSize="max">
             <Text weight={500} textAlign="right" size="medium">
