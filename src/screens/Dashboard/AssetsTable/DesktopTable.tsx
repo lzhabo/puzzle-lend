@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import Tooltip from "@components/Tooltip";
 import Table from "@components/Table";
-import { ROUTES } from "@src/constants";
+import { ROUTES, TOKENS_LOGO_BY_ASSET_ID } from "@src/constants";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import SquareTokenIcon from "@components/SquareTokenIcon";
@@ -16,7 +16,6 @@ import Skeleton from "react-loading-skeleton";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
 import RoundTokenIcon from "@components/RoundTokenIcon";
-import { getTokenIconById } from "@src/utils/getTokenIconById";
 
 type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
@@ -347,7 +346,7 @@ const DesktopTable: React.FC<IProps> = () => {
             <SupplyApyWrapper>
               <AdditionalBorrowApy>
                 <RoundTokenIcon
-                  src={getTokenIconById(s.additionalSupplyAPY.assetId)}
+                  src={TOKENS_LOGO_BY_ASSET_ID[s.additionalSupplyAPY.assetId]}
                   alt={"logo"}
                 />
                 {s.additionalSupplyAPY.value.toBigFormat(2) + " %"}
@@ -401,7 +400,7 @@ const DesktopTable: React.FC<IProps> = () => {
             <>
               <AdditionalBorrowApy>
                 <RoundTokenIcon
-                  src={getTokenIconById(s.additionalBorrowAPY.assetId)}
+                  src={TOKENS_LOGO_BY_ASSET_ID[s.additionalBorrowAPY.assetId]}
                   alt={"logo"}
                 />
                 {s.additionalBorrowAPY.value.toBigFormat(2) + " %"}

@@ -11,12 +11,11 @@ import BN from "@src/utils/BN";
 import Button from "@components/Button";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@src/constants";
+import { ROUTES, TOKENS_LOGO_BY_ASSET_ID } from "@src/constants";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
 import { useSupplyAndBorrowVM } from "./SupplyAndBorrowVM";
 import RoundTokenIcon from "@components/RoundTokenIcon";
-import { getTokenIconById } from "@src/utils/getTokenIconById";
 
 interface IProps {}
 
@@ -254,7 +253,7 @@ const AccountSupplyTable: React.FC<IProps> = () => {
               <SupplyApyWrapper>
                 <AdditionalApy>
                   <RoundTokenIcon
-                    src={getTokenIconById(s.additionalSupplyAPY.assetId)}
+                    src={TOKENS_LOGO_BY_ASSET_ID[s.additionalSupplyAPY.assetId]}
                     alt={"logo"}
                   />
                   {s.additionalSupplyAPY.value.toBigFormat(2) + " %"}

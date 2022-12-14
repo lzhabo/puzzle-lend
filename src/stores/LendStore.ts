@@ -207,13 +207,17 @@ class LendStore {
         this.fetchService.getUserCollateral(address || "")
       ]
     );
-    prices?.forEach((p, i) => {
-      prices[i] = {
-        ...p,
-        // @ts-ignore
-        assetId: this.tokensSetups[i]?.assetId
-      };
-    });
+
+    const pricesWithId = prices?.reduce((acc, p, i) => {
+      return [
+        ...acc,
+        {
+          ...p,
+          assetId: this.tokensSetups[i]?.assetId || "WAVES"
+        }
+      ];
+    }, [] as { min: BN; max: BN; assetId: string }[]);
+
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
       const totalSupply = new BN(sup ?? "0").times(rates[index]?.supplyRate);
@@ -249,11 +253,10 @@ class LendStore {
         `${token.assetId}_reward_supply_id`
       );
 
-      if (borRewardAmount && borRewardId && prices) {
+      if (borRewardAmount && borRewardId && pricesWithId) {
         additionalBorrowRewards = new BN(borRewardAmount);
         additionalBorrowToken = {
-          // @ts-ignore
-          ...prices.find((p) => p.assetId === borRewardId),
+          ...pricesWithId.find((p) => p.assetId === borRewardId),
           assetId: borRewardId,
           decimals: this.tokensSetups.find(
             (token) => token.assetId === borRewardId
@@ -261,11 +264,10 @@ class LendStore {
         } as { max: BN; min: BN; assetId: string; decimals: number };
       }
 
-      if (supRewardAmount && supRewardId && prices) {
+      if (supRewardAmount && supRewardId && pricesWithId) {
         additionalSupplyRewards = new BN(supRewardAmount);
         additionalSupplyToken = {
-          // @ts-ignore
-          ...prices.find((p) => p.assetId === supRewardId),
+          ...pricesWithId.find((p) => p.assetId === supRewardId),
           assetId: supRewardId,
           decimals: this.tokensSetups.find(
             (token) => token.assetId === supRewardId
@@ -277,8 +279,8 @@ class LendStore {
       const supplyInterest = interests[index]
         .multipliedBy(UR)
         .multipliedBy(0.8);
-      const p = prices
-        ? prices[index]
+      const p = pricesWithId
+        ? pricesWithId[index]
         : {
             min: BN.ZERO,
             max: BN.ZERO,
