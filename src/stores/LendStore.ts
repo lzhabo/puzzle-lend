@@ -19,7 +19,9 @@ export type TPoolStats = {
   dailyLoan: BN;
   supplyLimit: BN;
   isAutostakeAvl?: boolean;
-  prices: { min: BN; max: BN };
+  additionalSupplyAPY: { value: BN; assetId: string } | null;
+  additionalBorrowAPY: { value: BN; assetId: string } | null;
+  prices: { min: BN; max: BN; assetId?: string };
 } & TPoolToken;
 
 // fixme
@@ -43,10 +45,79 @@ const calcAutostakeApy = (
   );
   const fStaked = lastBlockStakingRewards
     .div(totalSupply)
-    .times(60)
-    .times(24)
-    .times(0.8);
-  return fStaked.plus(interest).plus(1).pow(365).minus(1).times(100);
+    .multipliedBy(60)
+    .multipliedBy(24)
+    .multipliedBy(0.8);
+  return fStaked.plus(interest).plus(1).pow(365).minus(1).multipliedBy(100);
+};
+
+const calcAdditionalSupRewardsApy = (
+  reward: BN,
+  rewardToken: { max: BN; min: BN; assetId: string; decimals: number },
+  totalSupply: BN,
+  supplyToken: TPoolToken,
+  supplyInterest: BN,
+  ASpreLastEarned: BN,
+  ASlastEarned: BN,
+  ASpreLastBlock: BN,
+  ASlastBlock: BN
+) => {
+  const lastBlockStakingRewards = ASlastEarned.minus(ASpreLastEarned).div(
+    ASlastBlock.minus(ASpreLastBlock)
+  );
+  const rewardTokenPrice = rewardToken.min.plus(rewardToken.max).div(2);
+  const rewardAssetMultiplier = new BN(10).pow(rewardToken.decimals);
+  const supAssetMultiplier = new BN(10).pow(supplyToken.decimals);
+  const fStaked = lastBlockStakingRewards
+    .div(totalSupply)
+    .multipliedBy(60)
+    .multipliedBy(24)
+    .multipliedBy(0.8);
+
+  const fReward = reward
+    .div(rewardAssetMultiplier)
+    .multipliedBy(rewardTokenPrice)
+    .div(
+      totalSupply
+        .div(supAssetMultiplier)
+        .multipliedBy(supplyToken.price || BN.ZERO)
+    );
+  const value = fStaked
+    .plus(supplyInterest)
+    .plus(fReward)
+    .plus(1)
+    .pow(365)
+    .minus(1)
+    .multipliedBy(100);
+
+  return { value: value, assetId: rewardToken.assetId };
+};
+
+const calcAdditionalBorRewardsApy = (
+  reward: BN,
+  rewardToken: { max: BN; min: BN; assetId: string; decimals: number },
+  totalBorrow: BN,
+  borrowToken: TPoolToken,
+  supplyInterest: BN
+) => {
+  const medianRewardTokenPrice = rewardToken.min.plus(rewardToken.max).div(2);
+  const rewardAssetMultiplier = new BN(10).pow(rewardToken.decimals);
+  const borAssetMultiplier = new BN(10).pow(borrowToken.decimals);
+  const fStaked = reward
+    .div(rewardAssetMultiplier)
+    .multipliedBy(medianRewardTokenPrice)
+    .div(
+      totalBorrow
+        .div(borAssetMultiplier)
+        .multipliedBy(borrowToken.price || BN.ZERO)
+    );
+  const value = supplyInterest
+    .minus(fStaked)
+    .plus(1)
+    .pow(365)
+    .minus(1)
+    .multipliedBy(100);
+  return { value: value, assetId: rewardToken.assetId };
 };
 
 class LendStore {
@@ -107,7 +178,6 @@ class LendStore {
 
   syncPoolsStats = async () => {
     const address = this.rootStore.accountStore.address;
-
     const keys = this.tokensSetups.reduce(
       (acc, { assetId }) => [
         ...acc,
@@ -118,6 +188,10 @@ class LendStore {
         `autostake_lastEarned_${assetId}`,
         `autostake_preLastBlock_${assetId}`,
         `autostake_lastBlock_${assetId}`,
+        `${assetId}_reward_borrow_id`,
+        `${assetId}_reward_supply_id`,
+        `${assetId}_reward_borrow_amount`,
+        `${assetId}_reward_supply_amount`,
         ...(address
           ? [`${address}_supplied_${assetId}`, `${address}_borrowed_${assetId}`]
           : [])
@@ -135,9 +209,19 @@ class LendStore {
       ]
     );
 
+    const pricesWithId = prices?.reduce((acc, p, i) => {
+      return [
+        ...acc,
+        {
+          ...p,
+          assetId: this.tokensSetups[i]?.assetId || "WAVES"
+        }
+      ];
+    }, [] as { min: BN; max: BN; assetId: string }[]);
+
     const stats = this.tokensSetups.map((token, index) => {
       const sup = getStateByKey(state, `total_supplied_${token.assetId}`);
-      const totalSupply = new BN(sup ?? "0").times(rates[index].supplyRate);
+      const totalSupply = new BN(sup ?? "0").times(rates[index]?.supplyRate);
 
       const sSup = getStateByKey(state, `${address}_supplied_${token.assetId}`);
       const selfSupply = new BN(sSup ?? "0").times(rates[index].supplyRate);
@@ -148,10 +232,61 @@ class LendStore {
       const sBor = getStateByKey(state, `${address}_borrowed_${token.assetId}`);
       const selfBorrow = new BN(sBor ?? "0").times(rates[index].borrowRate);
 
-      const UR = totalBorrow.div(totalSupply);
-      const supplyInterest = interests[index].times(UR).times(0.8);
+      let additionalSupplyRewards;
+      let additionalSupplyToken;
+      let additionalBorrowRewards;
+      let additionalBorrowToken;
 
-      const p = prices ? prices[index] : { min: BN.ZERO, max: BN.ZERO };
+      const borRewardAmount = getStateByKey(
+        state,
+        `${token.assetId}_reward_borrow_amount`
+      );
+      const borRewardId = getStateByKey(
+        state,
+        `${token.assetId}_reward_borrow_id`
+      );
+      const supRewardAmount = getStateByKey(
+        state,
+        `${token.assetId}_reward_supply_amount`
+      );
+      const supRewardId = getStateByKey(
+        state,
+        `${token.assetId}_reward_supply_id`
+      );
+
+      if (borRewardAmount && borRewardId && pricesWithId) {
+        additionalBorrowRewards = new BN(borRewardAmount);
+        additionalBorrowToken = {
+          ...pricesWithId.find((p) => p.assetId === borRewardId),
+          assetId: borRewardId,
+          decimals: this.tokensSetups.find(
+            (token) => token.assetId === borRewardId
+          )?.decimals
+        } as { max: BN; min: BN; assetId: string; decimals: number };
+      }
+
+      if (supRewardAmount && supRewardId && pricesWithId) {
+        additionalSupplyRewards = new BN(supRewardAmount);
+        additionalSupplyToken = {
+          ...pricesWithId.find((p) => p.assetId === supRewardId),
+          assetId: supRewardId,
+          decimals: this.tokensSetups.find(
+            (token) => token.assetId === supRewardId
+          )?.decimals
+        } as { max: BN; min: BN; assetId: string; decimals: number };
+      }
+
+      const UR = totalBorrow.div(totalSupply);
+      const supplyInterest = interests[index]
+        .multipliedBy(UR)
+        .multipliedBy(0.8);
+      const p = pricesWithId
+        ? pricesWithId[index]
+        : {
+            min: BN.ZERO,
+            max: BN.ZERO,
+            assetId: this.tokensSetups[index].assetId
+          };
       const dailyIncome = selfSupply.times(supplyInterest);
       const dailyLoan = selfBorrow.times(interests[index]);
 
@@ -181,7 +316,16 @@ class LendStore {
         `autostake_lastBlock_${token.assetId}`
       );
       const ASlastBlock = new BN(ASlastBlockNum ?? 0);
-
+      const supplyAPY = ASlastBlockNum
+        ? calcAutostakeApy(
+            totalSupply,
+            supplyInterest,
+            ASpreLastEarned,
+            ASlastEarned,
+            ASpreLastBlock,
+            ASlastBlock
+          )
+        : calcApy(supplyInterest);
       return {
         ...token,
         interest: interests[index],
@@ -193,16 +337,31 @@ class LendStore {
         selfSupply: selfSupply.toDecimalPlaces(0),
         totalBorrow: totalBorrow.toDecimalPlaces(0),
         selfBorrow: selfBorrow.toDecimalPlaces(0),
-        supplyAPY: ASlastBlockNum
-          ? calcAutostakeApy(
-              totalSupply,
-              supplyInterest,
-              ASpreLastEarned,
-              ASlastEarned,
-              ASpreLastBlock,
-              ASlastBlock
-            )
-          : calcApy(supplyInterest),
+        supplyAPY: supplyAPY,
+        additionalSupplyAPY:
+          additionalSupplyRewards && token.price && additionalSupplyToken
+            ? calcAdditionalSupRewardsApy(
+                additionalSupplyRewards,
+                additionalSupplyToken,
+                totalSupply,
+                token,
+                supplyInterest,
+                ASpreLastEarned,
+                ASlastEarned,
+                ASpreLastBlock,
+                ASlastBlock
+              )
+            : null,
+        additionalBorrowAPY:
+          additionalBorrowRewards && token.price && additionalBorrowToken
+            ? calcAdditionalBorRewardsApy(
+                additionalBorrowRewards,
+                additionalBorrowToken,
+                totalBorrow,
+                token,
+                supplyInterest
+              )
+            : null,
         isAutostakeAvl: !!ASlastBlockNum,
         borrowAPY: calcApy(interests[index])
       };

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import Tooltip from "@components/Tooltip";
 import Table from "@components/Table";
-import { ROUTES } from "@src/constants";
+import { ROUTES, TOKENS_LOGO_BY_ASSET_ID } from "@src/constants";
 import { Column, Row } from "@src/components/Flex";
 import Text from "@src/components/Text";
 import SquareTokenIcon from "@components/SquareTokenIcon";
@@ -15,6 +15,7 @@ import BN from "@src/utils/BN";
 import Skeleton from "react-loading-skeleton";
 import { useTheme } from "@emotion/react";
 import { TPoolStats } from "@src/stores/LendStore";
+import RoundTokenIcon from "@components/RoundTokenIcon";
 
 type ISortTypes = "totalSupply" | "supplyAPY" | "totalBorrow" | "borrowAPY";
 
@@ -43,6 +44,23 @@ const Root = styled.div<{ sort?: boolean }>`
 const SupplyApy = styled.div`
   display: flex;
   white-space: nowrap;
+  justify-content: flex-end;
+
+  img {
+    margin: 1px 4px 0 -1px;
+  }
+`;
+
+const SupplyApyWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+
+const BorrowApy = styled.div`
+  display: flex;
+  white-space: nowrap;
+  flex-direction: column;
 
   img {
     margin: 1px 4px 0 -1px;
@@ -57,6 +75,17 @@ const TooltipText = styled(Text)`
   white-space: normal;
 `;
 
+const AdditionalBorrowApy = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  white-space: nowrap;
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+`;
 const DesktopTable: React.FC<IProps> = () => {
   const { lendStore } = useStores();
   const theme = useTheme();
@@ -320,24 +349,42 @@ const DesktopTable: React.FC<IProps> = () => {
       ),
       supplyApy: (
         <SupplyApy>
-          <Tooltip
-            config={{ placement: "top-start" }}
-            content={
-              <TooltipText textAlign="left">
-                Non-borrowed tokens are automatically staked within native
-                protocol to generate additional interest
-              </TooltipText>
-            }
-          >
-            {s.isAutostakeAvl && (
-              <img
-                src={theme.images.icons.autostaking}
-                alt="autostaking"
-                className="autostaking-icon"
-              />
-            )}
-          </Tooltip>
-          {s.supplyAPY.toFormat(2) + " %"}
+          {s.additionalSupplyAPY ? (
+            <SupplyApyWrapper>
+              <AdditionalBorrowApy>
+                <RoundTokenIcon
+                  src={TOKENS_LOGO_BY_ASSET_ID[s.additionalSupplyAPY.assetId]}
+                  alt={"logo"}
+                />
+                {s.additionalSupplyAPY.value.toBigFormat(2) + " %"}
+              </AdditionalBorrowApy>
+              <div style={{ textDecoration: "line-through" }}>
+                {s.supplyAPY.toBigFormat(2) + " %"}
+              </div>
+            </SupplyApyWrapper>
+          ) : (
+            <>
+              <Tooltip
+                config={{ placement: "top-start" }}
+                content={
+                  <TooltipText textAlign="left">
+                    Non-borrowed tokens are automatically staked within native
+                    protocol to generate additional interest
+                  </TooltipText>
+                }
+              >
+                {s.isAutostakeAvl && (
+                  <img
+                    src={theme.images.icons.autostaking}
+                    alt="autostaking"
+                    className="autostaking-icon"
+                  />
+                )}
+              </Tooltip>
+              {s.supplyAPY.toFormat(2) + " %"}
+            </>
+          )}
+          {/*{s.additionalSupplyAPY && s.additionalSupplyAPY?.toFormat(2) + " %"}*/}
         </SupplyApy>
       ),
       borrow: (
@@ -354,7 +401,26 @@ const DesktopTable: React.FC<IProps> = () => {
           </Text>
         </Column>
       ),
-      borrowApy: s.borrowAPY.toBigFormat(2) + " %",
+      borrowApy: (
+        <BorrowApy>
+          {s.additionalBorrowAPY ? (
+            <>
+              <AdditionalBorrowApy>
+                <RoundTokenIcon
+                  src={TOKENS_LOGO_BY_ASSET_ID[s.additionalBorrowAPY.assetId]}
+                  alt={"logo"}
+                />
+                {s.additionalBorrowAPY.value.toBigFormat(2) + " %"}
+              </AdditionalBorrowApy>
+              <div style={{ textDecoration: "line-through" }}>
+                {s.borrowAPY.toBigFormat(2) + " %"}
+              </div>
+            </>
+          ) : (
+            <div>{s.borrowAPY.toBigFormat(2) + " %"}</div>
+          )}
+        </BorrowApy>
+      ),
       borrowBtn: (
         <Button
           kind="secondary"
