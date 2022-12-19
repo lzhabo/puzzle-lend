@@ -5,6 +5,7 @@ const colors = {
   primary100: "#F1F2FE",
   primary50: "#f8f8ff",
   white: "#FFFFFF",
+  alwaysWhite: "#FFFFFF",
   blue500: "#7075E9",
   success: "#35A15A",
   error: "#ED827E",

@@ -2,11 +2,13 @@ import styled from "@emotion/styled";
 
 type TButtonType = "primary" | "secondary" | "danger";
 type TButtonSize = "medium" | "large";
+type TButtonWeight = "fat";
 
 const Button = styled.button<{
   kind?: TButtonType;
   size?: TButtonSize;
   fixed?: boolean;
+  weight?: TButtonWeight;
 }>`
   white-space: nowrap;
   display: flex;
@@ -28,9 +30,18 @@ const Button = styled.button<{
         }
       })()};
 
+  font-weight: ${({ weight }) =>
+    (() => {
+      switch (weight) {
+        case "fat":
+          return "700";
+        default:
+          return "500";
+      }
+    })()};
+
   border-radius: 12px;
   box-shadow: none;
-  font-weight: 500;
   font-size: 16px;
   line-height: 24px;
 

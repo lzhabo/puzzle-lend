@@ -9,6 +9,7 @@ import WalletModal from "@components/Wallet/WalletModal";
 import MobileNavBar from "./components/MobileNavBar";
 import { ROUTES, OPERATIONS_TYPE } from "@src/constants";
 import Dashboard from "@screens/Dashboard";
+import Markets from "@screens/Markets";
 import ExploreToken from "@screens/ExploreToken";
 import NotFound from "@screens/NotFound";
 import DashboardModal from "@screens/Dashboard/DashboardModals";
@@ -36,6 +37,7 @@ const App: React.FC = () => {
       <Routes>
         {/*Account*/}
         <Route path={ROUTES.ANALYTICS} element={<AnalyticsScreen />} />
+        <Route path={ROUTES.MARKETS} element={<Markets />} />
 
         {/* Dashboard */}
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />}>

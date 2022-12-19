@@ -24,6 +24,7 @@ export default {
   primary300: "#8182C5",
   primary100: "#363970",
   primary50: "#181931",
+  alwaysWhite: "#FFFFFF",
   white: "#232345",
   success100: "#1C2F37",
   error100: "#3A2A3D",
