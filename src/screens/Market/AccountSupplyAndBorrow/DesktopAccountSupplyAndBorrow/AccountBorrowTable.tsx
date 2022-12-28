@@ -68,7 +68,6 @@ const AccountBorrowTable: React.FC<IProps> = () => {
           <Row
             style={{ cursor: "pointer" }}
             onClick={() => {
-              console.log("To be repaid");
               vm.selectSort("selfBorrow", false);
             }}
             justifyContent="flex-end"

@@ -35,6 +35,10 @@ export const TOKENS_BY_ASSET_ID: Record<string, IToken> = TOKENS_LIST.reduce(
   (acc, t) => ({ ...acc, [t.assetId]: t }),
   {}
 );
+export const TOKEN_LOGOS_BY_ID: Record<string, string> = TOKENS_LIST.reduce(
+  (acc, t) => ({ ...acc, [t.assetId]: t.logo }),
+  {}
+);
 
 export const NODE_URL = "https://nodes-puzzle.wavesnodes.com";
 export const EXPLORER_URL = "https://new.wavesexplorer.com";

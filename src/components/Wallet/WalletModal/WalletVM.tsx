@@ -3,11 +3,9 @@ import { useVM } from "@src/hooks/useVM";
 import { makeAutoObservable } from "mobx";
 import { RootStore, useStores } from "@stores";
 import copy from "copy-to-clipboard";
-import Balance from "@src/entities/Balance";
 import { LOGIN_TYPE } from "@src/stores/AccountStore";
 import centerEllipsis from "@src/utils/centerEllipsis";
 import BN from "@src/utils/BN";
-import { TOKENS_LIST } from "@src/constants";
 import { TMarketStats } from "@src/entities/Market";
 
 const ctx = React.createContext<WalletVM | null>(null);
@@ -58,29 +56,40 @@ class WalletVM {
     }: ${centerEllipsis(address ?? "", 6)}`;
   }
 
+  // get userAssets() {
+  //   const { accountStore, marketsStore } = this.rootStore;
+  //   return TOKENS_LIST.map((t) => {
+  //     const balance = accountStore.findBalanceByAssetId(t.assetId);
+  //     return balance ?? new Balance(t);
+  //   })
+  //     .filter((balance) =>
+  //       marketsStore.markets
+  //         .map((v) => v.assets)
+  //         .find((item) => item?.includes(balance.assetId))
+  //     )
+  //     .filter(({ balance }) => balance && !balance.eq(0))
+  //     .sort((a, b) => {
+  //       if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
+  //       if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
+  //       if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
+  //       return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
+  //     });
+  // }
+
   get userAssets() {
     const { accountStore, marketsStore } = this.rootStore;
-    return TOKENS_LIST.map((t) => {
-      const balance = accountStore.findBalanceByAssetId(t.assetId);
-      return balance ?? new Balance(t);
-    })
-      .filter((balance) =>
-        marketsStore.markets
-          .map((v) => v.assets)
-          .find((item) => item?.includes(balance.assetId))
-      )
+    return accountStore.balances
+      .map((v) => {
+        console.log(v.symbol, v.balance?.toString());
+        return v;
+      })
       .filter(({ balance }) => balance && !balance.eq(0))
-      .sort((a, b) => {
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return 0;
-        if (a.usdnEquivalent == null && b.usdnEquivalent != null) return 1;
-        if (a.usdnEquivalent == null && b.usdnEquivalent == null) return -1;
-        return a.usdnEquivalent!.lt(b.usdnEquivalent!) ? 1 : -1;
-      });
+      .filter((b) => marketsStore.tokensInMarkets.includes(b.assetId));
   }
 
   get totalInvestmentAmount() {
-    const { userAssets } = this;
-    const balancesAmount = userAssets.reduce((acc, b) => {
+    const { accountStore } = this.rootStore;
+    const balancesAmount = accountStore.balances.reduce((acc, b) => {
       const rate = this.tokenStats(b.assetId)?.prices.min || BN.ZERO;
       const balance = BN.formatUnits(b?.balance || BN.ZERO, b?.decimals);
       return acc.plus(balance.times(rate));

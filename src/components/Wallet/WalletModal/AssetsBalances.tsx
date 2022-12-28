@@ -23,7 +23,7 @@ const Root = styled.div`
 
 const AssetsBalances: React.FC<IProps> = () => {
   const vm = useWalletVM();
-  const { accountStore } = useStores();
+  const { accountStore, marketsStore } = useStores();
   if (accountStore.assetBalances === null)
     return (
       <Root style={{ padding: "0 24px" }}>
@@ -42,7 +42,6 @@ const AssetsBalances: React.FC<IProps> = () => {
 
           return (
             <InvestRow
-              rateChange={BN.ZERO}
               key={b.assetId}
               logo={b.logo}
               topLeftInfo={b.name}
@@ -50,10 +49,6 @@ const AssetsBalances: React.FC<IProps> = () => {
               bottomLeftInfo={`$ ${stats?.prices.min}`}
               bottomRightInfo={dollarEquivalent}
               withClickLogic
-              onClick={() => {
-                accountStore.setAssetToSend(b);
-                accountStore.setSendAssetModalOpened(true);
-              }}
             />
           );
         })

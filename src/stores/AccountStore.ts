@@ -97,13 +97,6 @@ class AccountStore {
   walletModalOpened = false;
   setWalletModalOpened = (state: boolean) => (this.walletModalOpened = state);
 
-  sendAssetModalOpened = false;
-  setSendAssetModalOpened = (state: boolean) =>
-    (this.sendAssetModalOpened = state);
-
-  assetToSend: Balance | null = null;
-  setAssetToSend = (state: Balance | null) => (this.assetToSend = state);
-
   changePoolModalOpened = false;
   setChangePoolModalOpened = (state: boolean) =>
     (this.changePoolModalOpened = state);
@@ -222,6 +215,7 @@ class AccountStore {
   });
 
   updateAccountAssets = async (force = false) => {
+    const marketsStore = this.rootStore.marketsStore;
     if (this.address == null) {
       this.setAssetBalances([]);
       return;
@@ -231,10 +225,11 @@ class AccountStore {
 
     const address = this.address;
     const data = await nodeService.getAddressBalances(address);
+
     const assetBalances = TOKENS_LIST.map((asset) => {
       const t = data.find(({ assetId }) => asset.assetId === assetId);
       const balance = new BN(t != null ? t.balance : 0);
-      const usdnEquivalent = BN.ZERO;
+      const usdnEquivalent = marketsStore?.assetPrice(asset.assetId) ?? BN.ZERO;
       return new Balance({ balance, usdnEquivalent, ...asset });
     });
     const newAddress = this.address;
@@ -243,71 +238,6 @@ class AccountStore {
     this.setAssetBalances(assetBalances);
     this.setAssetsBalancesLoading(false);
     // this.rootStore.lendStore.syncPoolsStats();
-  };
-
-  ///------------------transfer
-  public transfer = async (trParams: ITransferParams) =>
-    this.loginType === LOGIN_TYPE.KEEPER
-      ? this.transferWithKeeper(trParams)
-      : this.transferWithSigner(trParams);
-
-  private transferWithSigner = async (
-    data: ITransferParams
-  ): Promise<string | null> => {
-    if (this.signer == null) {
-      await this.login(this.loginType ?? LOGIN_TYPE.SIGNER_EMAIL);
-    }
-    if (this.signer == null) {
-      this.rootStore.notificationStore.notify("You need to login firstly", {
-        title: "Error",
-        type: "error"
-      });
-      return null;
-    }
-    try {
-      const ttx = this.signer.transfer({
-        ...data,
-        fee: this.isAccScripted ? 500000 : 100000
-      });
-      const txId = await ttx.broadcast().then((tx: any) => tx.id);
-      await waitForTx(txId, {
-        apiBase: NODE_URL
-      });
-      return txId;
-    } catch (e: any) {
-      console.warn(e);
-      this.rootStore.notificationStore.notify(e.toString(), {
-        type: "error",
-        title: "Transaction is not completed"
-      });
-      return null;
-    }
-  };
-
-  private transferWithKeeper = async (
-    data: ITransferParams
-  ): Promise<string | null> => {
-    const tokenAmount = BN.formatUnits(
-      data.amount,
-      this.assetToSend?.decimals
-    ).toString();
-    const tx = await (window as any).WavesKeeper.signAndPublishTransaction({
-      type: 4,
-      data: {
-        amount: { tokens: tokenAmount, assetId: data.assetId },
-        fee: {
-          tokens: this.isAccScripted ? "0.005" : "0.001",
-          assetId: "WAVES"
-        },
-        recipient: data.recipient
-      }
-    } as any);
-
-    const txId = JSON.parse(tx).id;
-    await waitForTx(txId, {
-      apiBase: NODE_URL
-    });
-    return txId;
   };
 
   ///////////------------invoke

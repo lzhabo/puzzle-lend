@@ -151,7 +151,6 @@ class ExploreTokenVM {
   }
 
   constructor(rootStore: RootStore, marketId: string, assetId: string) {
-    console.log("constructor ExploreTokenVMProvider");
     this.rootStore = rootStore;
     this.assetId = assetId;
     const market =

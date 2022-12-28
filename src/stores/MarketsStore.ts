@@ -102,4 +102,9 @@ export default class MarketsStore {
     const price = market.prices?.find((v) => v.assetId === assetId);
     return price == null ? null : new BN(price.min);
   };
+
+  get tokensInMarkets(): string[] {
+    if (this.markets == null) return [];
+    return this.markets.map((v) => (v.assets == null ? [] : v.assets)).flat();
+  }
 }

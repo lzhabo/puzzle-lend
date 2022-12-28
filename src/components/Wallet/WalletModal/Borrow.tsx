@@ -54,10 +54,6 @@ const Borrow: React.FC<IProps> = () => {
               bottomLeftInfo="Borrow APY"
               bottomRightInfo={`${stats?.borrowAPY.toFormat(2)}%` ?? "0"}
               withClickLogic
-              onClick={() => {
-                accountStore.setAssetToSend(b);
-                accountStore.setSendAssetModalOpened(true);
-              }}
             />
           );
         })
